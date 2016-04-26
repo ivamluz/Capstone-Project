@@ -1,8 +1,12 @@
 <resources>
-    <string name="app_name">MarvelShelf</string>
+    <string name="app_name">Marvel Shelf</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="characters_favorite">Favorites</string>
+    <string name="characters_all">All characters</string>
+    <string name="characters_seen">Seen characters</string>
 
     <string name="action_settings">Settings</string>
 </resources>
