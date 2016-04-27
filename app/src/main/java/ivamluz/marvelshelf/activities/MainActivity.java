@@ -1,8 +1,10 @@
-package ivamluz.marvelshelf;
+package ivamluz.marvelshelf.activities;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -13,8 +15,18 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import ivamluz.marvelshelf.R;
+import ivamluz.marvelshelf.fragments.AllCharactersFragment;
+import ivamluz.marvelshelf.fragments.BookmarksFragment;
+import ivamluz.marvelshelf.fragments.SeenCharactersFragment;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    private static final String KEY_FRAGMENT = "fragment";
+    private static final String KEY_TITLE = "title";
+
+
+    private FragmentManager mFragmentManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +52,22 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        mFragmentManager = getSupportFragmentManager();
+
+        if (savedInstanceState != null) {
+            Fragment fragment = getSupportFragmentManager().getFragment(savedInstanceState, KEY_FRAGMENT);
+            String title = savedInstanceState.getString(KEY_TITLE, "");
+
+            if (fragment != null) {
+                setTitle(title);
+                mFragmentManager.beginTransaction().replace(R.id.content_holder, fragment).commit();
+            }
+        } else {
+            Fragment fragment = AllCharactersFragment.newInstance();
+            setTitle(getString(R.string.characters_all));
+            mFragmentManager.beginTransaction().replace(R.id.content_holder, fragment).commit();
+        }
     }
 
     @Override
@@ -77,19 +105,38 @@ public class MainActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        if (id == R.id.nav_bookmarks) {
-            // Handle the camera action
-        } else if (id == R.id.nav_characters_all) {
-
-        } else if (id == R.id.nav_characters_seen) {
-
+        // Create a new fragment and specify the fragment to show based on nav item clicked
+        Fragment fragment = null;
+        Class fragmentClass;
+        switch (item.getItemId()) {
+            case R.id.nav_bookmarks:
+                fragmentClass = BookmarksFragment.class;
+                break;
+            case R.id.nav_characters_all:
+                fragmentClass = AllCharactersFragment.class;
+                break;
+            case R.id.nav_characters_seen:
+                fragmentClass = SeenCharactersFragment.class;
+                break;
+            default:
+                fragmentClass = BookmarksFragment.class;
         }
+
+        try {
+            fragment = (Fragment) fragmentClass.newInstance();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        mFragmentManager.beginTransaction().replace(R.id.content_holder, fragment).commit();
+
+        item.setChecked(true);
+        setTitle(item.getTitle());
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+
         return true;
     }
 }
