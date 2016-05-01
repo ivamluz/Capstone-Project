@@ -16,14 +16,7 @@
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6fa0c5f9-facc-4917-aa48-b5d938acb9d3" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/assets/database.db" afterPath="$PROJECT_DIR$/app/src/main/assets/database.db" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_all_characters.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_all_characters.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_bookmarks.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_bookmarks.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_seen_characters.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_seen_characters.xml" />
-    </list>
+    <list default="true" id="6fa0c5f9-facc-4917-aa48-b5d938acb9d3" name="Default" comment="" />
     <ignored path="MarvelShelf.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
