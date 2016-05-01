@@ -43,21 +43,18 @@ var marvel = api.createClient({
   privateKey: opt.options.private_key
 });
 
-crawlData(LIMIT, 1375);
+crawlData(LIMIT, 0);
 
 function crawlData(offset, limit) {
   marvel.characters.findAll(offset, limit, function(err, results) {
     if (err) {
-      console.log(util.inspect(err, { showHidden: true, depth: null }));
+      console.error(err);
       return;
     }
 
     var characters = results.data;
     characters.forEach(function(character, index, array) {
       var thumbnail = getThumbnailUrl(character);
-
-
-      console.log(character);
 
       var params = {
         '$id': character.id, 
@@ -68,7 +65,7 @@ function crawlData(offset, limit) {
         '$thumbnail': getThumbnailUrl(character)
       };
 
-      // db.run("INSERT INTO Character (id, name, description, modified, details_url, thumbnail) VALUES ($id, $name, $description, $modified, $details_url, $thumbnail)", params);
+      db.run("INSERT INTO Character (id, name, description, modified, details_url, thumbnail) VALUES ($id, $name, $description, $modified, $details_url, $thumbnail)", params);
     });
 
     var totalProcessed = results.meta.offset + characters.length;
@@ -80,7 +77,7 @@ function crawlData(offset, limit) {
       console.log('============================');
 
       var newOffset = totalProcessed;
-      // crawlData(LIMIT, newOffset);
+      crawlData(LIMIT, newOffset);
     }
   });
 }
@@ -110,26 +107,41 @@ function getDetailsUrl(character) {
 }
 
 function processRelatedSeries(character) {
-  if (!character.series || !character.series || !character.series.length) {
+  var hasSeries = character && character.series && character.series.items && character.series.items.length;
+  if (!hasSeries) {
     return;
   }
 
-  character.series.forEach(function(series, index, array) {
+  character.series.items.forEach(function(series, index, array) {
 
   });
 }
 
 function processRelatedComics(character) {
-  if (!character.comics || !character.comics || !character.comics.length) {
+  var hasComics = character && character.comics && character.comics.items && character.comics.items.length;
+  if (!hasComics) {
     return;
   }
 
-  character.comics.forEach(function(comic, index, array) {
+  character.comics.items.forEach(function(item, index, array) {
       var params = {
-        '$character_id': character.name, 
-        '$comic_id': character.description
+        '$character_id': character.id, 
+        '$comic_id': extractIdFromUrl(item.resourceURI)
       };
 
       // db.run("INSERT INTO Character (id, name, description, modified, details_url, thumbnail) VALUES ($id, $name, $description, $modified, $details_url, $thumbnail)", params);
   });
+}
+
+function extractIdFromUrl(url) {
+  var id = null;
+
+  var regex = new RegExp("^http://gateway.marvel.com/v1/public/[a-z]+/([0-9]+)$");
+
+  var matches = regex.exec(url);
+  if (matches) {
+    id = matches[1];
+  }
+
+  return id;
 }
