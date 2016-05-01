@@ -7,13 +7,16 @@
  */
 
 var util = require('util'),
-	opt = require('node-getopt'),
-	api = require('marvel-api');
+	  opt = require('node-getopt'),
+	  api = require('marvel-api'),
+    sqlite3 = require('sqlite3').verbose();
+
+var LIMIT = 25;
 
 var opt = opt.create([
-  ['' , 'public_key=ARG' , 'Comma-separated list of profile ids'],
-  ['' , 'private_key=ARG'       , 'Comma-separated list of roles to add to the given profiles'],
-  ['' , 'db_path=ARG'         , 'The Brain environment. Valid values are: local, dev, tst and prd.']
+  ['' , 'public_key=ARG' , 'Marvel API public key'],
+  ['' , 'private_key=ARG', 'Marvel API private key'],
+  ['' , 'db_path=ARG',     'Path to the SQLite DB to be populated with Marvel data.']
 ])
 .bindHelp()
 .parseSystem();
@@ -33,12 +36,100 @@ if (!opt.options.db_path) {
   process.exit(1);
 }
 
+var db = new sqlite3.Database(opt.options.db_path);
+
 var marvel = api.createClient({
   publicKey: opt.options.public_key,
   privateKey: opt.options.private_key
 });
 
-marvel.characters.findAll()
-  .then(console.log)
-  .fail(console.error)
-  .done();
+crawlData(LIMIT, 1375);
+
+function crawlData(offset, limit) {
+  marvel.characters.findAll(offset, limit, function(err, results) {
+    if (err) {
+      console.log(util.inspect(err, { showHidden: true, depth: null }));
+      return;
+    }
+
+    var characters = results.data;
+    characters.forEach(function(character, index, array) {
+      var thumbnail = getThumbnailUrl(character);
+
+
+      console.log(character);
+
+      var params = {
+        '$id': character.id, 
+        '$name': character.name, 
+        '$description': character.description, 
+        '$modified': character.modified, 
+        '$details_url': getDetailsUrl(character), 
+        '$thumbnail': getThumbnailUrl(character)
+      };
+
+      // db.run("INSERT INTO Character (id, name, description, modified, details_url, thumbnail) VALUES ($id, $name, $description, $modified, $details_url, $thumbnail)", params);
+    });
+
+    var totalProcessed = results.meta.offset + characters.length;
+    if (totalProcessed < results.meta.total) {        
+      console.log('============================');
+      console.log('totalProcessed: ' + totalProcessed);
+      console.log('total: ' + results.meta.total);
+      console.log('count: ' + results.meta.count);
+      console.log('============================');
+
+      var newOffset = totalProcessed;
+      // crawlData(LIMIT, newOffset);
+    }
+  });
+}
+
+function getThumbnailUrl(character) {
+  var thumbnailUrl = '';
+  if (character.thumbnail && character.thumbnail.path) {
+    thumbnailUrl = character.thumbnail.path + '.' + character.thumbnail.extension;
+  }
+
+  return thumbnailUrl;
+}
+
+function getDetailsUrl(character) {
+  var detailsUrl = '';
+  if (!character.urls || character.urls.length == 0) {
+    return detailsUrl;
+  }
+
+  character.urls.forEach(function(item, index, array) {
+    if (item.type == 'detail') {
+      detailsUrl = item.url;
+    }
+  });
+
+  return detailsUrl;
+}
+
+function processRelatedSeries(character) {
+  if (!character.series || !character.series || !character.series.length) {
+    return;
+  }
+
+  character.series.forEach(function(series, index, array) {
+
+  });
+}
+
+function processRelatedComics(character) {
+  if (!character.comics || !character.comics || !character.comics.length) {
+    return;
+  }
+
+  character.comics.forEach(function(comic, index, array) {
+      var params = {
+        '$character_id': character.name, 
+        '$comic_id': character.description
+      };
+
+      // db.run("INSERT INTO Character (id, name, description, modified, details_url, thumbnail) VALUES ($id, $name, $description, $modified, $details_url, $thumbnail)", params);
+  });
+}
