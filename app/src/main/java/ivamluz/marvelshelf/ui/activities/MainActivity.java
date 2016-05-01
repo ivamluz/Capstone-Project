@@ -1,4 +1,4 @@
-package ivamluz.marvelshelf.activities;
+package ivamluz.marvelshelf.ui.activities;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -16,9 +16,9 @@ import android.view.MenuItem;
 import android.view.View;
 
 import ivamluz.marvelshelf.R;
-import ivamluz.marvelshelf.fragments.AllCharactersFragment;
-import ivamluz.marvelshelf.fragments.BookmarksFragment;
-import ivamluz.marvelshelf.fragments.SeenCharactersFragment;
+import ivamluz.marvelshelf.ui.fragments.AllCharactersFragment;
+import ivamluz.marvelshelf.ui.fragments.BookmarksFragment;
+import ivamluz.marvelshelf.ui.fragments.SeenCharactersFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
