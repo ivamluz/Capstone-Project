@@ -4,10 +4,10 @@
              android:layout_height="match_parent"
              tools:context=".ui.fragments.AllCharactersFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view_all_characters"
+        android:scrollbars="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="All Characters"/>
+        android:layout_height="match_parent"/>
 
 </FrameLayout>

@@ -1,13 +1,24 @@
 package ivamluz.marvelshelf.ui.fragments;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import ivamluz.marvelshelf.R;
+import ivamluz.marvelshelf.adapter.MarvelCharactersCursorAdapter;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -15,7 +26,15 @@ import ivamluz.marvelshelf.R;
  * Use the {@link AllCharactersFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class AllCharactersFragment extends Fragment {
+public class AllCharactersFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+    private static final int sMarvelCharacterLoader = 0;
+
+//    @BindView(R.id.recycler_view_all_characters)
+    private RecyclerView mAllCharactersRecyclerView;
+
+    private MarvelCharactersCursorAdapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
+
     public AllCharactersFragment() {
         // Required empty public constructor
     }
@@ -42,8 +61,23 @@ public class AllCharactersFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_all_characters, container, false);
+
+        View rootView = inflater.inflate(R.layout.fragment_all_characters, container, false);
+//        ButterKnife.bind(this, view);
+
+        // use a linear layout manager
+        mLayoutManager = new LinearLayoutManager(getContext());
+        mAllCharactersRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view_all_characters);
+        mAllCharactersRecyclerView.setLayoutManager(mLayoutManager);
+        mAllCharactersRecyclerView.setAdapter(mAdapter);
+
+        // specify an adapter (see also next example)
+//        mAdapter = new CharactersAdapter(myDataset);
+//        mAllCharactersRecyclerView.setAdapter(mAdapter);
+
+        getActivity().getSupportLoaderManager().initLoader(sMarvelCharacterLoader, null, this);
+
+        return rootView;
     }
 
     @Override
@@ -54,5 +88,23 @@ public class AllCharactersFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+    }
+
+    @Override
+    public Loader onCreateLoader(int id, Bundle args) {
+        Uri CONTACT_URI = ContactsContract.Contacts.CONTENT_URI;
+        return new CursorLoader(getContext(), CONTACT_URI, null, null, null, null);
+    }
+
+    @Override
+    public void onLoadFinished(Loader loader, Cursor cursor) {
+        cursor.moveToFirst();
+        mAdapter = new MarvelCharactersCursorAdapter(getContext(), cursor);
+        mAllCharactersRecyclerView.setAdapter(mAdapter);
+    }
+
+    @Override
+    public void onLoaderReset(Loader loader) {
+
     }
 }
