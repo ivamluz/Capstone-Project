@@ -1,7 +1,6 @@
 package ivamluz.marvelshelf.model;
 
 import android.database.Cursor;
-import android.provider.ContactsContract;
 
 /**
  * Created by iluz on 5/3/16.

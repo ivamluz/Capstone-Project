@@ -19,6 +19,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import ivamluz.marvelshelf.R;
 import ivamluz.marvelshelf.adapter.MarvelCharactersCursorAdapter;
+import ivamluz.marvelshelf.data.MarvelShelfContract;
+import ivamluz.marvelshelf.data.MarvelShelfProvider;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -65,15 +67,10 @@ public class AllCharactersFragment extends Fragment implements LoaderManager.Loa
         View rootView = inflater.inflate(R.layout.fragment_all_characters, container, false);
 //        ButterKnife.bind(this, view);
 
-        // use a linear layout manager
         mLayoutManager = new LinearLayoutManager(getContext());
         mAllCharactersRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view_all_characters);
         mAllCharactersRecyclerView.setLayoutManager(mLayoutManager);
         mAllCharactersRecyclerView.setAdapter(mAdapter);
-
-        // specify an adapter (see also next example)
-//        mAdapter = new CharactersAdapter(myDataset);
-//        mAllCharactersRecyclerView.setAdapter(mAdapter);
 
         getActivity().getSupportLoaderManager().initLoader(sMarvelCharacterLoader, null, this);
 
@@ -92,8 +89,8 @@ public class AllCharactersFragment extends Fragment implements LoaderManager.Loa
 
     @Override
     public Loader onCreateLoader(int id, Bundle args) {
-        Uri CONTACT_URI = ContactsContract.Contacts.CONTENT_URI;
-        return new CursorLoader(getContext(), CONTACT_URI, null, null, null, null);
+        Uri CHARACTER_URI = MarvelShelfContract.CharacterEntry.CONTENT_URI;
+        return new CursorLoader(getContext(), CHARACTER_URI, null, null, null, null);
     }
 
     @Override

@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import ivamluz.marvelshelf.R;
+import ivamluz.marvelshelf.data.MarvelShelfContract;
 import ivamluz.marvelshelf.model.MarvelCharacter;
 
 /**
@@ -41,8 +42,10 @@ public class MarvelCharactersCursorAdapter extends AbstractCursorRecyclerViewAda
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, Cursor cursor) {
-        MarvelCharacter character = MarvelCharacter.fromCursor(cursor);
-        viewHolder.mTextView.setText(character.getName());
+//        MarvelCharacter character = MarvelCharacter.fromCursor(cursor);
+        String name = cursor.getString(cursor.getColumnIndex(MarvelShelfContract.CharacterEntry.COLUMN_NAME));
+//        viewHolder.mTextView.setText(character.getName());
+        viewHolder.mTextView.setText(name);
     }
 
     @Override

@@ -20,6 +20,11 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
+        <provider
+            android:name=".data.MarvelShelfProvider"
+            android:authorities="${applicationId}" >
+        </provider>
     </application>
 
 </manifest>
