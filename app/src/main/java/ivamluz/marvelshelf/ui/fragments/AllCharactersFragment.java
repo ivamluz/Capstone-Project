@@ -31,7 +31,7 @@ import ivamluz.marvelshelf.data.MarvelShelfProvider;
 public class AllCharactersFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final int sMarvelCharacterLoader = 0;
 
-//    @BindView(R.id.recycler_view_all_characters)
+    //    @BindView(R.id.recycler_view_all_characters)
     private RecyclerView mAllCharactersRecyclerView;
 
     private MarvelCharactersCursorAdapter mAdapter;
