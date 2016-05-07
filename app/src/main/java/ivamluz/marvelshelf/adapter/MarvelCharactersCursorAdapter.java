@@ -2,7 +2,6 @@ package ivamluz.marvelshelf.adapter;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +14,6 @@ import com.squareup.picasso.Picasso;
 import ivamluz.marvelshelf.MarvelShelfApplication;
 import ivamluz.marvelshelf.R;
 import ivamluz.marvelshelf.data.MarvelShelfContract;
-import ivamluz.marvelshelf.infrastructure.MarvelShelfLogger;
 
 /**
  * Created by iluz on 5/3/16.
@@ -64,10 +62,10 @@ public class MarvelCharactersCursorAdapter extends AbstractCursorRecyclerViewAda
 
         String thumbnailUrl = cursor.getString(cursor.getColumnIndex(MarvelShelfContract.CharacterEntry.COLUMN_THUMBNAIL));
         picasso.load(thumbnailUrl)
-                .placeholder(android.R.drawable.presence_away)
+                .placeholder(R.drawable.character_placeholder)
                 .fit()
                 .centerCrop()
-                .error(android.R.drawable.presence_offline)
+                .error(R.drawable.character_placeholder)
                 .into(viewHolder.mImageViewCharacterThumbnail);
 
     }

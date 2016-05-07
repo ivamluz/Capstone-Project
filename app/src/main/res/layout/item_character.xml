@@ -20,8 +20,7 @@
             android:id="@+id/img_view_character_thumb"
             android:layout_width="match_parent"
             android:layout_height="250dp"
-            android:layout_alignParentTop="true"
-            android:src="@android:drawable/presence_away"/>
+            android:layout_alignParentTop="true"/>
 
         <TextView
             android:id="@+id/txt_view_character_name"
