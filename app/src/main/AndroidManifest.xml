@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="ivamluz.marvelshelf">
 
-    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:allowBackup="true"
@@ -23,7 +23,7 @@
 
         <provider
             android:name=".data.MarvelShelfProvider"
-            android:authorities="${applicationId}" >
+            android:authorities="${applicationId}">
         </provider>
     </application>
 

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest
+    package="ivamluz.marvelshelf"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <meta-data tools:replace="android:name"
+               android:name="utils.glide.StethoOkHttpGlideDebugModule"
+               android:value="GlideModule" />
+
+    <application
+        tools:replace="android:name"
+        android:name=".MarvelShelfDebugApplication"/>
+
+</manifest>
