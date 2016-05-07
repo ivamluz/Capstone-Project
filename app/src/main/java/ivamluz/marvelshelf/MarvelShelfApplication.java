@@ -6,6 +6,7 @@ import android.net.Uri;
 import com.squareup.picasso.Picasso;
 
 import ivamluz.marvelshelf.infrastructure.MarvelShelfLogger;
+import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
 /**
  * Created by iluz on 5/7/16.
@@ -21,7 +22,10 @@ public class MarvelShelfApplication extends Application {
         super.onCreate();
 
         sInstance = this;
+
+        setupCaligraphy();
     }
+
 
     public static MarvelShelfApplication getInstance() {
         MarvelShelfLogger.debug(LOG_TAG, "getInstance() called. Returning " + sInstance);
@@ -45,5 +49,13 @@ public class MarvelShelfApplication extends Application {
         mPicasso = builder.build();
 
         return mPicasso;
+    }
+
+    private void setupCaligraphy() {
+        CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
+                .setDefaultFontPath("fonts/Roboto-RobotoRegular.ttf")
+                .setFontAttrId(R.attr.fontPath)
+                .build()
+        );
     }
 }

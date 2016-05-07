@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -20,7 +19,7 @@ import butterknife.ButterKnife;
 import ivamluz.marvelshelf.R;
 import ivamluz.marvelshelf.adapter.MarvelCharactersCursorAdapter;
 import ivamluz.marvelshelf.data.MarvelShelfContract;
-import ivamluz.marvelshelf.data.MarvelShelfProvider;
+import ivamluz.marvelshelf.ui.decorators.MarginBottomItemDecoration;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -71,6 +70,9 @@ public class AllCharactersFragment extends Fragment implements LoaderManager.Loa
         mAllCharactersRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view_all_characters);
         mAllCharactersRecyclerView.setLayoutManager(mLayoutManager);
         mAllCharactersRecyclerView.setAdapter(mAdapter);
+
+        int marginBottom = getResources().getDimensionPixelSize(R.dimen.character_card_margin_bottom);
+        mAllCharactersRecyclerView.addItemDecoration(new MarginBottomItemDecoration(marginBottom));
 
         getActivity().getSupportLoaderManager().initLoader(sMarvelCharacterLoader, null, this);
 

@@ -6,4 +6,12 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+
+    <dimen name="title_margin_bottom">8dp</dimen>
+
+    <dimen name="card_elevation">4dp</dimen>
+
+    <dimen name="character_card_margin_bottom">16dp</dimen>
+    <dimen name="character_card_image_height">250dp</dimen>
+    <dimen name="character_card_padding">16dp</dimen>
 </resources>

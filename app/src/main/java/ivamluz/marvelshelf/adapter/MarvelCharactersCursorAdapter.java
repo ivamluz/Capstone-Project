@@ -33,15 +33,19 @@ public class MarvelCharactersCursorAdapter extends AbstractCursorRecyclerViewAda
     public static class ViewHolder extends RecyclerView.ViewHolder {
         // TODO: fix problem with ButterKnife binding
 //        @BindView(R.id.txt_view_character_name)
-        public TextView mTxtViewCharacterName;
         public ImageView mImageViewCharacterThumbnail;
+        public TextView mTxtViewCharacterName;
+        public TextView mTxtViewCharacterDescription;
+
 
         public ViewHolder(View view) {
             super(view);
 //            ButterKnife.setDebug(true);
 //            ButterKnife.bind(this, view);
-            mTxtViewCharacterName = (TextView) view.findViewById(R.id.txt_view_character_name);
             mImageViewCharacterThumbnail = (ImageView) view.findViewById(R.id.img_view_character_thumb);
+            mTxtViewCharacterName = (TextView) view.findViewById(R.id.txt_view_character_name);
+            mTxtViewCharacterDescription = (TextView) view.findViewById(R.id.txt_view_character_description);
+
         }
     }
 
@@ -55,9 +59,6 @@ public class MarvelCharactersCursorAdapter extends AbstractCursorRecyclerViewAda
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, Cursor cursor) {
-        String name = cursor.getString(cursor.getColumnIndex(MarvelShelfContract.CharacterEntry.COLUMN_NAME));
-        viewHolder.mTxtViewCharacterName.setText(name);
-
         Picasso picasso = MarvelShelfApplication.getInstance().getPicasso();
 
         String thumbnailUrl = cursor.getString(cursor.getColumnIndex(MarvelShelfContract.CharacterEntry.COLUMN_THUMBNAIL));
@@ -67,6 +68,12 @@ public class MarvelCharactersCursorAdapter extends AbstractCursorRecyclerViewAda
                 .centerCrop()
                 .error(R.drawable.character_placeholder)
                 .into(viewHolder.mImageViewCharacterThumbnail);
+
+        String name = cursor.getString(cursor.getColumnIndex(MarvelShelfContract.CharacterEntry.COLUMN_NAME));
+        viewHolder.mTxtViewCharacterName.setText(name);
+
+        String description = cursor.getString(cursor.getColumnIndex(MarvelShelfContract.CharacterEntry.COLUMN_DESCRIPTION));
+        viewHolder.mTxtViewCharacterDescription.setText(description);
 
     }
 
