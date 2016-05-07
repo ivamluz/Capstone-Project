@@ -31,7 +31,7 @@ import ivamluz.marvelshelf.data.MarvelShelfProvider;
 public class AllCharactersFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final int sMarvelCharacterLoader = 0;
 
-    //    @BindView(R.id.recycler_view_all_characters)
+    @BindView(R.id.recycler_view_all_characters)
     private RecyclerView mAllCharactersRecyclerView;
 
     private MarvelCharactersCursorAdapter mAdapter;
@@ -65,7 +65,7 @@ public class AllCharactersFragment extends Fragment implements LoaderManager.Loa
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_all_characters, container, false);
-//        ButterKnife.bind(this, view);
+        ButterKnife.bind(this, rootView);
 
         mLayoutManager = new LinearLayoutManager(getContext());
         mAllCharactersRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view_all_characters);
