@@ -13,6 +13,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -27,7 +28,7 @@ import ivamluz.marvelshelf.ui.decorators.MarginBottomItemDecoration;
  * Use the {@link AllCharactersFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class AllCharactersFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class AllCharactersFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, MarvelCharactersCursorAdapter.OnItemClickListener {
     private static final int sMarvelCharacterLoader = 0;
 
     @BindView(R.id.recycler_view_all_characters)
@@ -98,12 +99,20 @@ public class AllCharactersFragment extends Fragment implements LoaderManager.Loa
     @Override
     public void onLoadFinished(Loader loader, Cursor cursor) {
         cursor.moveToFirst();
+
         mAdapter = new MarvelCharactersCursorAdapter(getContext(), cursor);
+        mAdapter.setOnItemClickListener(this);
+
         mAllCharactersRecyclerView.setAdapter(mAdapter);
     }
 
     @Override
     public void onLoaderReset(Loader loader) {
 
+    }
+
+    @Override
+    public void onItemClick(int position, View v) {
+        Toast.makeText(v.getContext(), "ID: " + mAdapter.getItemId(position), Toast.LENGTH_SHORT).show();
     }
 }

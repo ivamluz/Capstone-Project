@@ -16,15 +16,17 @@ import android.view.MenuItem;
 import android.view.View;
 
 import ivamluz.marvelshelf.R;
+import ivamluz.marvelshelf.infrastructure.MarvelShelfLogger;
 import ivamluz.marvelshelf.ui.fragments.AllCharactersFragment;
 import ivamluz.marvelshelf.ui.fragments.BookmarksFragment;
 import ivamluz.marvelshelf.ui.fragments.SeenCharactersFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    private static final String LOG_TAG = MainActivity.class.getSimpleName();
+
     private static final String KEY_FRAGMENT = "fragment";
     private static final String KEY_TITLE = "title";
-
 
     private FragmentManager mFragmentManager;
 
@@ -125,7 +127,7 @@ public class MainActivity extends AppCompatActivity
         try {
             fragment = (Fragment) fragmentClass.newInstance();
         } catch (Exception e) {
-            e.printStackTrace();
+            MarvelShelfLogger.error(LOG_TAG, e);
         }
 
 

@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -25,6 +24,7 @@ public class MarvelCharactersCursorAdapter extends AbstractCursorRecyclerViewAda
     private static final String LOG_TAG = MarvelCharactersCursorAdapter.class.getSimpleName();
 
     private Context mContext;
+    private OnItemClickListener mOnItemClickListener;
 
     public MarvelCharactersCursorAdapter(Context context, Cursor cursor) {
         super(context, cursor);
@@ -38,6 +38,8 @@ public class MarvelCharactersCursorAdapter extends AbstractCursorRecyclerViewAda
         public TextView mTxtViewCharacterName;
         public TextView mTxtViewCharacterDescription;
 
+        private OnItemClickListener mOnItemClickListener;
+
 
         public ViewHolder(View view) {
             super(view);
@@ -50,9 +52,15 @@ public class MarvelCharactersCursorAdapter extends AbstractCursorRecyclerViewAda
             view.setOnClickListener(this);
         }
 
+        public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+            mOnItemClickListener = onItemClickListener;
+        }
+
         @Override
         public void onClick(View view) {
-            Toast.makeText(view.getContext(), "Position: " + getAdapterPosition(), Toast.LENGTH_SHORT).show();
+            if (mOnItemClickListener != null) {
+                mOnItemClickListener.onItemClick(getAdapterPosition(), view);
+            }
         }
     }
 
@@ -60,6 +68,7 @@ public class MarvelCharactersCursorAdapter extends AbstractCursorRecyclerViewAda
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_character, parent, false);
         ViewHolder vh = new ViewHolder(itemView);
+        vh.setOnItemClickListener(mOnItemClickListener);
 
         return vh;
     }
@@ -84,7 +93,11 @@ public class MarvelCharactersCursorAdapter extends AbstractCursorRecyclerViewAda
 
     }
 
-    public interface OnClickListener {
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        mOnItemClickListener = onItemClickListener;
+    }
+
+    public interface OnItemClickListener {
         public void onItemClick(int position, View v);
     }
 }
