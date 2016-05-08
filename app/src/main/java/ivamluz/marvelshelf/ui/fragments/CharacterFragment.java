@@ -1,4 +1,4 @@
-package ivamluz.marvelshelf.ui.activities;
+package ivamluz.marvelshelf.ui.fragments;
 
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -11,9 +11,9 @@ import ivamluz.marvelshelf.R;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class CharacterActivityFragment extends Fragment {
+public class CharacterFragment extends Fragment {
 
-    public CharacterActivityFragment() {
+    public CharacterFragment() {
     }
 
     @Override
