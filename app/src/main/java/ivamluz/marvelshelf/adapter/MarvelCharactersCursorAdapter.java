@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -30,7 +31,7 @@ public class MarvelCharactersCursorAdapter extends AbstractCursorRecyclerViewAda
         mContext = context;
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         // TODO: fix problem with ButterKnife binding
 //        @BindView(R.id.txt_view_character_name)
         public ImageView mImageViewCharacterThumbnail;
@@ -46,6 +47,12 @@ public class MarvelCharactersCursorAdapter extends AbstractCursorRecyclerViewAda
             mTxtViewCharacterName = (TextView) view.findViewById(R.id.txt_view_character_name);
             mTxtViewCharacterDescription = (TextView) view.findViewById(R.id.txt_view_character_description);
 
+            view.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            Toast.makeText(view.getContext(), "Position: " + getAdapterPosition(), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -77,8 +84,7 @@ public class MarvelCharactersCursorAdapter extends AbstractCursorRecyclerViewAda
 
     }
 
-    @Override
-    public int getItemCount() {
-        return getCursor().getCount();
+    public interface OnClickListener {
+        public void onItemClick(int position, View v);
     }
 }
