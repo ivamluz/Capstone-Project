@@ -6,6 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 
 /**
  * Created by iluz on 5/7/16.
+ *
+ * Reference: https://www.bignerdranch.com/blog/splash-screens-the-right-way/
  */
 public class SplashActivity extends AppCompatActivity {
 
