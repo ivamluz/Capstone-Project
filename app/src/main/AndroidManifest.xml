@@ -33,7 +33,7 @@
         </activity>
 
         <activity
-            android:name=".ui.activities.CharacterActivity"
+            android:name=".ui.activities.CharacterDetailsActivity"
             android:label="@string/title_activity_character"
             android:theme="@style/MarvelShelfTheme.NoActionBar">
         </activity>

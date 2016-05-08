@@ -20,7 +20,7 @@ import butterknife.ButterKnife;
 import ivamluz.marvelshelf.R;
 import ivamluz.marvelshelf.adapter.MarvelCharactersCursorAdapter;
 import ivamluz.marvelshelf.data.MarvelShelfContract;
-import ivamluz.marvelshelf.ui.activities.CharacterActivity;
+import ivamluz.marvelshelf.ui.activities.CharacterDetailsActivity;
 import ivamluz.marvelshelf.ui.decorators.MarginBottomItemDecoration;
 
 /**
@@ -116,7 +116,7 @@ public class AllCharactersFragment extends Fragment implements LoaderManager.Loa
     public void onItemClick(int position, View v) {
 //        Toast.makeText(v.getContext(), "ID: " + mAdapter.getItemId(position), Toast.LENGTH_SHORT).show();
 
-        Intent intent = CharacterActivity.newIntent(getContext(), mAdapter.getItemId(position));
+        Intent intent = CharacterDetailsActivity.newIntent(getContext(), mAdapter.getItemId(position));
         getContext().startActivity(intent);
     }
 }
