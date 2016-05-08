@@ -25,6 +25,12 @@
             android:name=".data.MarvelShelfProvider"
             android:authorities="${applicationId}">
         </provider>
+
+        <activity
+            android:name=".ui.activities.CharacterActivity"
+            android:label="@string/title_activity_character"
+            android:theme="@style/MarvelShelfTheme.NoActionBar">
+        </activity>
     </application>
 
 </manifest>

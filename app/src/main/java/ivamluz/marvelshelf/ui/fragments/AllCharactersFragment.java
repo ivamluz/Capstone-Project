@@ -1,6 +1,7 @@
 package ivamluz.marvelshelf.ui.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import butterknife.ButterKnife;
 import ivamluz.marvelshelf.R;
 import ivamluz.marvelshelf.adapter.MarvelCharactersCursorAdapter;
 import ivamluz.marvelshelf.data.MarvelShelfContract;
+import ivamluz.marvelshelf.ui.activities.CharacterActivity;
 import ivamluz.marvelshelf.ui.decorators.MarginBottomItemDecoration;
 
 /**
@@ -113,6 +115,9 @@ public class AllCharactersFragment extends Fragment implements LoaderManager.Loa
 
     @Override
     public void onItemClick(int position, View v) {
-        Toast.makeText(v.getContext(), "ID: " + mAdapter.getItemId(position), Toast.LENGTH_SHORT).show();
+//        Toast.makeText(v.getContext(), "ID: " + mAdapter.getItemId(position), Toast.LENGTH_SHORT).show();
+
+        Intent intent = CharacterActivity.newIntent(getContext(), mAdapter.getItemId(position));
+        getContext().startActivity(intent);
     }
 }
