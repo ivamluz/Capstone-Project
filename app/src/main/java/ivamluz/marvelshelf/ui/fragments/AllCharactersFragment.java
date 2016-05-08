@@ -14,7 +14,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -31,7 +30,7 @@ import ivamluz.marvelshelf.ui.decorators.MarginBottomItemDecoration;
  * create an instance of this fragment.
  */
 public class AllCharactersFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, MarvelCharactersCursorAdapter.OnItemClickListener {
-    private static final int sMarvelCharacterLoader = 0;
+    private static final int CHARACTERS_LOADER = 0;
 
     @BindView(R.id.recycler_view_all_characters)
     private RecyclerView mAllCharactersRecyclerView;
@@ -77,7 +76,7 @@ public class AllCharactersFragment extends Fragment implements LoaderManager.Loa
         int marginBottom = getResources().getDimensionPixelSize(R.dimen.character_card_margin_bottom);
         mAllCharactersRecyclerView.addItemDecoration(new MarginBottomItemDecoration(marginBottom));
 
-        getActivity().getSupportLoaderManager().initLoader(sMarvelCharacterLoader, null, this);
+        getActivity().getSupportLoaderManager().initLoader(CHARACTERS_LOADER, null, this);
 
         return rootView;
     }
