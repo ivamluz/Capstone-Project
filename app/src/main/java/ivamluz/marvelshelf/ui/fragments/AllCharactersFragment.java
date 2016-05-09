@@ -20,6 +20,7 @@ import butterknife.ButterKnife;
 import ivamluz.marvelshelf.R;
 import ivamluz.marvelshelf.adapter.MarvelCharactersCursorAdapter;
 import ivamluz.marvelshelf.data.MarvelShelfContract;
+import ivamluz.marvelshelf.data.model.MarvelCharacter;
 import ivamluz.marvelshelf.ui.activities.CharacterDetailsActivity;
 import ivamluz.marvelshelf.ui.decorators.MarginBottomItemDecoration;
 
@@ -73,7 +74,7 @@ public class AllCharactersFragment extends Fragment implements LoaderManager.Loa
         mAllCharactersRecyclerView.setLayoutManager(mLayoutManager);
         mAllCharactersRecyclerView.setAdapter(mAdapter);
 
-        int marginBottom = getResources().getDimensionPixelSize(R.dimen.character_card_margin_bottom);
+        int marginBottom = getResources().getDimensionPixelSize(R.dimen.card_margin_bottom);
         mAllCharactersRecyclerView.addItemDecoration(new MarginBottomItemDecoration(marginBottom));
 
         getActivity().getSupportLoaderManager().initLoader(CHARACTERS_LOADER, null, this);
@@ -116,7 +117,12 @@ public class AllCharactersFragment extends Fragment implements LoaderManager.Loa
     public void onItemClick(int position, View v) {
 //        Toast.makeText(v.getContext(), "ID: " + mAdapter.getItemId(position), Toast.LENGTH_SHORT).show();
 
-        Intent intent = CharacterDetailsActivity.newIntent(getContext(), mAdapter.getItemId(position));
+        mAdapter.getCursor().moveToPosition(position);
+
+        MarvelCharacter character = MarvelCharacter.fromCursor(mAdapter.getCursor());
+
+
+        Intent intent = CharacterDetailsActivity.newIntent(getContext(), character);
         getContext().startActivity(intent);
     }
 }

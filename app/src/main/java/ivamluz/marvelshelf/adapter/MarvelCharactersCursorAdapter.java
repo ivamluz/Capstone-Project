@@ -45,9 +45,9 @@ public class MarvelCharactersCursorAdapter extends AbstractCursorRecyclerViewAda
             super(view);
 //            ButterKnife.setDebug(true);
 //            ButterKnife.bind(this, view);
-            mImageViewCharacterThumbnail = (ImageView) view.findViewById(R.id.img_view_character_thumb);
-            mTxtViewCharacterName = (TextView) view.findViewById(R.id.txt_view_character_name);
-            mTxtViewCharacterDescription = (TextView) view.findViewById(R.id.txt_view_character_description);
+            mImageViewCharacterThumbnail = (ImageView) view.findViewById(R.id.image_character_thumb);
+            mTxtViewCharacterName = (TextView) view.findViewById(R.id.text_character_name);
+            mTxtViewCharacterDescription = (TextView) view.findViewById(R.id.text_character_description);
 
             view.setOnClickListener(this);
         }

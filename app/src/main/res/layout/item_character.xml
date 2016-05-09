@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/character_card_view"
+    android:id="@+id/card_character_info"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     card_view:cardElevation="@dimen/card_elevation"
@@ -16,9 +16,9 @@
         android:orientation="vertical">
 
         <ImageView
-            android:id="@+id/img_view_character_thumb"
+            android:id="@+id/image_character_thumb"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/character_card_image_height"
+            android:layout_height="@dimen/character_closed_card_image_height"
             android:layout_alignParentTop="true"/>
 
         <LinearLayout
@@ -28,14 +28,14 @@
             android:padding="@dimen/character_card_padding">
 
             <TextView
-                android:id="@+id/txt_view_character_name"
+                android:id="@+id/text_character_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 style="@style/MarvelShelfTheme.Character.Title"
                 tools:text="Character Name"/>
 
             <TextView
-                android:id="@+id/txt_view_character_description"
+                android:id="@+id/text_character_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:text="Lorem ipsum dolor sit amet"

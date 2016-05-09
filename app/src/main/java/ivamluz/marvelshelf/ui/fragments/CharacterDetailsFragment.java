@@ -11,10 +11,12 @@ import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
+import com.squareup.picasso.Picasso;
+
+import ivamluz.marvelshelf.MarvelShelfApplication;
 import ivamluz.marvelshelf.R;
 import ivamluz.marvelshelf.data.MarvelShelfContract;
 import ivamluz.marvelshelf.infrastructure.MarvelShelfLogger;
@@ -30,11 +32,14 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
 
     private static final String ARG_CHARACTER_ID = "ivamluz.marvelshelf.character_id";
 
+    private Picasso mPicasso;
+
     private long mCharacterId;
 
 //    @BindView(R.id.characterName)
-    private TextView mTxtViewCharacterName;
-    private TextView mTxtViewCharacterDescription;
+    private TextView mTextCharacterName;
+    private TextView mTextCharacterDescription;
+    private ImageView mImageCharacterThumbnail;
 
     public CharacterDetailsFragment() {
         // Required empty public constructor
@@ -67,6 +72,8 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
 
             MarvelShelfLogger.debug(LOG_TAG, "characterId: " + mCharacterId);
         }
+
+        mPicasso = MarvelShelfApplication.getInstance().getPicasso();
     }
 
     @Override
@@ -76,8 +83,9 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
         View rootView = inflater.inflate(R.layout.fragment_character_details, container, false);
 //        ButterKnife.bind(this, rootView);
 
-        mTxtViewCharacterName = (TextView) rootView.findViewById(R.id.txtViewCharacterName);
-        mTxtViewCharacterDescription = (TextView) rootView.findViewById(R.id.txtViewCharacterDescription);
+        mTextCharacterName = (TextView) rootView.findViewById(R.id.text_character_name);
+        mTextCharacterDescription = (TextView) rootView.findViewById(R.id.text_character_description);
+        mImageCharacterThumbnail = (ImageView) rootView.findViewById(R.id.image_character_thumb);
 
         getActivity().getSupportLoaderManager().initLoader(CHARACTER_LOADER, null, this);
 
@@ -105,11 +113,18 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
         cursor.moveToFirst();
 
         String name = cursor.getString(cursor.getColumnIndex(MarvelShelfContract.CharacterEntry.COLUMN_NAME));
-        mTxtViewCharacterName.setText(name);
+        mTextCharacterName.setText(name);
 
         String description = cursor.getString(cursor.getColumnIndex(MarvelShelfContract.CharacterEntry.COLUMN_DESCRIPTION));
-        mTxtViewCharacterDescription.setText(description);
+        mTextCharacterDescription.setText(description);
 
+//        String thumbnailUrl = cursor.getString(cursor.getColumnIndex(MarvelShelfContract.CharacterEntry.COLUMN_THUMBNAIL));
+//        mPicasso.load(thumbnailUrl)
+//                .placeholder(R.drawable.character_placeholder)
+//                .fit()
+//                .centerCrop()
+//                .error(R.drawable.character_placeholder)
+//                .into(mImageCharacterThumbnail);
     }
 
     @Override
