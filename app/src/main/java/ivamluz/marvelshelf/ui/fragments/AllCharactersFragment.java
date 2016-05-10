@@ -74,7 +74,7 @@ public class AllCharactersFragment extends Fragment implements LoaderManager.Loa
         mAllCharactersRecyclerView.setLayoutManager(mLayoutManager);
         mAllCharactersRecyclerView.setAdapter(mAdapter);
 
-        int marginBottom = getResources().getDimensionPixelSize(R.dimen.card_margin_bottom);
+        int marginBottom = getResources().getDimensionPixelSize(R.dimen.card_spacing);
         mAllCharactersRecyclerView.addItemDecoration(new MarginBottomItemDecoration(marginBottom));
 
         getActivity().getSupportLoaderManager().initLoader(CHARACTERS_LOADER, null, this);

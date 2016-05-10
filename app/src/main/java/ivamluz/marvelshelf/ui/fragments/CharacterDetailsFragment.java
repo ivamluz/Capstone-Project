@@ -31,10 +31,15 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
     private static final int CHARACTER_LOADER = 100;
 
     private static final String ARG_CHARACTER_ID = "ivamluz.marvelshelf.character_id";
+    private static final String ARG_SHOW_NAME = "ivamluz.marvelshelf.show_name";
+    private static final String ARG_SHOW_THUMBNAIL = "ivamluz.marvelshelf.show_thumbnail";
 
     private Picasso mPicasso;
 
     private long mCharacterId;
+
+    private boolean mShowThumbnail;
+    private boolean mShowCharacterName;
 
 //    @BindView(R.id.characterName)
     private TextView mTextCharacterName;
@@ -52,16 +57,21 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
      * @param characterId Parameter 1.
      * @return A new instance of fragment BookmarksFragment.
      */
-    // TODO: Rename and change types and number of parameters
-    public static CharacterDetailsFragment newInstance(long characterId) {
+    public static CharacterDetailsFragment newInstance(long characterId, boolean showName, boolean showThumbnail) {
         CharacterDetailsFragment fragment = new CharacterDetailsFragment();
 
         Bundle args = new Bundle();
         args.putLong(ARG_CHARACTER_ID, characterId);
+        args.putBoolean(ARG_SHOW_NAME, showName);
+        args.putBoolean(ARG_SHOW_THUMBNAIL, showThumbnail);
 
         fragment.setArguments(args);
 
         return fragment;
+    }
+
+    public static CharacterDetailsFragment newInstance(long characterId) {
+        return newInstance(characterId, false, false);
     }
 
     @Override
@@ -69,6 +79,8 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mCharacterId = getArguments().getLong(ARG_CHARACTER_ID);
+            mShowThumbnail= getArguments().getBoolean(ARG_SHOW_THUMBNAIL);
+            mShowCharacterName = getArguments().getBoolean(ARG_SHOW_NAME);
 
             MarvelShelfLogger.debug(LOG_TAG, "characterId: " + mCharacterId);
         }
@@ -83,9 +95,12 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
         View rootView = inflater.inflate(R.layout.fragment_character_details, container, false);
 //        ButterKnife.bind(this, rootView);
 
+        mImageCharacterThumbnail = (ImageView) rootView.findViewById(R.id.image_character_thumb);
         mTextCharacterName = (TextView) rootView.findViewById(R.id.text_character_name);
         mTextCharacterDescription = (TextView) rootView.findViewById(R.id.text_character_description);
-        mImageCharacterThumbnail = (ImageView) rootView.findViewById(R.id.image_character_thumb);
+
+        mImageCharacterThumbnail.setVisibility(mShowThumbnail ? View.VISIBLE : View.GONE);
+        mTextCharacterName.setVisibility(mShowCharacterName ? View.VISIBLE : View.GONE);
 
         getActivity().getSupportLoaderManager().initLoader(CHARACTER_LOADER, null, this);
 
@@ -112,24 +127,33 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
     public void onLoadFinished(Loader loader, Cursor cursor) {
         cursor.moveToFirst();
 
-        String name = cursor.getString(cursor.getColumnIndex(MarvelShelfContract.CharacterEntry.COLUMN_NAME));
-        mTextCharacterName.setText(name);
-
-        String description = cursor.getString(cursor.getColumnIndex(MarvelShelfContract.CharacterEntry.COLUMN_DESCRIPTION));
-        mTextCharacterDescription.setText(description);
-
-//        String thumbnailUrl = cursor.getString(cursor.getColumnIndex(MarvelShelfContract.CharacterEntry.COLUMN_THUMBNAIL));
-//        mPicasso.load(thumbnailUrl)
-//                .placeholder(R.drawable.character_placeholder)
-//                .fit()
-//                .centerCrop()
-//                .error(R.drawable.character_placeholder)
-//                .into(mImageCharacterThumbnail);
+        bindValues(cursor);
     }
 
     @Override
     public void onLoaderReset(Loader loader) {
 
+    }
+
+
+    private void bindValues(Cursor cursor) {
+        if (mShowThumbnail) {
+            String thumbnailUrl = cursor.getString(cursor.getColumnIndex(MarvelShelfContract.CharacterEntry.COLUMN_THUMBNAIL));
+            mPicasso.load(thumbnailUrl)
+                    .placeholder(R.drawable.character_placeholder)
+                    .fit()
+                    .centerCrop()
+                    .error(R.drawable.character_placeholder)
+                    .into(mImageCharacterThumbnail);
+        }
+
+        if (mShowCharacterName) {
+            String name = cursor.getString(cursor.getColumnIndex(MarvelShelfContract.CharacterEntry.COLUMN_NAME));
+            mTextCharacterName.setText(name);
+        }
+
+        String description = cursor.getString(cursor.getColumnIndex(MarvelShelfContract.CharacterEntry.COLUMN_DESCRIPTION));
+        mTextCharacterDescription.setText(description);
     }
 }
 

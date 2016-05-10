@@ -1,216 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  ~ Copyright (C) 2015 The Android Open Source Project
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~ you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
-  ~
-  ~      http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS,
-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
--->
-
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:paddingTop="24dp">
+    android:orientation="vertical">
 
-    <android.support.v7.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/card_margin_bottom">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/text_character_name"
-                style="@style/MarvelShelfTheme.Character.Title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:text="Character Name"/>
-
-            <TextView
-                android:id="@+id/text_character_description"
-                style="@style/MarvelShelfTheme.Character.Description"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                tools:text="Lorem ipsum dolor sit amet"/>
-
-        </LinearLayout>
-
-    </android.support.v7.widget.CardView>
+    <include layout="@layout/item_character"/>
 
     <android.support.v7.widget.CardView
         android:id="@+id/card_character_comics"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/card_margin_bottom"
+        android:layout_marginTop="@dimen/card_spacing"
+
         card_view:cardElevation="@dimen/card_elevation">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:padding="@dimen/card_padding"
             android:orientation="vertical">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Comics"/>
+                style="@style/MarvelShelfTheme.Character.Title"
+                android:text="@string/title_comics"/>
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recycler_view_character_comics"
                 android:layout_width="match_parent"
-                android:layout_height="400dp"
+                android:layout_height="@dimen/card_related_items_holder_height"
                 android:scrollbars="horizontal"/>
         </LinearLayout>
 
     </android.support.v7.widget.CardView>
 
-
     <android.support.v7.widget.CardView
         android:id="@+id/card_character_series"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/card_margin_bottom"
+        android:layout_marginTop="@dimen/card_spacing"
+        android:layout_marginBottom="@dimen/card_spacing"
         card_view:cardElevation="@dimen/card_elevation">
-
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:padding="@dimen/card_padding"
             android:orientation="vertical">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Series"/>
+                style="@style/MarvelShelfTheme.Character.Title"
+                android:text="@string/title_series"/>
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recycler_view_character_series"
                 android:layout_width="match_parent"
-                android:layout_height="400dp"
+                android:layout_height="@dimen/card_related_items_holder_height"
                 android:scrollbars="horizontal"/>l"/>
         </LinearLayout>
-
 
     </android.support.v7.widget.CardView>
 
 </LinearLayout>
-    <!--
-    <?xml version="1.0" encoding="utf-8"?>
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                  xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                  xmlns:tools="http://schemas.android.com/tools"
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent"
-                  android:orientation="vertical">
-
-        <android.support.v7.widget.CardView
-            android:id="@+id/card_character_info"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            card_view:cardElevation="@dimen/card_elevation">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:id="@+id/image_character_thumb"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/character_opened_card_image_height"
-                    android:layout_alignParentTop="true"/>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="@dimen/character_card_padding">
-
-                    <TextView
-                        android:id="@+id/text_character_name"
-                        style="@style/MarvelShelfTheme.Character.Title"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        tools:text="Character Name"/>
-
-                    <TextView
-                        android:id="@+id/text_character_description"
-                        style="@style/MarvelShelfTheme.Character.Description"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        tools:text="Lorem ipsum dolor sit amet"/>
-                </LinearLayout>
-            </LinearLayout>
-        </android.support.v7.widget.CardView>
-
-        <android.support.v7.widget.CardView
-            android:id="@+id/card_character_comics"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/card_margin_bottom"
-            card_view:cardElevation="@dimen/card_elevation">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Comics"/>
-
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/recycler_view_character_comics"
-                    android:layout_width="match_parent"
-                    android:layout_height="400dp"
-                    android:scrollbars="horizontal"/>
-            </LinearLayout>
-
-        </android.support.v7.widget.CardView>
-
-
-        <android.support.v7.widget.CardView
-            android:id="@+id/card_character_series"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/card_margin_bottom"
-            card_view:cardElevation="@dimen/card_elevation">
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Series"/>
-
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/recycler_view_character_series"
-                    android:layout_width="match_parent"
-                    android:layout_height="400dp"
-                    android:scrollbars="horizontal"/>l"/>
-            </LinearLayout>
-
-
-        </android.support.v7.widget.CardView>
-    </LinearLayout> -->

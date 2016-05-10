@@ -21,6 +21,13 @@
         <item name="fontPath">fonts/Roboto-Medium.ttf</item>
     </style>
 
+    <style name="TextAppearance.Design.CollapsingToolbar.Expanded.Shadow">
+        <item name="android:shadowDy">0</item>
+        <item name="android:shadowDx">0</item>
+        <item name="android:shadowRadius">8</item>
+        <item name="android:shadowColor">@android:color/black</item>
+    </style>
+
     <style name="MarvelShelfTheme.Character.Title" parent="@android:style/TextAppearance.Large">
         <item name="android:textColor">@color/colorPrimary</item>
         <item name="fontPath">fonts/Roboto-Bold.ttf</item>

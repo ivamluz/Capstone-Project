@@ -10,4 +10,7 @@
 
     <string name="action_settings">Settings</string>
     <string name="title_activity_character">CharacterActivity</string>
+
+    <string name="title_comics">Comics</string>
+    <string name="title_series">Series</string>
 </resources>

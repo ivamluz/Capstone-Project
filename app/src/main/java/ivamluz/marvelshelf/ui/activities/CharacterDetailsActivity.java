@@ -46,7 +46,6 @@ public class CharacterDetailsActivity extends AppCompatActivity {
         Picasso picasso = MarvelShelfApplication.getInstance().getPicasso();
 
         picasso.load(mCharacter.getThumbnailUrl())
-                .placeholder(R.drawable.character_placeholder)
                 .fit()
                 .centerCrop()
                 .error(R.drawable.character_placeholder)
