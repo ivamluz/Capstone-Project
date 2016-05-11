@@ -20,15 +20,19 @@ import ivamluz.marvelshelf.data.MarvelShelfContract;
  * <p/>
  * Credits: https://gist.github.com/skyfishjy/443b7448f59be978bc59#file-mylistcursoradapter-java
  */
-public class MarvelCharactersCursorAdapter extends AbstractCursorRecyclerViewAdapter<MarvelCharactersCursorAdapter.ViewHolder> {
-    private static final String LOG_TAG = MarvelCharactersCursorAdapter.class.getSimpleName();
+public class CharactersCursorAdapter extends AbstractCursorRecyclerViewAdapter<CharactersCursorAdapter.ViewHolder> {
+    private static final String LOG_TAG = CharactersCursorAdapter.class.getSimpleName();
 
     private Context mContext;
+    Picasso mPicasso;
+
     private OnItemClickListener mOnItemClickListener;
 
-    public MarvelCharactersCursorAdapter(Context context, Cursor cursor) {
+    public CharactersCursorAdapter(Context context, Cursor cursor) {
         super(context, cursor);
         mContext = context;
+
+        mPicasso = MarvelShelfApplication.getInstance().getPicasso();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -75,10 +79,8 @@ public class MarvelCharactersCursorAdapter extends AbstractCursorRecyclerViewAda
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, Cursor cursor) {
-        Picasso picasso = MarvelShelfApplication.getInstance().getPicasso();
-
         String thumbnailUrl = cursor.getString(cursor.getColumnIndex(MarvelShelfContract.CharacterEntry.COLUMN_THUMBNAIL));
-        picasso.load(thumbnailUrl)
+        mPicasso.load(thumbnailUrl)
                 .placeholder(R.drawable.character_placeholder)
                 .fit()
                 .centerCrop()
@@ -98,6 +100,6 @@ public class MarvelCharactersCursorAdapter extends AbstractCursorRecyclerViewAda
     }
 
     public interface OnItemClickListener {
-        public void onItemClick(int position, View v);
+        void onItemClick(int position, View v);
     }
 }

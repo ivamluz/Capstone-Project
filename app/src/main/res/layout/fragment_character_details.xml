@@ -25,7 +25,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                style="@style/MarvelShelfTheme.Character.Title"
+                style="@style/MarvelShelfTheme.Card.Title"
                 android:text="@string/title_comics"/>
 
             <android.support.v7.widget.RecyclerView
@@ -54,7 +54,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                style="@style/MarvelShelfTheme.Character.Title"
+                style="@style/MarvelShelfTheme.Card.Title"
                 android:text="@string/title_series"/>
 
             <android.support.v7.widget.RecyclerView

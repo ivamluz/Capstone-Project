@@ -2,7 +2,9 @@ package ivamluz.marvelshelf;
 
 import android.app.Application;
 import android.net.Uri;
+import android.support.v4.util.Pair;
 
+import com.karumi.marvelapiclient.MarvelApiConfig;
 import com.squareup.picasso.Picasso;
 
 import ivamluz.marvelshelf.infrastructure.MarvelShelfLogger;
@@ -16,6 +18,7 @@ public class MarvelShelfApplication extends Application {
     private static MarvelShelfApplication sInstance;
 
     private Picasso mPicasso;
+    protected MarvelApiConfig mMarvelApiConfig;
 
     @Override
     public void onCreate() {
@@ -49,6 +52,16 @@ public class MarvelShelfApplication extends Application {
         mPicasso = builder.build();
 
         return mPicasso;
+    }
+
+    public MarvelApiConfig getMarvelApiConfig() {
+        if (mMarvelApiConfig != null) {
+            return mMarvelApiConfig;
+        }
+
+        mMarvelApiConfig = new MarvelApiConfig.Builder(BuildConfig.MARVEL_API_PUBLIC_KEY, BuildConfig.MARVEL_API_PRIVATE_KEY).build();
+
+        return mMarvelApiConfig;
     }
 
     private void setupCaligraphy() {

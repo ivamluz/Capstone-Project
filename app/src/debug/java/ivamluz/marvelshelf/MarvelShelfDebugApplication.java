@@ -1,5 +1,6 @@
 package ivamluz.marvelshelf;
 
+import com.karumi.marvelapiclient.MarvelApiConfig;
 import com.squareup.picasso.Picasso;
 
 import butterknife.ButterKnife;
@@ -24,6 +25,18 @@ public class MarvelShelfDebugApplication extends MarvelShelfApplication {
         picasso.setLoggingEnabled(true);
 
         return picasso;
+    }
+
+    public MarvelApiConfig getMarvelApiConfig() {
+        if (mMarvelApiConfig != null) {
+            return mMarvelApiConfig;
+        }
+
+        mMarvelApiConfig = new MarvelApiConfig.Builder(BuildConfig.MARVEL_API_PUBLIC_KEY, BuildConfig.MARVEL_API_PRIVATE_KEY)
+                .debug()
+                .build();
+
+        return mMarvelApiConfig;
     }
 
     private void setupButterKnife() {

@@ -7,18 +7,24 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.widget.ImageView;
 
+import com.karumi.marvelapiclient.model.ComicDto;
 import com.squareup.picasso.Picasso;
+
+import java.util.List;
 
 import ivamluz.marvelshelf.MarvelShelfApplication;
 import ivamluz.marvelshelf.R;
 import ivamluz.marvelshelf.data.MarvelShelfContract;
 import ivamluz.marvelshelf.data.model.MarvelCharacter;
 import ivamluz.marvelshelf.ui.fragments.CharacterDetailsFragment;
+import ivamluz.marvelshelf.ui.fragments.workers.ComicsLoaderWorkerFragment;
 
-public class CharacterDetailsActivity extends AppCompatActivity {
+public class CharacterDetailsActivity extends AppCompatActivity implements ComicsLoaderWorkerFragment.TaskCallbacks {
     private static final String EXTRA_CHARACTER = "ivamluz.marvelshelf.character";
 
     private MarvelCharacter mCharacter;
+
+    private CharacterDetailsFragment mCharacterDetailsFragment;
 
     public static Intent newIntent(Context packageContext, MarvelCharacter character) {
         Intent intent = new Intent(packageContext, CharacterDetailsActivity.class);
@@ -55,11 +61,26 @@ public class CharacterDetailsActivity extends AppCompatActivity {
     }
 
     private void setupCharacterDetailsFragment() {
-        CharacterDetailsFragment fragment = CharacterDetailsFragment.newInstance(mCharacter.getId());
+        mCharacterDetailsFragment = CharacterDetailsFragment.newInstance(mCharacter.getId());
 
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.character_details_container, fragment)
+                .replace(R.id.character_details_container, mCharacterDetailsFragment)
                 .commit();
+    }
+
+    @Override
+    public void onPreExecute() {
+        mCharacterDetailsFragment.onPreExecute();
+    }
+
+    @Override
+    public void onCancelled() {
+        mCharacterDetailsFragment.onCancelled();
+    }
+
+    @Override
+    public void onComicsLoaded(List<ComicDto> comics) {
+        mCharacterDetailsFragment.onComicsLoaded(comics);
     }
 }

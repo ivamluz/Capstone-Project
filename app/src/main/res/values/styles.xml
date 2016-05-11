@@ -28,13 +28,13 @@
         <item name="android:shadowColor">@android:color/black</item>
     </style>
 
-    <style name="MarvelShelfTheme.Character.Title" parent="@android:style/TextAppearance.Large">
+    <style name="MarvelShelfTheme.Card.Title" parent="@android:style/TextAppearance.Large">
         <item name="android:textColor">@color/colorPrimary</item>
         <item name="fontPath">fonts/Roboto-Bold.ttf</item>
         <item name="android:layout_marginBottom">@dimen/title_margin_bottom</item>
     </style>
 
-    <style name="MarvelShelfTheme.Character.Description" parent="@android:style/TextAppearance.Medium">
+    <style name="MarvelShelfTheme.Card.Description" parent="@android:style/TextAppearance.Medium">
         <item name="fontPath">fonts/Roboto-Regular.ttf</item>
     </style>
 

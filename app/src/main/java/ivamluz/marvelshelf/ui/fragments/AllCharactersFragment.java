@@ -18,7 +18,7 @@ import android.view.ViewGroup;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import ivamluz.marvelshelf.R;
-import ivamluz.marvelshelf.adapter.MarvelCharactersCursorAdapter;
+import ivamluz.marvelshelf.adapter.CharactersCursorAdapter;
 import ivamluz.marvelshelf.data.MarvelShelfContract;
 import ivamluz.marvelshelf.data.model.MarvelCharacter;
 import ivamluz.marvelshelf.ui.activities.CharacterDetailsActivity;
@@ -30,13 +30,13 @@ import ivamluz.marvelshelf.ui.decorators.MarginBottomItemDecoration;
  * Use the {@link AllCharactersFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class AllCharactersFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, MarvelCharactersCursorAdapter.OnItemClickListener {
+public class AllCharactersFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, CharactersCursorAdapter.OnItemClickListener {
     private static final int CHARACTERS_LOADER = 0;
 
     @BindView(R.id.recycler_view_all_characters)
     private RecyclerView mAllCharactersRecyclerView;
 
-    private MarvelCharactersCursorAdapter mAdapter;
+    private CharactersCursorAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
     public AllCharactersFragment() {
@@ -102,7 +102,7 @@ public class AllCharactersFragment extends Fragment implements LoaderManager.Loa
     public void onLoadFinished(Loader loader, Cursor cursor) {
         cursor.moveToFirst();
 
-        mAdapter = new MarvelCharactersCursorAdapter(getContext(), cursor);
+        mAdapter = new CharactersCursorAdapter(getContext(), cursor);
         mAdapter.setOnItemClickListener(this);
 
         mAllCharactersRecyclerView.setAdapter(mAdapter);
