@@ -22,7 +22,7 @@ import ivamluz.marvelshelf.adapter.CharactersCursorAdapter;
 import ivamluz.marvelshelf.data.MarvelShelfContract;
 import ivamluz.marvelshelf.data.model.MarvelCharacter;
 import ivamluz.marvelshelf.ui.activities.CharacterDetailsActivity;
-import ivamluz.marvelshelf.ui.decorators.MarginBottomItemDecoration;
+import ivamluz.marvelshelf.ui.decorators.MarginItemDecoration;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -75,7 +75,7 @@ public class AllCharactersFragment extends Fragment implements LoaderManager.Loa
         mAllCharactersRecyclerView.setAdapter(mAdapter);
 
         int marginBottom = getResources().getDimensionPixelSize(R.dimen.card_spacing);
-        mAllCharactersRecyclerView.addItemDecoration(new MarginBottomItemDecoration(marginBottom));
+        mAllCharactersRecyclerView.addItemDecoration(new MarginItemDecoration(0, 0, marginBottom, 0));
 
         getActivity().getSupportLoaderManager().initLoader(CHARACTERS_LOADER, null, this);
 

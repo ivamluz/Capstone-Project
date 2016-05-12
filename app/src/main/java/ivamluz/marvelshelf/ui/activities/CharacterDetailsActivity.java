@@ -14,7 +14,6 @@ import java.util.List;
 
 import ivamluz.marvelshelf.MarvelShelfApplication;
 import ivamluz.marvelshelf.R;
-import ivamluz.marvelshelf.data.MarvelShelfContract;
 import ivamluz.marvelshelf.data.model.MarvelCharacter;
 import ivamluz.marvelshelf.ui.fragments.CharacterDetailsFragment;
 import ivamluz.marvelshelf.ui.fragments.workers.ComicsLoaderWorkerFragment;

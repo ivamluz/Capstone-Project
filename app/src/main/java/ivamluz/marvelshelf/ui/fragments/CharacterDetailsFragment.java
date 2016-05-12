@@ -22,13 +22,12 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-import butterknife.BindView;
 import ivamluz.marvelshelf.MarvelShelfApplication;
 import ivamluz.marvelshelf.R;
 import ivamluz.marvelshelf.adapter.CharacterComicsAdapter;
-import ivamluz.marvelshelf.adapter.CharactersCursorAdapter;
 import ivamluz.marvelshelf.data.MarvelShelfContract;
 import ivamluz.marvelshelf.infrastructure.MarvelShelfLogger;
+import ivamluz.marvelshelf.ui.decorators.MarginItemDecoration;
 import ivamluz.marvelshelf.ui.fragments.workers.ComicsLoaderWorkerFragment;
 
 /**
@@ -49,7 +48,7 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
     private long mCharacterId;
 
 
-//    @BindView(R.id.recycler_view_character_comics)
+    //    @BindView(R.id.recycler_view_character_comics)
     private RecyclerView mRecyclerViewCharacterComics;
 
     private CharacterComicsAdapter mAdapterCharacterComics;
@@ -60,7 +59,7 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
     private boolean mShowThumbnail;
     private boolean mShowCharacterName;
 
-//    @BindView(R.id.characterName)
+    //    @BindView(R.id.characterName)
     private TextView mTextCharacterName;
     private TextView mTextCharacterDescription;
     private ImageView mImageCharacterThumbnail;
@@ -98,7 +97,7 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mCharacterId = getArguments().getLong(ARG_CHARACTER_ID);
-            mShowThumbnail= getArguments().getBoolean(ARG_SHOW_THUMBNAIL);
+            mShowThumbnail = getArguments().getBoolean(ARG_SHOW_THUMBNAIL);
             mShowCharacterName = getArguments().getBoolean(ARG_SHOW_NAME);
 
             MarvelShelfLogger.debug(LOG_TAG, "characterId: " + mCharacterId);
@@ -107,8 +106,8 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
         FragmentManager fm = getFragmentManager();
         mComicsLoaderWorkerFragment = (ComicsLoaderWorkerFragment) fm.findFragmentByTag(ComicsLoaderWorkerFragment.TAG);
 
-        // If the Fragment is non-null, then it is currently being
-        // retained across a configuration change.
+        // If the Fragment is non-null, then it is currently being retained across a
+        // configuration change.
         if (mComicsLoaderWorkerFragment == null) {
             mComicsLoaderWorkerFragment = ComicsLoaderWorkerFragment.newInstance(mCharacterId);
             fm.beginTransaction().add(mComicsLoaderWorkerFragment, ComicsLoaderWorkerFragment.TAG).commit();
@@ -136,6 +135,9 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
         mRecyclerViewCharacterComics = (RecyclerView) rootView.findViewById(R.id.recycler_view_character_comics);
         mRecyclerViewCharacterComics.setLayoutManager(layoutManager);
         mRecyclerViewCharacterComics.setAdapter(mAdapterCharacterComics);
+
+        int marginRight = getResources().getDimensionPixelSize(R.dimen.card_spacing);
+        mRecyclerViewCharacterComics.addItemDecoration(new MarginItemDecoration(0, marginRight, 0, 0));
 
         getActivity().getSupportLoaderManager().initLoader(CHARACTER_LOADER, null, this);
 

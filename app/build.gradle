@@ -25,6 +25,9 @@ android {
     buildTypes.each {
         it.buildConfigField 'String', 'MARVEL_API_PUBLIC_KEY', MarvelApiPublicKey
         it.buildConfigField 'String', 'MARVEL_API_PRIVATE_KEY', MarvelApiPrivateKey
+
+        it.buildConfigField 'int', 'HTTP_CONNECTION_TIMEOUT_IN_SECONDS', '30'
+        it.buildConfigField 'int', 'HTTP_READ_TIMEOUT_IN_SECONDS', '30'
     }
 }
 

@@ -19,7 +19,7 @@ import ivamluz.marvelshelf.infrastructure.MarvelShelfLogger;
 
 /**
  * Created by iluz on 5/10/16.
- *
+ * <p/>
  * This Fragment manages a single background task responsible for loading comics asyncly and retains
  * itself across configuration changes.
  */
@@ -38,11 +38,13 @@ public class ComicsLoaderWorkerFragment extends AbstractWorkerFragment {
      */
     public interface TaskCallbacks {
         void onPreExecute();
+
         void onCancelled();
+
         void onComicsLoaded(List<ComicDto> comics);
     }
 
-    private TaskCallbacks mCallbacks;
+    private TaskCallbacks mListener;
     private LoadComicsTask mTask;
 
     public static ComicsLoaderWorkerFragment newInstance(long characterId) {
@@ -57,22 +59,12 @@ public class ComicsLoaderWorkerFragment extends AbstractWorkerFragment {
     }
 
 
-    /**
-     * Hold a reference to the parent Activity so we can report the
-     * task's current progress and results. The Android framework
-     * will pass us a reference to the newly created Activity after
-     * each configuration change.
-     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mCallbacks = (TaskCallbacks) context;
+        mListener = (TaskCallbacks) context;
     }
 
-    /**
-     * This method will only be called once when the retained
-     * Fragment is first created.
-     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,7 +73,6 @@ public class ComicsLoaderWorkerFragment extends AbstractWorkerFragment {
             mCharacterId = getArguments().getLong(ARG_CHARACTER_ID);
         }
 
-        // Create and execute the background task.
         mTask = new LoadComicsTask();
         mTask.execute();
     }
@@ -93,36 +84,27 @@ public class ComicsLoaderWorkerFragment extends AbstractWorkerFragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        mCallbacks = null;
+        mListener = null;
     }
 
     /**
-     * A dummy task that performs some (dumb) background work and
-     * proxies progress updates and results back to the Activity.
-     *
-     * Note that we need to check if the callbacks are null in each
-     * method in case they are invoked after the Activity's and
-     * Fragment's onDestroy() method have been called.
+     * An async task that fetches comics for a given character.
      */
     private class LoadComicsTask extends AsyncTask<Void, Integer, List<ComicDto>> {
 
         @Override
         protected void onPreExecute() {
-            if (mCallbacks != null) {
-                mCallbacks.onPreExecute();
+            if (mListener != null) {
+                mListener.onPreExecute();
             }
         }
 
-        /**
-         * Note that we do NOT call the callback object's methods
-         * directly from the background thread, as this could result
-         * in a race condition.
-         */
         @Override
         protected List<ComicDto> doInBackground(Void... ignore) {
-            MarvelResponse<ComicsDto> response = null;
             ComicApiClient comicApiClient = new ComicApiClient(MarvelShelfApplication.getInstance().getMarvelApiConfig());
-            ComicsQuery query = ComicsQuery.Builder.create().addCharacter((int)mCharacterId).withOffset(0).withLimit(100).build();
+            ComicsQuery query = ComicsQuery.Builder.create().addCharacter((int) mCharacterId).withOffset(0).withLimit(100).build();
+
+            MarvelResponse<ComicsDto> response = null;
             try {
                 response = comicApiClient.getAll(query);
             } catch (MarvelApiException e) {
@@ -139,15 +121,15 @@ public class ComicsLoaderWorkerFragment extends AbstractWorkerFragment {
 
         @Override
         protected void onCancelled() {
-            if (mCallbacks != null) {
-                mCallbacks.onCancelled();
+            if (mListener != null) {
+                mListener.onCancelled();
             }
         }
 
         @Override
         protected void onPostExecute(List<ComicDto> comics) {
-            if (mCallbacks != null) {
-                mCallbacks.onComicsLoaded(comics);
+            if (mListener != null) {
+                mListener.onComicsLoaded(comics);
             }
         }
     }
