@@ -17,8 +17,9 @@
     <dimen name="character_opened_card_image_height">400dp</dimen>
     <dimen name="character_opened_card_image_elevation">4dp</dimen>
 
-    <dimen name="card_related_items_holder_height">200dp</dimen>
+    <dimen name="card_related_items_holder_height">340dp</dimen>
 
-    <dimen name="comic_closed_card_height">250dp</dimen>
-    <dimen name="comic_closed_card_width">150dp</dimen>
+    <dimen name="comic_closed_card_width">200dp</dimen>
+    <dimen name="comic_closed_card_title_height">32dp</dimen>
+    <dimen name="comic_closed_card_image_height">260dp</dimen>
 </resources>
