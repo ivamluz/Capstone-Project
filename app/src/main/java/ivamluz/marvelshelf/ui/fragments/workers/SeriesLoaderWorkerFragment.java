@@ -4,12 +4,12 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
-import com.karumi.marvelapiclient.ComicApiClient;
 import com.karumi.marvelapiclient.MarvelApiException;
-import com.karumi.marvelapiclient.model.ComicDto;
-import com.karumi.marvelapiclient.model.ComicsDto;
-import com.karumi.marvelapiclient.model.ComicsQuery;
+import com.karumi.marvelapiclient.SeriesApiClient;
 import com.karumi.marvelapiclient.model.MarvelResponse;
+import com.karumi.marvelapiclient.model.SeriesCollectionDto;
+import com.karumi.marvelapiclient.model.SeriesDto;
+import com.karumi.marvelapiclient.model.SeriesQuery;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -20,11 +20,11 @@ import ivamluz.marvelshelf.infrastructure.MarvelShelfLogger;
 /**
  * Created by iluz on 5/10/16.
  * <p/>
- * This Fragment manages a single background task responsible for loading comics asyncly and retains
+ * This Fragment manages a single background task responsible for loading series asyncly and retains
  * itself across configuration changes.
  */
-public class ComicsLoaderWorkerFragment extends AbstractWorkerFragment {
-    public static final String TAG = ComicsLoaderWorkerFragment.class.getSimpleName();
+public class SeriesLoaderWorkerFragment extends AbstractWorkerFragment {
+    public static final String TAG = SeriesLoaderWorkerFragment.class.getSimpleName();
 
     private static final String LOG_TAG = TAG;
 
@@ -37,18 +37,18 @@ public class ComicsLoaderWorkerFragment extends AbstractWorkerFragment {
      * task's progress and results back to the Activity.
      */
     public interface TaskCallbacks {
-        void onComicsLoadingPreExecute();
+        void onSeriesLoadingPreExecute();
 
-        void onComicsLoadingCancelled();
+        void onSeriesLoadingCancelled();
 
-        void onComicsLoaded(List<ComicDto> comics);
+        void onSeriesLoaded(List<SeriesDto> series);
     }
 
     private TaskCallbacks mListener;
-    private LoadComicsTask mTask;
+    private LoadSeriesTask mTask;
 
-    public static ComicsLoaderWorkerFragment newInstance(long characterId) {
-        ComicsLoaderWorkerFragment fragment = new ComicsLoaderWorkerFragment();
+    public static SeriesLoaderWorkerFragment newInstance(long characterId) {
+        SeriesLoaderWorkerFragment fragment = new SeriesLoaderWorkerFragment();
 
         Bundle args = new Bundle();
         args.putLong(ARG_CHARACTER_ID, characterId);
@@ -73,7 +73,7 @@ public class ComicsLoaderWorkerFragment extends AbstractWorkerFragment {
             mCharacterId = getArguments().getLong(ARG_CHARACTER_ID);
         }
 
-        mTask = new LoadComicsTask();
+        mTask = new LoadSeriesTask();
         mTask.execute();
     }
 
@@ -88,31 +88,31 @@ public class ComicsLoaderWorkerFragment extends AbstractWorkerFragment {
     }
 
     /**
-     * An async task that fetches comics for a given character.
+     * An async task that fetches series for a given character.
      */
-    private class LoadComicsTask extends AsyncTask<Void, Integer, List<ComicDto>> {
+    private class LoadSeriesTask extends AsyncTask<Void, Integer, List<SeriesDto>> {
 
         @Override
         protected void onPreExecute() {
             if (mListener != null) {
-                mListener.onComicsLoadingPreExecute();
+                mListener.onSeriesLoadingPreExecute();
             }
         }
 
         @Override
-        protected List<ComicDto> doInBackground(Void... ignore) {
-            ComicApiClient comicApiClient = new ComicApiClient(MarvelShelfApplication.getInstance().getMarvelApiConfig());
-            ComicsQuery query = ComicsQuery.Builder.create().addCharacter((int) mCharacterId).withOffset(0).withLimit(100).build();
+        protected List<SeriesDto> doInBackground(Void... ignore) {
+            SeriesApiClient seriesApiClient = new SeriesApiClient(MarvelShelfApplication.getInstance().getMarvelApiConfig());
+            SeriesQuery query = SeriesQuery.Builder.create().addCharacter((int) mCharacterId).withOffset(0).withLimit(100).build();
 
-            MarvelResponse<ComicsDto> response = null;
+            MarvelResponse<SeriesCollectionDto> response = null;
             try {
-                response = comicApiClient.getAll(query);
+                response = seriesApiClient.getAll(query);
             } catch (MarvelApiException e) {
                 MarvelShelfLogger.error(LOG_TAG, e);
             }
 
             if (response != null) {
-                return response.getResponse().getComics();
+                return response.getResponse().getSeries();
             } else {
                 MarvelShelfLogger.debug(LOG_TAG, "response is null");
                 return new LinkedList<>();
@@ -122,14 +122,14 @@ public class ComicsLoaderWorkerFragment extends AbstractWorkerFragment {
         @Override
         protected void onCancelled() {
             if (mListener != null) {
-                mListener.onComicsLoadingCancelled();
+                mListener.onSeriesLoadingCancelled();
             }
         }
 
         @Override
-        protected void onPostExecute(List<ComicDto> comics) {
+        protected void onPostExecute(List<SeriesDto> series) {
             if (mListener != null) {
-                mListener.onComicsLoaded(comics);
+                mListener.onSeriesLoaded(series);
             }
         }
     }

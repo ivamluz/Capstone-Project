@@ -18,24 +18,27 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.karumi.marvelapiclient.model.ComicDto;
+import com.karumi.marvelapiclient.model.MarvelImage;
+import com.karumi.marvelapiclient.model.SeriesDto;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 import ivamluz.marvelshelf.MarvelShelfApplication;
 import ivamluz.marvelshelf.R;
-import ivamluz.marvelshelf.adapter.CharacterComicsAdapter;
+import ivamluz.marvelshelf.adapter.AbstractCharacterRelatedItemsAdapter;
 import ivamluz.marvelshelf.data.MarvelShelfContract;
 import ivamluz.marvelshelf.infrastructure.MarvelShelfLogger;
 import ivamluz.marvelshelf.ui.decorators.MarginItemDecoration;
 import ivamluz.marvelshelf.ui.fragments.workers.ComicsLoaderWorkerFragment;
+import ivamluz.marvelshelf.ui.fragments.workers.SeriesLoaderWorkerFragment;
 
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link BookmarksFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CharacterDetailsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, ComicsLoaderWorkerFragment.TaskCallbacks {
+public class CharacterDetailsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, ComicsLoaderWorkerFragment.TaskCallbacks, SeriesLoaderWorkerFragment.TaskCallbacks {
     private static final String LOG_TAG = CharacterDetailsFragment.class.getSimpleName();
     private static final int CHARACTER_LOADER = 100;
 
@@ -47,14 +50,15 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
 
     private long mCharacterId;
 
+    private AbstractCharacterRelatedItemsAdapter mAdapterCharacterComics;
+    private AbstractCharacterRelatedItemsAdapter mAdapterCharacterSeries;
 
     //    @BindView(R.id.recycler_view_character_comics)
     private RecyclerView mRecyclerViewCharacterComics;
-
-    private CharacterComicsAdapter mAdapterCharacterComics;
+    private RecyclerView mRecyclerViewCharacterSeries;
 
     private ComicsLoaderWorkerFragment mComicsLoaderWorkerFragment;
-
+    private SeriesLoaderWorkerFragment mSeriesLoaderWorkerFragment;
 
     private boolean mShowThumbnail;
     private boolean mShowCharacterName;
@@ -63,6 +67,7 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
     private TextView mTextCharacterName;
     private TextView mTextCharacterDescription;
     private ImageView mImageCharacterThumbnail;
+
 
     public CharacterDetailsFragment() {
         // Required empty public constructor
@@ -103,17 +108,29 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
             MarvelShelfLogger.debug(LOG_TAG, "characterId: " + mCharacterId);
         }
 
-        FragmentManager fm = getFragmentManager();
-        mComicsLoaderWorkerFragment = (ComicsLoaderWorkerFragment) fm.findFragmentByTag(ComicsLoaderWorkerFragment.TAG);
+        setupComicsLoaderFragment();
+        setupSeriesLoaderFragment();
 
-        // If the Fragment is non-null, then it is currently being retained across a
-        // configuration change.
+        mPicasso = MarvelShelfApplication.getInstance().getPicasso();
+    }
+
+    private void setupSeriesLoaderFragment() {
+        FragmentManager fm = getFragmentManager();
+        mSeriesLoaderWorkerFragment = (SeriesLoaderWorkerFragment) fm.findFragmentByTag(SeriesLoaderWorkerFragment.TAG);
+        if (mSeriesLoaderWorkerFragment == null) {
+            mSeriesLoaderWorkerFragment = SeriesLoaderWorkerFragment.newInstance(mCharacterId);
+            fm.beginTransaction().add(mSeriesLoaderWorkerFragment, ComicsLoaderWorkerFragment.TAG).commit();
+        }
+    }
+
+    private void setupComicsLoaderFragment() {
+        FragmentManager fm = getFragmentManager();
+
+        mComicsLoaderWorkerFragment = (ComicsLoaderWorkerFragment) fm.findFragmentByTag(ComicsLoaderWorkerFragment.TAG);
         if (mComicsLoaderWorkerFragment == null) {
             mComicsLoaderWorkerFragment = ComicsLoaderWorkerFragment.newInstance(mCharacterId);
             fm.beginTransaction().add(mComicsLoaderWorkerFragment, ComicsLoaderWorkerFragment.TAG).commit();
         }
-
-        mPicasso = MarvelShelfApplication.getInstance().getPicasso();
     }
 
     @Override
@@ -130,18 +147,61 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
         mImageCharacterThumbnail.setVisibility(mShowThumbnail ? View.VISIBLE : View.GONE);
         mTextCharacterName.setVisibility(mShowCharacterName ? View.VISIBLE : View.GONE);
 
+        setupComicsAdapterAndRecyclerView(rootView);
+        setupSeriesAdapterAndRecyclerView(rootView);
+
+        return rootView;
+    }
+
+    private void setupSeriesAdapterAndRecyclerView(View rootView) {
+        mAdapterCharacterSeries = new AbstractCharacterRelatedItemsAdapter<SeriesDto>(null) {
+            @Override
+            public void onBindViewHolder(ViewHolder holder, int position) {
+                SeriesDto series = mItems.get(position);
+
+                if (series.getThumbnail() != null) {
+                    setThumbnail(holder, series.getThumbnail());
+                }
+
+                setTitle(holder, series.getTitle());
+            }
+        };
+
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+
+        mRecyclerViewCharacterSeries = (RecyclerView) rootView.findViewById(R.id.recycler_view_character_series);
+        mRecyclerViewCharacterSeries.setLayoutManager(layoutManager);
+        mRecyclerViewCharacterSeries.setAdapter(mAdapterCharacterSeries);
+        int marginRight = getResources().getDimensionPixelSize(R.dimen.card_spacing);
+        mRecyclerViewCharacterSeries.addItemDecoration(new MarginItemDecoration(0, marginRight, 0, 0));
+
+        getActivity().getSupportLoaderManager().initLoader(CHARACTER_LOADER, null, this);
+    }
+
+    private void setupComicsAdapterAndRecyclerView(View rootView) {
+        mAdapterCharacterComics = new AbstractCharacterRelatedItemsAdapter<ComicDto>(null) {
+            @Override
+            public void onBindViewHolder(ViewHolder holder, int position) {
+                ComicDto comic = mItems.get(position);
+
+                if (!comic.getImages().isEmpty()) {
+                    MarvelImage image = comic.getImages().get(0);
+                    setThumbnail(holder, image);
+                }
+
+                setTitle(holder, comic.getTitle());
+            }
+        };
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+
         mRecyclerViewCharacterComics = (RecyclerView) rootView.findViewById(R.id.recycler_view_character_comics);
         mRecyclerViewCharacterComics.setLayoutManager(layoutManager);
         mRecyclerViewCharacterComics.setAdapter(mAdapterCharacterComics);
-
         int marginRight = getResources().getDimensionPixelSize(R.dimen.card_spacing);
         mRecyclerViewCharacterComics.addItemDecoration(new MarginItemDecoration(0, marginRight, 0, 0));
-
-        getActivity().getSupportLoaderManager().initLoader(CHARACTER_LOADER, null, this);
-
-        return rootView;
     }
 
     @Override
@@ -193,20 +253,38 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
     }
 
     @Override
-    public void onPreExecute() {
-        MarvelShelfLogger.debug(LOG_TAG, "onComicsLoaded - onPreExecute");
+    public void onComicsLoadingPreExecute() {
+        MarvelShelfLogger.debug(LOG_TAG, "onComicsLoadingPreExecute");
     }
 
     @Override
-    public void onCancelled() {
-        MarvelShelfLogger.debug(LOG_TAG, "onComicsLoaded - onCancelled");
+    public void onComicsLoadingCancelled() {
+        MarvelShelfLogger.debug(LOG_TAG, "onComicsLoadingCancelled");
     }
 
     @Override
     public void onComicsLoaded(List<ComicDto> comics) {
         MarvelShelfLogger.debug(LOG_TAG, "onComicsLoaded - comics: " + comics);
-        mAdapterCharacterComics = new CharacterComicsAdapter(comics);
-        mRecyclerViewCharacterComics.setAdapter(mAdapterCharacterComics);
+
+        mAdapterCharacterComics.setItems(comics);
+        mAdapterCharacterComics.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onSeriesLoadingPreExecute() {
+        MarvelShelfLogger.debug(LOG_TAG, "onSeriesLoadingPreExecute");
+    }
+
+    @Override
+    public void onSeriesLoadingCancelled() {
+        MarvelShelfLogger.debug(LOG_TAG, "onComicsLoadingCancelled");
+    }
+
+    @Override
+    public void onSeriesLoaded(List<SeriesDto> series) {
+        MarvelShelfLogger.debug(LOG_TAG, "onSeriesLoaded - comics: " + series);
+        mAdapterCharacterSeries.setItems(series);
+        mAdapterCharacterSeries.notifyDataSetChanged();
     }
 }
 

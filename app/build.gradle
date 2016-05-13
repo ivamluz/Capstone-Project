@@ -26,8 +26,8 @@ android {
         it.buildConfigField 'String', 'MARVEL_API_PUBLIC_KEY', MarvelApiPublicKey
         it.buildConfigField 'String', 'MARVEL_API_PRIVATE_KEY', MarvelApiPrivateKey
 
-        it.buildConfigField 'int', 'HTTP_CONNECTION_TIMEOUT_IN_SECONDS', '30'
-        it.buildConfigField 'int', 'HTTP_READ_TIMEOUT_IN_SECONDS', '30'
+        it.buildConfigField 'int', 'HTTP_CONNECTION_TIMEOUT_IN_SECONDS', '60'
+        it.buildConfigField 'int', 'HTTP_READ_TIMEOUT_IN_SECONDS', '60'
     }
 }
 
@@ -48,5 +48,5 @@ dependencies {
 
     compile 'uk.co.chrisjenx:calligraphy:2.2.0'
 
-    compile 'com.karumi:marvelapiclient:0.0.2'
+    compile 'com.karumi:marvelapiclient:0.0.4'
 }

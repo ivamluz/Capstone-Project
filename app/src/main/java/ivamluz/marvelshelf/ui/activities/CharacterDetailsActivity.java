@@ -8,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.widget.ImageView;
 
 import com.karumi.marvelapiclient.model.ComicDto;
+import com.karumi.marvelapiclient.model.SeriesDto;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -17,8 +18,9 @@ import ivamluz.marvelshelf.R;
 import ivamluz.marvelshelf.data.model.MarvelCharacter;
 import ivamluz.marvelshelf.ui.fragments.CharacterDetailsFragment;
 import ivamluz.marvelshelf.ui.fragments.workers.ComicsLoaderWorkerFragment;
+import ivamluz.marvelshelf.ui.fragments.workers.SeriesLoaderWorkerFragment;
 
-public class CharacterDetailsActivity extends AppCompatActivity implements ComicsLoaderWorkerFragment.TaskCallbacks {
+public class CharacterDetailsActivity extends AppCompatActivity implements ComicsLoaderWorkerFragment.TaskCallbacks, SeriesLoaderWorkerFragment.TaskCallbacks {
     private static final String EXTRA_CHARACTER = "ivamluz.marvelshelf.character";
 
     private MarvelCharacter mCharacter;
@@ -69,17 +71,32 @@ public class CharacterDetailsActivity extends AppCompatActivity implements Comic
     }
 
     @Override
-    public void onPreExecute() {
-        mCharacterDetailsFragment.onPreExecute();
+    public void onComicsLoadingPreExecute() {
+        mCharacterDetailsFragment.onComicsLoadingPreExecute();
     }
 
     @Override
-    public void onCancelled() {
-        mCharacterDetailsFragment.onCancelled();
+    public void onComicsLoadingCancelled() {
+        mCharacterDetailsFragment.onComicsLoadingCancelled();
     }
 
     @Override
     public void onComicsLoaded(List<ComicDto> comics) {
         mCharacterDetailsFragment.onComicsLoaded(comics);
+    }
+
+    @Override
+    public void onSeriesLoadingPreExecute() {
+        mCharacterDetailsFragment.onSeriesLoadingPreExecute();
+    }
+
+    @Override
+    public void onSeriesLoadingCancelled() {
+        mCharacterDetailsFragment.onSeriesLoadingCancelled();
+    }
+
+    @Override
+    public void onSeriesLoaded(List<SeriesDto> series) {
+        mCharacterDetailsFragment.onSeriesLoaded(series);
     }
 }
