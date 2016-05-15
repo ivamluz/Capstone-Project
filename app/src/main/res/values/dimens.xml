@@ -13,7 +13,7 @@
     <dimen name="card_spacing">16dp</dimen>
     <dimen name="card_padding">16dp</dimen>
 
-    <dimen name="character_card_image_height">250dp</dimen>
+    <dimen name="details_thumb_height">250dp</dimen>
 
     <dimen name="card_related_items_holder_height">340dp</dimen>
 

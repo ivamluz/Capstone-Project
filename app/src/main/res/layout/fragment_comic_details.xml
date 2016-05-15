@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/item_main_info"/>
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/card_comic_images"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/card_spacing"
+
+        card_view:cardElevation="@dimen/card_elevation">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/card_padding"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/MarvelShelfTheme.Card.Title"
+                android:text="@string/title_images"/>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_view_comics_images"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/card_related_items_holder_height"
+                android:scrollbars="horizontal"/>
+        </LinearLayout>
+
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>

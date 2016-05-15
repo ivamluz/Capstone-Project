@@ -16,9 +16,9 @@
         android:orientation="vertical">
 
         <ImageView
-            android:id="@+id/image_character_thumb"
+            android:id="@+id/image_details_thumb"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/character_card_image_height"
+            android:layout_height="@dimen/details_thumb_height"
             android:transitionName="@string/shared_transition_character_image"
             android:layout_alignParentTop="true"/>
 
@@ -29,14 +29,14 @@
             android:padding="@dimen/card_padding">
 
             <TextView
-                android:id="@+id/text_character_name"
+                android:id="@+id/text_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 style="@style/MarvelShelfTheme.Card.Title"
                 tools:text="Character Name"/>
 
             <TextView
-                android:id="@+id/text_character_description"
+                android:id="@+id/text_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:text="Lorem ipsum dolor sit amet"

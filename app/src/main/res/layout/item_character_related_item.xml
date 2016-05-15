@@ -19,6 +19,7 @@
             android:id="@+id/image_item_thumb"
             android:layout_width="match_parent"
             android:layout_height="@dimen/comic_closed_card_image_height"
+            android:transitionName="@string/shared_transition_character_image"
             android:layout_alignParentTop="true"/>
 
         <LinearLayout

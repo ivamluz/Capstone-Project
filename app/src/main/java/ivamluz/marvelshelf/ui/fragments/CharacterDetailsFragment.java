@@ -1,9 +1,11 @@
 package ivamluz.marvelshelf.ui.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
@@ -29,7 +31,10 @@ import ivamluz.marvelshelf.MarvelShelfApplication;
 import ivamluz.marvelshelf.R;
 import ivamluz.marvelshelf.adapter.AbstractCharacterRelatedItemsAdapter;
 import ivamluz.marvelshelf.data.MarvelShelfContract;
+import ivamluz.marvelshelf.data.model.MarvelComic;
 import ivamluz.marvelshelf.infrastructure.MarvelShelfLogger;
+import ivamluz.marvelshelf.ui.activities.CharacterDetailsActivity;
+import ivamluz.marvelshelf.ui.activities.ComicDetailsActivity;
 import ivamluz.marvelshelf.ui.decorators.MarginItemDecoration;
 import ivamluz.marvelshelf.ui.fragments.workers.ComicsLoaderWorkerFragment;
 import ivamluz.marvelshelf.ui.fragments.workers.SeriesLoaderWorkerFragment;
@@ -39,7 +44,7 @@ import ivamluz.marvelshelf.ui.fragments.workers.SeriesLoaderWorkerFragment;
  * Use the {@link BookmarksFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CharacterDetailsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, ComicsLoaderWorkerFragment.TaskCallbacks, SeriesLoaderWorkerFragment.TaskCallbacks {
+public class CharacterDetailsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, ComicsLoaderWorkerFragment.TaskCallbacks, SeriesLoaderWorkerFragment.TaskCallbacks, AbstractCharacterRelatedItemsAdapter.OnItemClickListener {
     private static final String LOG_TAG = CharacterDetailsFragment.class.getSimpleName();
     private static final int CHARACTER_LOADER = 100;
 
@@ -141,9 +146,9 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
         View rootView = inflater.inflate(R.layout.fragment_character_details, container, false);
 //        ButterKnife.bind(this, rootView);
 
-        mImageCharacterThumbnail = (ImageView) rootView.findViewById(R.id.image_character_thumb);
-        mTextCharacterName = (TextView) rootView.findViewById(R.id.text_character_name);
-        mTextCharacterDescription = (TextView) rootView.findViewById(R.id.text_character_description);
+        mImageCharacterThumbnail = (ImageView) rootView.findViewById(R.id.image_details_thumb);
+        mTextCharacterName = (TextView) rootView.findViewById(R.id.text_name);
+        mTextCharacterDescription = (TextView) rootView.findViewById(R.id.text_description);
 
         mImageCharacterThumbnail.setVisibility(mShowThumbnail ? View.VISIBLE : View.GONE);
         mTextCharacterName.setVisibility(mShowCharacterName ? View.VISIBLE : View.GONE);
@@ -154,10 +159,40 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
         return rootView;
     }
 
-    private void setupSeriesAdapterAndRecyclerView(View rootView) {
-        mAdapterCharacterSeries = new AbstractCharacterRelatedItemsAdapter<SeriesDto>(null) {
+    private void setupComicsAdapterAndRecyclerView(View rootView) {
+        mAdapterCharacterComics = new AbstractCharacterRelatedItemsAdapter<ComicDto>(ComicDto.class, null) {
             @Override
             public void onBindViewHolder(ViewHolder holder, int position) {
+                super.onBindViewHolder(holder, position);
+
+                ComicDto comic = mItems.get(position);
+
+                if (!comic.getImages().isEmpty()) {
+                    MarvelImage image = comic.getImages().get(0);
+                    setThumbnail(holder, image);
+                }
+
+                setTitle(holder, comic.getTitle());
+            }
+        };
+        mAdapterCharacterComics.setOnItemClickListener(this);
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+
+        mRecyclerViewCharacterComics = (RecyclerView) rootView.findViewById(R.id.recycler_view_character_comics);
+        mRecyclerViewCharacterComics.setLayoutManager(layoutManager);
+        mRecyclerViewCharacterComics.setAdapter(mAdapterCharacterComics);
+        int marginRight = getResources().getDimensionPixelSize(R.dimen.card_spacing);
+        mRecyclerViewCharacterComics.addItemDecoration(new MarginItemDecoration(0, marginRight, 0, 0));
+    }
+
+    private void setupSeriesAdapterAndRecyclerView(View rootView) {
+        mAdapterCharacterSeries = new AbstractCharacterRelatedItemsAdapter<SeriesDto>(SeriesDto.class, null) {
+            @Override
+            public void onBindViewHolder(ViewHolder holder, int position) {
+                super.onBindViewHolder(holder, position);
+
                 SeriesDto series = mItems.get(position);
 
                 if (series.getThumbnail() != null) {
@@ -167,6 +202,7 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
                 setTitle(holder, series.getTitle());
             }
         };
+        mAdapterCharacterSeries.setOnItemClickListener(this);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
@@ -178,31 +214,6 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
         mRecyclerViewCharacterSeries.addItemDecoration(new MarginItemDecoration(0, marginRight, 0, 0));
 
         getActivity().getSupportLoaderManager().initLoader(CHARACTER_LOADER, null, this);
-    }
-
-    private void setupComicsAdapterAndRecyclerView(View rootView) {
-        mAdapterCharacterComics = new AbstractCharacterRelatedItemsAdapter<ComicDto>(null) {
-            @Override
-            public void onBindViewHolder(ViewHolder holder, int position) {
-                ComicDto comic = mItems.get(position);
-
-                if (!comic.getImages().isEmpty()) {
-                    MarvelImage image = comic.getImages().get(0);
-                    setThumbnail(holder, image);
-                }
-
-                setTitle(holder, comic.getTitle());
-            }
-        };
-
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-
-        mRecyclerViewCharacterComics = (RecyclerView) rootView.findViewById(R.id.recycler_view_character_comics);
-        mRecyclerViewCharacterComics.setLayoutManager(layoutManager);
-        mRecyclerViewCharacterComics.setAdapter(mAdapterCharacterComics);
-        int marginRight = getResources().getDimensionPixelSize(R.dimen.card_spacing);
-        mRecyclerViewCharacterComics.addItemDecoration(new MarginItemDecoration(0, marginRight, 0, 0));
     }
 
     @Override
@@ -289,6 +300,45 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
         MarvelShelfLogger.debug(LOG_TAG, "onSeriesLoaded - comics: " + series);
         mAdapterCharacterSeries.setItems(series);
         mAdapterCharacterSeries.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onItemClick(Class type, int position, View view) {
+        MarvelShelfLogger.debug(LOG_TAG, "type: " + type + " | position: " + position);
+
+        if (type == ComicDto.class) {
+            ComicDto comic = (ComicDto) mAdapterCharacterComics.getItem(position);
+            showComicDetails(comic, view);
+        } else if (type == SeriesDto.class) {
+            SeriesDto series = (SeriesDto) mAdapterCharacterSeries.getItem(position);
+            showSeriesDetails(series, view);
+        } else {
+            MarvelShelfLogger.debug(LOG_TAG, "Unknown item type: " + type);
+        }
+    }
+
+    private void showComicDetails(ComicDto comic, View view) {
+        MarvelShelfLogger.debug(LOG_TAG, "Comic: " + comic);
+
+        MarvelComic marvelComic = MarvelComic.fromComicDto(comic);
+        Intent intent = ComicDetailsActivity.newIntent(getContext(), marvelComic);
+
+        startDetailsActivity(view, intent);
+    }
+
+    private void startDetailsActivity(View view, Intent intent) {
+        ImageView imageView = (ImageView) view.findViewById(R.id.image_item_thumb);
+        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                getActivity(),
+                imageView,
+                getContext().getString(R.string.shared_transition_character_image)
+        );
+
+        startActivity(intent, options.toBundle());
+    }
+
+    private void showSeriesDetails(SeriesDto series, View view) {
+        MarvelShelfLogger.debug(LOG_TAG, "Series: " + series);
     }
 }
 

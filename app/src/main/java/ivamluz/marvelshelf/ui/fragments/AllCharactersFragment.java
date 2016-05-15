@@ -122,7 +122,7 @@ public class AllCharactersFragment extends Fragment implements LoaderManager.Loa
         MarvelCharacter character = MarvelCharacter.fromCursor(mAdapter.getCursor());
         Intent intent = CharacterDetailsActivity.newIntent(getContext(), character);
 
-        ImageView characterImage = (ImageView) view.findViewById(R.id.image_character_thumb);
+        ImageView characterImage = (ImageView) view.findViewById(R.id.image_details_thumb);
         ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
                 getActivity(),
                 characterImage,

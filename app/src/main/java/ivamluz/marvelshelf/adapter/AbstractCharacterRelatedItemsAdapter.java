@@ -11,11 +11,13 @@ import com.karumi.marvelapiclient.model.ComicDto;
 import com.karumi.marvelapiclient.model.MarvelImage;
 import com.squareup.picasso.Picasso;
 
+import java.lang.reflect.Type;
 import java.util.LinkedList;
 import java.util.List;
 
 import ivamluz.marvelshelf.MarvelShelfApplication;
 import ivamluz.marvelshelf.R;
+import ivamluz.marvelshelf.infrastructure.MarvelShelfLogger;
 
 /**
  * Created by iluz on 5/3/16.
@@ -23,19 +25,25 @@ import ivamluz.marvelshelf.R;
  * Credits: https://gist.github.com/skyfishjy/443b7448f59be978bc59#file-mylistcursoradapter-java
  */
 public abstract class AbstractCharacterRelatedItemsAdapter<T> extends RecyclerView.Adapter<AbstractCharacterRelatedItemsAdapter.ViewHolder> {
+    private static final String LOG_TAG = AbstractCharacterRelatedItemsAdapter.class.getSimpleName();
     Picasso mPicasso;
 
     protected List<T> mItems;
 
+    private Class<T> mType;
+
+    private OnItemClickListener mOnItemClickListener;
+
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         // each data item is just a string in this case
+        public Class mType;
         public ImageView mImageViewThumbnail;
         public TextView mTxtViewTitle;
 
-//        private OnItemClickListener mOnItemClickListener;
+        private OnItemClickListener mOnItemClickListener;
 
 
         public ViewHolder(View view) {
@@ -45,12 +53,24 @@ public abstract class AbstractCharacterRelatedItemsAdapter<T> extends RecyclerVi
             mImageViewThumbnail = (ImageView) view.findViewById(R.id.image_item_thumb);
             mTxtViewTitle = (TextView) view.findViewById(R.id.text_item_title);
 
-//            view.setOnClickListener(this);
+            view.setOnClickListener(this);
+        }
+
+        public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+            mOnItemClickListener = onItemClickListener;
+        }
+
+        @Override
+        public void onClick(View view) {
+            if (mOnItemClickListener != null) {
+                mOnItemClickListener.onItemClick(mType, getAdapterPosition(), view);
+            }
         }
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public AbstractCharacterRelatedItemsAdapter(List<T> items) {
+    public AbstractCharacterRelatedItemsAdapter(Class<T> type, List<T> items) {
+        mType = type;
         mPicasso = MarvelShelfApplication.getInstance().getPicasso();
 
         setItems(items);
@@ -65,6 +85,8 @@ public abstract class AbstractCharacterRelatedItemsAdapter<T> extends RecyclerVi
                 .inflate(R.layout.item_character_related_item, parent, false);
 
         ViewHolder vh = new ViewHolder(v);
+        vh.setOnItemClickListener(mOnItemClickListener);
+
         return vh;
     }
 
@@ -72,6 +94,11 @@ public abstract class AbstractCharacterRelatedItemsAdapter<T> extends RecyclerVi
     @Override
     public int getItemCount() {
         return mItems.size();
+    }
+
+    @Override
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        holder.mType = mType;
     }
 
     protected void setThumbnail(ViewHolder holder, MarvelImage image) {
@@ -110,5 +137,23 @@ public abstract class AbstractCharacterRelatedItemsAdapter<T> extends RecyclerVi
         }
 
         mItems.add(item);
+    }
+
+    public T getItem(int position) {
+        try {
+            return mItems.get(position);
+        } catch (Exception e) {
+            MarvelShelfLogger.error(LOG_TAG, e);
+
+            return null;
+        }
+    }
+
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        mOnItemClickListener = onItemClickListener;
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(Class type, int position, View view);
     }
 }

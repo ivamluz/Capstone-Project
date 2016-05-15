@@ -49,9 +49,9 @@ public class CharactersCursorAdapter extends AbstractCursorRecyclerViewAdapter<C
             super(view);
 //            ButterKnife.setDebug(true);
 //            ButterKnife.bind(this, view);
-            mImageViewCharacterThumbnail = (ImageView) view.findViewById(R.id.image_character_thumb);
-            mTxtViewCharacterName = (TextView) view.findViewById(R.id.text_character_name);
-            mTxtViewCharacterDescription = (TextView) view.findViewById(R.id.text_character_description);
+            mImageViewCharacterThumbnail = (ImageView) view.findViewById(R.id.image_details_thumb);
+            mTxtViewCharacterName = (TextView) view.findViewById(R.id.text_name);
+            mTxtViewCharacterDescription = (TextView) view.findViewById(R.id.text_description);
 
             view.setOnClickListener(this);
         }
@@ -70,7 +70,7 @@ public class CharactersCursorAdapter extends AbstractCursorRecyclerViewAdapter<C
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_character, parent, false);
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_main_info, parent, false);
         ViewHolder vh = new ViewHolder(itemView);
         vh.setOnItemClickListener(mOnItemClickListener);
 

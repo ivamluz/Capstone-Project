@@ -26,6 +26,7 @@ public class CharacterDetailsActivity extends AppCompatActivity implements Comic
     private MarvelCharacter mCharacter;
 
     private CharacterDetailsFragment mCharacterDetailsFragment;
+    private Picasso mPicasso;
 
     public static Intent newIntent(Context packageContext, MarvelCharacter character) {
         Intent intent = new Intent(packageContext, CharacterDetailsActivity.class);
@@ -37,9 +38,11 @@ public class CharacterDetailsActivity extends AppCompatActivity implements Comic
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_character_details);
+        setContentView(R.layout.activity_details);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        mPicasso = MarvelShelfApplication.getInstance().getPicasso();
 
         mCharacter = getIntent().getParcelableExtra(EXTRA_CHARACTER);
 
@@ -48,11 +51,9 @@ public class CharacterDetailsActivity extends AppCompatActivity implements Comic
     }
 
     private void bindCharacterInfo() {
-        ImageView characterThumbnail = (ImageView) findViewById(R.id.image_character_thumb);
+        ImageView characterThumbnail = (ImageView) findViewById(R.id.image_details_thumb);
 
-        Picasso picasso = MarvelShelfApplication.getInstance().getPicasso();
-
-        picasso.load(mCharacter.getThumbnailUrl())
+        mPicasso.load(mCharacter.getThumbnailUrl())
                 .fit()
                 .centerCrop()
                 .error(R.drawable.character_placeholder)
@@ -66,7 +67,7 @@ public class CharacterDetailsActivity extends AppCompatActivity implements Comic
 
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.character_details_container, mCharacterDetailsFragment)
+                .replace(R.id.details_fragment_container, mCharacterDetailsFragment)
                 .commit();
     }
 
