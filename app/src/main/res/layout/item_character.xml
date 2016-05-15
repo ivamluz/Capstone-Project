@@ -18,7 +18,8 @@
         <ImageView
             android:id="@+id/image_character_thumb"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/character_closed_card_image_height"
+            android:layout_height="@dimen/character_card_image_height"
+            android:transitionName="@string/shared_transition_character_image"
             android:layout_alignParentTop="true"/>
 
         <LinearLayout

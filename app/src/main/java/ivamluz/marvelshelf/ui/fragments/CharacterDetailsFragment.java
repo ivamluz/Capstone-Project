@@ -11,6 +11,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -114,15 +115,6 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
         mPicasso = MarvelShelfApplication.getInstance().getPicasso();
     }
 
-    private void setupSeriesLoaderFragment() {
-        FragmentManager fm = getFragmentManager();
-        mSeriesLoaderWorkerFragment = (SeriesLoaderWorkerFragment) fm.findFragmentByTag(SeriesLoaderWorkerFragment.TAG);
-        if (mSeriesLoaderWorkerFragment == null) {
-            mSeriesLoaderWorkerFragment = SeriesLoaderWorkerFragment.newInstance(mCharacterId);
-            fm.beginTransaction().add(mSeriesLoaderWorkerFragment, ComicsLoaderWorkerFragment.TAG).commit();
-        }
-    }
-
     private void setupComicsLoaderFragment() {
         FragmentManager fm = getFragmentManager();
 
@@ -130,6 +122,15 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
         if (mComicsLoaderWorkerFragment == null) {
             mComicsLoaderWorkerFragment = ComicsLoaderWorkerFragment.newInstance(mCharacterId);
             fm.beginTransaction().add(mComicsLoaderWorkerFragment, ComicsLoaderWorkerFragment.TAG).commit();
+        }
+    }
+
+    private void setupSeriesLoaderFragment() {
+        FragmentManager fm = getFragmentManager();
+        mSeriesLoaderWorkerFragment = (SeriesLoaderWorkerFragment) fm.findFragmentByTag(SeriesLoaderWorkerFragment.TAG);
+        if (mSeriesLoaderWorkerFragment == null) {
+            mSeriesLoaderWorkerFragment = SeriesLoaderWorkerFragment.newInstance(mCharacterId);
+            fm.beginTransaction().add(mSeriesLoaderWorkerFragment, SeriesLoaderWorkerFragment.TAG).commit();
         }
     }
 
@@ -249,6 +250,9 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
         }
 
         String description = cursor.getString(cursor.getColumnIndex(MarvelShelfContract.CharacterEntry.COLUMN_DESCRIPTION));
+        if (TextUtils.isEmpty(description)) {
+            description = getString(R.string.not_available_description);
+        }
         mTextCharacterDescription.setText(description);
     }
 
@@ -277,7 +281,7 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
 
     @Override
     public void onSeriesLoadingCancelled() {
-        MarvelShelfLogger.debug(LOG_TAG, "onComicsLoadingCancelled");
+        MarvelShelfLogger.debug(LOG_TAG, "onSeriesLoadingCancelled");
     }
 
     @Override

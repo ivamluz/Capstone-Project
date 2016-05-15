@@ -13,4 +13,10 @@
 
     <string name="title_comics">Comics</string>
     <string name="title_series">Series</string>
+
+    <!-- Not available -->
+    <string name="not_available_description">Description not available.</string>
+
+    <!-- Transitions -->
+    <string name="shared_transition_character_image">SharedTransitionCharacterImage</string>
 </resources>

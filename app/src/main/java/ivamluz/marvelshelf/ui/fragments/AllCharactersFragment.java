@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -14,6 +15,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -114,15 +116,19 @@ public class AllCharactersFragment extends Fragment implements LoaderManager.Loa
     }
 
     @Override
-    public void onItemClick(int position, View v) {
-//        Toast.makeText(v.getContext(), "ID: " + mAdapter.getItemId(position), Toast.LENGTH_SHORT).show();
-
+    public void onItemClick(int position, View view) {
         mAdapter.getCursor().moveToPosition(position);
 
         MarvelCharacter character = MarvelCharacter.fromCursor(mAdapter.getCursor());
-
-
         Intent intent = CharacterDetailsActivity.newIntent(getContext(), character);
-        getContext().startActivity(intent);
+
+        ImageView characterImage = (ImageView) view.findViewById(R.id.image_character_thumb);
+        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                getActivity(),
+                characterImage,
+                getContext().getString(R.string.shared_transition_character_image)
+        );
+
+        startActivity(intent, options.toBundle());
     }
 }
