@@ -30,8 +30,8 @@
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recycler_view_comics_images"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/card_related_items_holder_height"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:scrollbars="horizontal"/>
         </LinearLayout>
 

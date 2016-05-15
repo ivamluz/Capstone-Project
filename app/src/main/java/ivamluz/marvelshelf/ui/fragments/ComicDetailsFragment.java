@@ -1,11 +1,10 @@
 package ivamluz.marvelshelf.ui.fragments;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,22 +12,18 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.karumi.marvelapiclient.model.ComicDto;
-import com.karumi.marvelapiclient.model.MarvelImage;
 import com.squareup.picasso.Picasso;
 
 import ivamluz.marvelshelf.MarvelShelfApplication;
 import ivamluz.marvelshelf.R;
-import ivamluz.marvelshelf.adapter.AbstractCharacterRelatedItemsAdapter;
 import ivamluz.marvelshelf.adapter.ImagesAdapter;
-import ivamluz.marvelshelf.data.MarvelShelfContract;
 import ivamluz.marvelshelf.data.model.MarvelComic;
 import ivamluz.marvelshelf.infrastructure.MarvelShelfLogger;
 import ivamluz.marvelshelf.ui.decorators.MarginItemDecoration;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link BookmarksFragment#newInstance} factory method to
+ * Use the {@link ComicDetailsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class ComicDetailsFragment extends Fragment implements ImagesAdapter.OnItemClickListener {
@@ -37,6 +32,7 @@ public class ComicDetailsFragment extends Fragment implements ImagesAdapter.OnIt
     private static final String ARG_COMIC = "ivamluz.marvelshelf.comic";
     private static final String ARG_SHOW_TITLE = "ivamluz.marvelshelf.show_title";
     private static final String ARG_SHOW_THUMBNAIL = "ivamluz.marvelshelf.show_thumbnail";
+    private static final int LAYOUT_COLUMNS = 2;
 
     private ImagesAdapter mImagesAdapter;
     private RecyclerView mImagesRecyclerView;
@@ -121,14 +117,13 @@ public class ComicDetailsFragment extends Fragment implements ImagesAdapter.OnIt
         mImagesAdapter = new ImagesAdapter(mComic.getImageUrls());
         mImagesAdapter.setOnItemClickListener(this);
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(LAYOUT_COLUMNS, StaggeredGridLayoutManager.VERTICAL);
 
         mImagesRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_comics_images);
         mImagesRecyclerView.setLayoutManager(layoutManager);
         mImagesRecyclerView.setAdapter(mImagesAdapter);
-        int marginRight = getResources().getDimensionPixelSize(R.dimen.card_spacing);
-        mImagesRecyclerView.addItemDecoration(new MarginItemDecoration(0, marginRight, 0, 0));
+        int margin = getResources().getDimensionPixelSize(R.dimen.card_spacing);
+        mImagesRecyclerView.addItemDecoration(new MarginItemDecoration(margin, margin, margin, margin));
     }
 
     @Override
