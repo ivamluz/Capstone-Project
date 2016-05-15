@@ -16,9 +16,9 @@ import ivamluz.marvelshelf.BuildConfig;
 
 /**
  * Created by iluz on 5/1/16.
- *
+ * <p/>
  * Helper class for using an pre-populated DB (instead of creating a new one).
- *
+ * <p/>
  * Credits: https://getpocket.com/a/read/411394830
  */
 public class MarvelShelfDbHelper extends SQLiteOpenHelper {

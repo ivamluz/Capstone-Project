@@ -159,7 +159,7 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
         return rootView;
     }
 
-    private void setupComicsAdapterAndRecyclerView(View rootView) {
+    private void setupComicsAdapterAndRecyclerView(View view) {
         mAdapterCharacterComics = new AbstractCharacterRelatedItemsAdapter<ComicDto>(ComicDto.class, null) {
             @Override
             public void onBindViewHolder(ViewHolder holder, int position) {
@@ -180,14 +180,14 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
 
-        mRecyclerViewCharacterComics = (RecyclerView) rootView.findViewById(R.id.recycler_view_character_comics);
+        mRecyclerViewCharacterComics = (RecyclerView) view.findViewById(R.id.recycler_view_character_comics);
         mRecyclerViewCharacterComics.setLayoutManager(layoutManager);
         mRecyclerViewCharacterComics.setAdapter(mAdapterCharacterComics);
         int marginRight = getResources().getDimensionPixelSize(R.dimen.card_spacing);
         mRecyclerViewCharacterComics.addItemDecoration(new MarginItemDecoration(0, marginRight, 0, 0));
     }
 
-    private void setupSeriesAdapterAndRecyclerView(View rootView) {
+    private void setupSeriesAdapterAndRecyclerView(View view) {
         mAdapterCharacterSeries = new AbstractCharacterRelatedItemsAdapter<SeriesDto>(SeriesDto.class, null) {
             @Override
             public void onBindViewHolder(ViewHolder holder, int position) {
@@ -207,7 +207,7 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
 
-        mRecyclerViewCharacterSeries = (RecyclerView) rootView.findViewById(R.id.recycler_view_character_series);
+        mRecyclerViewCharacterSeries = (RecyclerView) view.findViewById(R.id.recycler_view_character_series);
         mRecyclerViewCharacterSeries.setLayoutManager(layoutManager);
         mRecyclerViewCharacterSeries.setAdapter(mAdapterCharacterSeries);
         int marginRight = getResources().getDimensionPixelSize(R.dimen.card_spacing);

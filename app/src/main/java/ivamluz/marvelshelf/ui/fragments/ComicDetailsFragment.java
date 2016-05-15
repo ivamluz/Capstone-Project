@@ -4,6 +4,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,25 +13,33 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.karumi.marvelapiclient.model.ComicDto;
+import com.karumi.marvelapiclient.model.MarvelImage;
 import com.squareup.picasso.Picasso;
 
 import ivamluz.marvelshelf.MarvelShelfApplication;
 import ivamluz.marvelshelf.R;
+import ivamluz.marvelshelf.adapter.AbstractCharacterRelatedItemsAdapter;
+import ivamluz.marvelshelf.adapter.ImagesAdapter;
 import ivamluz.marvelshelf.data.MarvelShelfContract;
 import ivamluz.marvelshelf.data.model.MarvelComic;
 import ivamluz.marvelshelf.infrastructure.MarvelShelfLogger;
+import ivamluz.marvelshelf.ui.decorators.MarginItemDecoration;
 
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link BookmarksFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ComicDetailsFragment extends Fragment {
+public class ComicDetailsFragment extends Fragment implements ImagesAdapter.OnItemClickListener {
     private static final String LOG_TAG = ComicDetailsFragment.class.getSimpleName();
 
     private static final String ARG_COMIC = "ivamluz.marvelshelf.comic";
     private static final String ARG_SHOW_TITLE = "ivamluz.marvelshelf.show_title";
     private static final String ARG_SHOW_THUMBNAIL = "ivamluz.marvelshelf.show_thumbnail";
+
+    private ImagesAdapter mImagesAdapter;
+    private RecyclerView mImagesRecyclerView;
 
     private Picasso mPicasso;
 
@@ -100,9 +110,25 @@ public class ComicDetailsFragment extends Fragment {
         mImageThumbnail.setVisibility(mShowThumbnail ? View.VISIBLE : View.GONE);
         mTextTitle.setVisibility(mShowTitle ? View.VISIBLE : View.GONE);
 
+        setupImagesRecyclerViewAndAdapter(rootView);
+
         bindValues();
 
         return rootView;
+    }
+
+    private void setupImagesRecyclerViewAndAdapter(View view) {
+        mImagesAdapter = new ImagesAdapter(mComic.getImageUrls());
+        mImagesAdapter.setOnItemClickListener(this);
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+
+        mImagesRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_comics_images);
+        mImagesRecyclerView.setLayoutManager(layoutManager);
+        mImagesRecyclerView.setAdapter(mImagesAdapter);
+        int marginRight = getResources().getDimensionPixelSize(R.dimen.card_spacing);
+        mImagesRecyclerView.addItemDecoration(new MarginItemDecoration(0, marginRight, 0, 0));
     }
 
     @Override
@@ -134,6 +160,11 @@ public class ComicDetailsFragment extends Fragment {
             description = getString(R.string.not_available_description);
         }
         mTextDescription.setText(description);
+    }
+
+    @Override
+    public void onItemClick(int position, View view) {
+
     }
 }
 

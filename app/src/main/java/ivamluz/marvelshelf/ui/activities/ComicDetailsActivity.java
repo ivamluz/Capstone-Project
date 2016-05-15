@@ -11,6 +11,7 @@ import com.squareup.picasso.Picasso;
 
 import ivamluz.marvelshelf.MarvelShelfApplication;
 import ivamluz.marvelshelf.R;
+import ivamluz.marvelshelf.adapter.ImagesAdapter;
 import ivamluz.marvelshelf.data.model.MarvelComic;
 import ivamluz.marvelshelf.ui.fragments.ComicDetailsFragment;
 

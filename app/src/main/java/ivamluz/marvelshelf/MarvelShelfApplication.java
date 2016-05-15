@@ -2,7 +2,6 @@ package ivamluz.marvelshelf;
 
 import android.app.Application;
 import android.net.Uri;
-import android.support.v4.util.Pair;
 
 import com.karumi.marvelapiclient.MarvelApiConfig;
 import com.squareup.picasso.Picasso;

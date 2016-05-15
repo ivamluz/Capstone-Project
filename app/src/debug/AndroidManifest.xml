@@ -4,9 +4,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <meta-data tools:replace="android:name"
-               android:name="utils.glide.StethoOkHttpGlideDebugModule"
-               android:value="GlideModule" />
+    <meta-data
+        tools:replace="android:name"
+        android:name="utils.glide.StethoOkHttpGlideDebugModule"
+        android:value="GlideModule"/>
 
     <application
         tools:replace="android:name"
