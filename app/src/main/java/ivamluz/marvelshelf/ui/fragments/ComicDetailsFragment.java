@@ -1,6 +1,7 @@
 package ivamluz.marvelshelf.ui.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
@@ -20,6 +21,7 @@ import ivamluz.marvelshelf.R;
 import ivamluz.marvelshelf.adapter.ImagesAdapter;
 import ivamluz.marvelshelf.data.model.MarvelComic;
 import ivamluz.marvelshelf.infrastructure.MarvelShelfLogger;
+import ivamluz.marvelshelf.ui.activities.ImageViewerActivity;
 import ivamluz.marvelshelf.ui.decorators.MarginItemDecoration;
 
 /**
@@ -160,7 +162,10 @@ public class ComicDetailsFragment extends Fragment implements ImagesAdapter.OnIt
 
     @Override
     public void onItemClick(int position, View view) {
+        String url = mImagesAdapter.getItem(position);
+        Intent intent = ImageViewerActivity.newIntent(getContext(), "1", "label", url);
 
+        startActivity(intent);
     }
 }
 

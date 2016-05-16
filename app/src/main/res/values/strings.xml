@@ -19,6 +19,10 @@
     <!-- Not available -->
     <string name="not_available_description">Description not available.</string>
 
+    <string name="save_image_success">Image saved successfully.</string>
+    <string name="error_try_again">Something was wrong. Please try again.</string>
+    <string name="share_with">Share with...</string>
+
     <!-- Transitions -->
     <string name="shared_transition_character_image">SharedTransitionCharacterImage</string>
 </resources>

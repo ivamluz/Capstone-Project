@@ -10,7 +10,6 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/MarvelShelfTheme">
-
         <provider
             android:name=".data.MarvelShelfProvider"
             android:authorities="${applicationId}">
@@ -25,23 +24,23 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-
         <activity
             android:name=".ui.activities.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/MarvelShelfTheme.NoActionBar">
         </activity>
-
         <activity
             android:name=".ui.activities.CharacterDetailsActivity"
             android:label="@string/title_details_activity"
             android:theme="@style/MarvelShelfTheme.NoActionBar">
         </activity>
-
         <activity
             android:name=".ui.activities.ComicDetailsActivity"
             android:label="@string/title_details_activity"
             android:theme="@style/MarvelShelfTheme.NoActionBar">
+        </activity>
+        <activity android:name=".ui.activities.ImageViewerActivity"
+                  android:theme="@style/MarvelShelfTheme.NoActionBar">
         </activity>
     </application>
 
