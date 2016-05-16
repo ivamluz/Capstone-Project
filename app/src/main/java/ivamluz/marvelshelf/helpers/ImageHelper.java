@@ -1,57 +1,13 @@
 package ivamluz.marvelshelf.helpers;
 
-import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
-import android.content.res.AssetFileDescriptor;
-import android.content.res.Resources;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.BlurMaskFilter;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.ColorFilter;
-import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.Rect;
-import android.graphics.RectF;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.VectorDrawable;
-import android.media.ExifInterface;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Build;
-import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.os.AsyncTaskCompat;
-import android.util.Log;
-import android.view.View;
-import android.widget.ImageView;
 
-import com.squareup.okhttp.Call;
-import com.squareup.okhttp.Callback;
-import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
-
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-
-import okio.BufferedSink;
-import okio.Okio;
 
 /**
  * Created by iluz on 5/15/16.
