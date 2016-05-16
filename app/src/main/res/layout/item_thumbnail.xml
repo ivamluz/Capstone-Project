@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:id="@+id/card_thumb"
-    android:layout_width="@dimen/comic_closed_card_width"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:clickable="true"
     android:foreground="?android:attr/selectableItemBackground"
@@ -11,8 +11,8 @@
 
     <ImageView
         android:id="@+id/image_thumbnail"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/comic_closed_card_image_height"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:transitionName="@string/shared_transition_character_image"/>
 </android.support.v7.widget.CardView>

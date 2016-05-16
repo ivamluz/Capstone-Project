@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.text.Html;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -154,7 +155,7 @@ public class ComicDetailsFragment extends Fragment implements ImagesAdapter.OnIt
         if (TextUtils.isEmpty(description)) {
             description = getString(R.string.not_available_description);
         }
-        mTextDescription.setText(description);
+        mTextDescription.setText(Html.fromHtml(description));
     }
 
     @Override
