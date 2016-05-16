@@ -12,6 +12,7 @@ import android.support.v4.os.AsyncTaskCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -121,31 +122,31 @@ public class ImageViewerActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-//        MenuInflater inflater = getMenuInflater();
-//        inflater.inflate(R.menu.menu_media_viewer, menu);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_image_viewer, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-//        switch (item.getItemId()) {
-//            case R.id.action_download_photo:
-//                downloadPhoto();
-//                break;
-//
-//            case R.id.action_share_photo:
-//                sharePhoto();
-//                break;
-//
-//            case R.id.action_open_in_browser:
-//                openInBrowser();
-//                break;
-//
-//            case android.R.id.home:
-//                onBackPressed();
-//                break;
-//        }
+        switch (item.getItemId()) {
+            case R.id.action_download_photo:
+                downloadPhoto();
+                break;
+
+            case R.id.action_share_photo:
+                sharePhoto();
+                break;
+
+            case R.id.action_open_in_browser:
+                openInBrowser();
+                break;
+
+            case android.R.id.home:
+                onBackPressed();
+                break;
+        }
 
         return super.onOptionsItemSelected(item);
     }

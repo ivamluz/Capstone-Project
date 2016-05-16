@@ -23,6 +23,11 @@
     <string name="error_try_again">Something was wrong. Please try again.</string>
     <string name="share_with">Share with...</string>
 
+    <!-- menus -->
+    <string name="menu_share_image">Share image</string>
+    <string name="menu_save_image">Save image</string>
+    <string name="menu_open_in_browser">Open in browser</string>
+
     <!-- Transitions -->
     <string name="shared_transition_character_image">SharedTransitionCharacterImage</string>
 </resources>
