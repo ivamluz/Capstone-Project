@@ -2,6 +2,7 @@ package ivamluz.marvelshelf.ui.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -47,6 +48,9 @@ public class ComicDetailsActivity extends AppCompatActivity {
 
     private void bindCharacterInfo() {
         ImageView comicThumbnail = (ImageView) findViewById(R.id.image_details_thumb);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            comicThumbnail.setTransitionName(getString(R.string.shared_transition_comic_image));
+        }
 
         mPicasso.load(mComic.getThumbnailUrl())
                 .fit()

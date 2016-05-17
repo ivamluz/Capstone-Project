@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.os.AsyncTaskCompat;
@@ -16,7 +17,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
@@ -37,32 +37,31 @@ public class ImageViewerActivity extends AppCompatActivity {
     private static final int SHARE_TAG = 102;
 
     private static final String EXTRA_IMAGE_ID = "ivamluz.marvelshelf.image_id";
-    private static final String EXTRA_IMAGE_LABEL = "ivamluz.marvelshelf.image_label";
     private static final String EXTRA_IMAGE_URL = "ivamluz.marvelshelf.image_url";
+    private static final String EXTRA_IMAGE_TRANSITION_NAME = "ivamluz.marvelshelf.image_transition_namel";
     private static final String LOG_TAG = ImageViewerActivity.class.getSimpleName();
 
     //    @Bind(R.id.photo)
     protected PhotoView mPhotoView;
     //    @Bind(R.id.photo_loading)
     protected ProgressBar mLoadingView;
-    //    @Bind(R.id.label)
-    protected TextView mTextLabel;
     //    @Bind(R.id.toolbar)
     private Toolbar mToolbar;
 
     private Picasso mPicasso;
 
     private String mId = "";
-    private String mLabel = "";
     private String mUrl = "";
+
+    private String mTransitionName = null;
 
     private PhotoViewAttacher mPhotoViewAttacher;
 
-    public static Intent newIntent(Context context, String id, String label, String url) {
+    public static Intent newIntent(Context context, String id, String url, String transitionName) {
         Intent intent = new Intent(context, ImageViewerActivity.class);
         intent.putExtra(EXTRA_IMAGE_ID, id);
-        intent.putExtra(EXTRA_IMAGE_LABEL, label);
         intent.putExtra(EXTRA_IMAGE_URL, url);
+        intent.putExtra(EXTRA_IMAGE_TRANSITION_NAME, transitionName);
 
         return intent;
     }
@@ -76,14 +75,16 @@ public class ImageViewerActivity extends AppCompatActivity {
 
         mPicasso = MarvelShelfApplication.getInstance().getPicasso();
 
-
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
+
         mPhotoView = (PhotoView) findViewById(R.id.photo);
-        mTextLabel = (TextView) findViewById(R.id.label);
-        mLoadingView = (ProgressBar) findViewById(R.id.photo_loading);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            if (mTransitionName != null) {
+                mPhotoView.setTransitionName(mTransitionName);
+            }
+        }
 
         mPhotoViewAttacher = new PhotoViewAttacher(mPhotoView);
-
         mPhotoViewAttacher.setOnViewTapListener(new PhotoViewAttacher.OnViewTapListener() {
 
             @Override
@@ -92,6 +93,8 @@ public class ImageViewerActivity extends AppCompatActivity {
                 toggleVisibility();
             }
         });
+
+        mLoadingView = (ProgressBar) findViewById(R.id.photo_loading);
 
         configToolbar();
         setupPhoto(savedInstanceState);
@@ -109,8 +112,8 @@ public class ImageViewerActivity extends AppCompatActivity {
 
         super.onSaveInstanceState(outState);
         outState.putString(EXTRA_IMAGE_ID, mId);
-        outState.putString(EXTRA_IMAGE_LABEL, mLabel);
         outState.putString(EXTRA_IMAGE_URL, mUrl);
+        outState.putString(EXTRA_IMAGE_TRANSITION_NAME, mTransitionName);
     }
 
     @Override
@@ -163,19 +166,17 @@ public class ImageViewerActivity extends AppCompatActivity {
 
         if (savedInstanceBundle != null) {
             mId = savedInstanceBundle.getString(EXTRA_IMAGE_ID);
-            mLabel = savedInstanceBundle.getString(EXTRA_IMAGE_LABEL);
             mUrl = savedInstanceBundle.getString(EXTRA_IMAGE_URL);
+            mTransitionName = savedInstanceBundle.getString(EXTRA_IMAGE_TRANSITION_NAME);
         } else if (getIntent().hasExtra(EXTRA_IMAGE_URL)) {
             mId = getIntent().getStringExtra(EXTRA_IMAGE_ID);
-            mLabel = getIntent().getStringExtra(EXTRA_IMAGE_LABEL);
             mUrl = getIntent().getStringExtra(EXTRA_IMAGE_URL);
+            mTransitionName = getIntent().getStringExtra(EXTRA_IMAGE_TRANSITION_NAME);
         }
 
         // Glide.with(this).load(mUrl).into(mPhotoView);
 
         mPicasso.load(mUrl).fit().into(mPhotoView);
-
-        mTextLabel.setText(mLabel);
     }
 
     private void downloadPhoto() {
@@ -222,23 +223,22 @@ public class ImageViewerActivity extends AppCompatActivity {
         int newVisibility = (mToolbar.getVisibility() == View.VISIBLE) ? View.GONE : View.VISIBLE;
 
         mToolbar.setVisibility(newVisibility);
-        mTextLabel.setVisibility(newVisibility);
     }
 
     private class DownloadImageTask extends AsyncTask<String, Void, Boolean> {
 
-        private File directory;
-        private String filename;
-        private Context context;
-        private boolean shareAfter;
-        private File savedImage;
+        private File mDirectory;
+        private String mFilename;
+        private Context mContext;
+        private boolean mShareAfter;
+        private File mSavedImage;
 
-        public DownloadImageTask(Context context, File directory, String filename, Boolean shareAfter) {
+        public DownloadImageTask(Context context, File directory, String filename, Boolean shareAfterDownload) {
 
-            this.directory = directory;
-            this.filename = filename;
-            this.context = context;
-            this.shareAfter = shareAfter;
+            this.mDirectory = directory;
+            this.mFilename = filename;
+            this.mContext = context;
+            this.mShareAfter = shareAfterDownload;
         }
 
         @Override
@@ -249,13 +249,13 @@ public class ImageViewerActivity extends AppCompatActivity {
                     String url = urls[i];
 
                     if (url != null) {
-                        InputStream is = (InputStream) new URL(url).getContent();
-                        Bitmap bitmap = BitmapFactory.decodeStream(is);
-                        is.close();
+                        InputStream inputStream = (InputStream) new URL(url).getContent();
+                        Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                        inputStream.close();
 
-                        savedImage = ImageHelper.saveBitmapToPNG(bitmap, directory, filename);
+                        mSavedImage = ImageHelper.saveBitmapToPNG(bitmap, mDirectory, mFilename);
 
-                        ImageHelper.addImageToGallery(context, savedImage.getAbsolutePath(), filename);
+                        ImageHelper.addImageToGallery(mContext, mSavedImage.getAbsolutePath(), mFilename);
                     }
                 }
 
@@ -274,9 +274,9 @@ public class ImageViewerActivity extends AppCompatActivity {
                 return;
             }
 
-            if (shareAfter) {
+            if (mShareAfter) {
                 Intent intent = new Intent(Intent.ACTION_SEND);
-                intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(savedImage));
+                intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(mSavedImage));
                 intent.setType("image/png");
                 startActivity(Intent.createChooser(intent, getResources().getText(R.string.share_with)));
             } else {

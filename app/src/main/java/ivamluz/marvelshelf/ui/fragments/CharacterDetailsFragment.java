@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
@@ -173,6 +174,10 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
                     setThumbnail(holder, image);
                 }
 
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    holder.mImageViewThumbnail.setTransitionName(getString(R.string.shared_transition_comic_image));
+                }
+
                 setTitle(holder, comic.getTitle());
             }
         };
@@ -198,6 +203,10 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
 
                 if (series.getThumbnail() != null) {
                     setThumbnail(holder, series.getThumbnail());
+                }
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    holder.mImageViewThumbnail.setTransitionName(getString(R.string.shared_transition_series_image));
                 }
 
                 setTitle(holder, series.getTitle());

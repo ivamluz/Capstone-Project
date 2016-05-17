@@ -23,6 +23,9 @@ import ivamluz.marvelshelf.infrastructure.MarvelShelfLogger;
  */
 public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder> {
     private static final String LOG_TAG = ImagesAdapter.class.getSimpleName();
+
+    private String mTransitionName;
+
     Picasso mPicasso;
 
     protected List<String> mItems;
@@ -37,11 +40,12 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
 
         private OnItemClickListener mOnItemClickListener;
 
-        public ViewHolder(View view) {
+        public ViewHolder(View view, String transitionName) {
             super(view);
 //            ButterKnife.setDebug(true);
 //            ButterKnife.bind(this, view);
             mImageViewThumbnail = (ImageView) view.findViewById(R.id.image_thumbnail);
+            mImageViewThumbnail.setTransitionName(transitionName);
 
             view.setOnClickListener(this);
         }
@@ -59,8 +63,9 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public ImagesAdapter(List<String> items) {
+    public ImagesAdapter(List<String> items, String transitionName) {
         mPicasso = MarvelShelfApplication.getInstance().getPicasso();
+        mTransitionName = transitionName;
 
         setItems(items);
     }
@@ -70,10 +75,10 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
     public ImagesAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
                                                        int viewType) {
         // create a new view
-        View v = LayoutInflater.from(parent.getContext())
+        View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_thumbnail, parent, false);
 
-        ViewHolder vh = new ViewHolder(v);
+        ViewHolder vh = new ViewHolder(view, mTransitionName);
         vh.setOnItemClickListener(mOnItemClickListener);
 
         return vh;

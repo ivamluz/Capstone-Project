@@ -117,7 +117,7 @@ public class ComicDetailsFragment extends Fragment implements ImagesAdapter.OnIt
     }
 
     private void setupImagesRecyclerViewAndAdapter(View view) {
-        mImagesAdapter = new ImagesAdapter(mComic.getImageUrls());
+        mImagesAdapter = new ImagesAdapter(mComic.getImageUrls(), getString(R.string.shared_transition_comic_image));
         mImagesAdapter.setOnItemClickListener(this);
 
         StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(LAYOUT_COLUMNS, StaggeredGridLayoutManager.VERTICAL);
@@ -163,7 +163,7 @@ public class ComicDetailsFragment extends Fragment implements ImagesAdapter.OnIt
     @Override
     public void onItemClick(int position, View view) {
         String url = mImagesAdapter.getItem(position);
-        Intent intent = ImageViewerActivity.newIntent(getContext(), "1", "label", url);
+        Intent intent = ImageViewerActivity.newIntent(getContext(), "1", url, getString(R.string.shared_transition_comic_image));
 
         startActivity(intent);
     }
