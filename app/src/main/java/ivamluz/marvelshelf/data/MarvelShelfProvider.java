@@ -115,24 +115,13 @@ public class MarvelShelfProvider extends ContentProvider {
     }
 
     private Cursor createBookmarkedCharactersQueryCursor(String[] projection, String selection, String[] selectionArgs, String sortOrder, SQLiteDatabase db) {
-
         SQLiteQueryBuilder queryBuilder = createBookmarkedCharactersQueryBuilder();
 
         return queryBuilder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
-        // projectionIn, String selection, String[] selectionArgs, String groupBy, String having, String sortOrder
-
-//        return db.query(
-//                MarvelShelfContract.CharacterEntry.TABLE_NAME,
-//                projection,
-//                selection,
-//                selectionArgs,
-//                null,
-//                null,
-//                sortOrder
-//        );
     }
 
     @NonNull
+    // Reference: http://www.copperykeenclaws.com/setting-up-an-android-contentprovider-with-a-join/
     private SQLiteQueryBuilder createBookmarkedCharactersQueryBuilder() {
         SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
 
