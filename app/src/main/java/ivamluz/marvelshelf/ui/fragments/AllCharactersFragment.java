@@ -35,7 +35,7 @@ import ivamluz.marvelshelf.ui.decorators.MarginItemDecoration;
 public class AllCharactersFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, CharactersCursorAdapter.OnItemClickListener {
     private static final int CHARACTERS_LOADER = 0;
 
-    @BindView(R.id.recycler_view_all_characters)
+    @BindView(R.id.recycler_view_characters_list)
     private RecyclerView mAllCharactersRecyclerView;
 
     private CharactersCursorAdapter mAdapter;
@@ -51,7 +51,6 @@ public class AllCharactersFragment extends Fragment implements LoaderManager.Loa
      *
      * @return A new instance of fragment AllCharactersFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static AllCharactersFragment newInstance() {
         AllCharactersFragment fragment = new AllCharactersFragment();
         Bundle args = new Bundle();
@@ -68,11 +67,11 @@ public class AllCharactersFragment extends Fragment implements LoaderManager.Loa
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_all_characters, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_characters_list, container, false);
         ButterKnife.bind(this, rootView);
 
         mLayoutManager = new LinearLayoutManager(getContext());
-        mAllCharactersRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view_all_characters);
+        mAllCharactersRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view_characters_list);
         mAllCharactersRecyclerView.setLayoutManager(mLayoutManager);
         mAllCharactersRecyclerView.setAdapter(mAdapter);
 

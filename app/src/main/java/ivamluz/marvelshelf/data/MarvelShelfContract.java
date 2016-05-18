@@ -17,6 +17,7 @@ public class MarvelShelfContract {
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
     public static final String PATH_CHARACTER = "character";
+    public static final String PATH_BOOKMARK = "bookmark";
 
     public static final class CharacterEntry implements BaseColumns {
 
@@ -39,8 +40,46 @@ public class MarvelShelfContract {
         public static final String COLUMN_DETAILS_URL = "details_url";
         public static final String COLUMN_THUMBNAIL = "thumbnail";
 
+        public static final String[] TABLE_COLUMNS = {
+                COLUMN_CHARACTER_KEY,
+                COLUMN_NAME,
+                COLUMN_DESCRIPTION,
+                COLUMN_MODIFIED,
+                COLUMN_DETAILS_URL,
+                COLUMN_THUMBNAIL
+        };
+
         public static Uri buildCharacterUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+    }
+
+    public static final class BookmarkEntry implements BaseColumns {
+
+        public static final Uri CONTENT_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_BOOKMARK).build();
+
+        @SuppressWarnings("UnusedDeclaration")
+        public static final String CONTENT_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_BOOKMARK;
+
+        @SuppressWarnings("UnusedDeclaration")
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_BOOKMARK;
+
+        public static final String TABLE_NAME = "FavoriteCharacter";
+        public static final String COLUMN_BOOKMARK_KEY = "_id";
+        public static final String COLUMN_CHARACTER_KEY = "character_id";
+        public static final String COLUMN_ADDED_ON = "added_on";
+
+        public static final String[] TABLE_COLUMNS = {
+                COLUMN_BOOKMARK_KEY,
+                COLUMN_CHARACTER_KEY,
+                COLUMN_ADDED_ON
+        };
+
+        public static Uri buildBookmarkUri(long characterId) {
+            return ContentUris.withAppendedId(CONTENT_URI, characterId);
         }
     }
 }

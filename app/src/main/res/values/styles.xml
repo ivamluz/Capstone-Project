@@ -13,6 +13,14 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="MarvelShelfTheme.NoActionModeOverlay" parent="MarvelShelfTheme">
+        <item name="android:windowActionModeOverlay">false</item>
+        <item name="android:windowActionBarOverlay">true</item>
+
+        <item name="windowActionModeOverlay">false</item>
+        <item name="windowActionBarOverlay">true</item>
+    </style>
+
     <style name="MarvelShelfTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
     <style name="MarvelShelfTheme.Widget.Toolbar.Transparent" parent="@style/MarvelShelfTheme.AppBarOverlay">

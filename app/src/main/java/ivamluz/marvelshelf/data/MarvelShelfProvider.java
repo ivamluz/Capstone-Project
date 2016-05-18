@@ -6,18 +6,49 @@ import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
+import java.util.HashMap;
 
 /**
  * Created by iluz on 5/5/16.
  */
 public class MarvelShelfProvider extends ContentProvider {
     private static final int CHARACTER = 100;
-    private static final int CHARACTER_ID = 101;
+    private static final int CHARACTER_ID = 110;
+    private static final int BOOKMARK = 200;
+    private static final int BOOKMARK_CHARACTER_ID = 210;
 
     private static final UriMatcher sUriMatcher = buildUriMatcher();
     private MarvelShelfDbHelper mDbHelper;
+
+    private static final HashMap<String, String> mBookmarksColumnMap = buildBookmarksColumnMap();
+
+    private static HashMap<String, String> buildBookmarksColumnMap() {
+        HashMap<String, String> map = new HashMap<String, String>();
+
+        String bookmarkProjection[] = MarvelShelfContract.BookmarkEntry.TABLE_COLUMNS;
+
+        for (String column : bookmarkProjection) {
+            String qualifiedCol = MarvelShelfContract.BookmarkEntry.TABLE_NAME + "." + column;
+            map.put(qualifiedCol, qualifiedCol + " as " + column);
+        }
+
+        String characterProjection[] = MarvelShelfContract.CharacterEntry.TABLE_COLUMNS;
+        for (String column : characterProjection) {
+            String qualifiedColumn = MarvelShelfContract.CharacterEntry.TABLE_NAME + "." + column;
+            String alias = column;
+            if (MarvelShelfContract.CharacterEntry.COLUMN_CHARACTER_KEY.equals(column)) {
+                alias = qualifiedColumn.replace(".", "_");
+            }
+            map.put(qualifiedColumn, qualifiedColumn + " AS " + alias);
+        }
+
+        return map;
+    }
 
     @Override
     public boolean onCreate() {
@@ -33,27 +64,18 @@ public class MarvelShelfProvider extends ContentProvider {
         Cursor cursor;
         switch (sUriMatcher.match(uri)) {
             case CHARACTER:
-                cursor = db.query(
-                        MarvelShelfContract.CharacterEntry.TABLE_NAME,
-                        projection,
-                        selection,
-                        selectionArgs,
-                        null,
-                        null,
-                        sortOrder
-                );
+                cursor = createAllCharactersQueryCursor(projection, selection, selectionArgs, sortOrder, db);
                 break;
             case CHARACTER_ID:
                 long _id = ContentUris.parseId(uri);
-                cursor = db.query(
-                        MarvelShelfContract.CharacterEntry.TABLE_NAME,
-                        projection,
-                        MarvelShelfContract.CharacterEntry._ID + " = ?",
-                        new String[]{String.valueOf(_id)},
-                        null,
-                        null,
-                        sortOrder
-                );
+                cursor = createCharacterByIdQueryCursor(projection, sortOrder, db, _id);
+                break;
+            case BOOKMARK:
+                cursor = createBookmarkedCharactersQueryCursor(projection, selection, selectionArgs, sortOrder, db);
+                break;
+            case BOOKMARK_CHARACTER_ID:
+                long _characterId = ContentUris.parseId(uri);
+                cursor = createBookmarkByCharacterIdQuery(projection, sortOrder, db, _characterId);
                 break;
             default:
                 throwErrorForUnknowUri(uri);
@@ -68,6 +90,84 @@ public class MarvelShelfProvider extends ContentProvider {
         return cursor;
     }
 
+    private Cursor createAllCharactersQueryCursor(String[] projection, String selection, String[] selectionArgs, String sortOrder, SQLiteDatabase db) {
+        return db.query(
+                MarvelShelfContract.CharacterEntry.TABLE_NAME,
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                sortOrder
+        );
+    }
+
+    private Cursor createCharacterByIdQueryCursor(String[] projection, String sortOrder, SQLiteDatabase db, long _id) {
+        return db.query(
+                MarvelShelfContract.CharacterEntry.TABLE_NAME,
+                projection,
+                MarvelShelfContract.CharacterEntry._ID + " = ?",
+                new String[]{String.valueOf(_id)},
+                null,
+                null,
+                sortOrder
+        );
+    }
+
+    private Cursor createBookmarkedCharactersQueryCursor(String[] projection, String selection, String[] selectionArgs, String sortOrder, SQLiteDatabase db) {
+
+        SQLiteQueryBuilder queryBuilder = createBookmarkedCharactersQueryBuilder();
+
+        return queryBuilder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
+        // projectionIn, String selection, String[] selectionArgs, String groupBy, String having, String sortOrder
+
+//        return db.query(
+//                MarvelShelfContract.CharacterEntry.TABLE_NAME,
+//                projection,
+//                selection,
+//                selectionArgs,
+//                null,
+//                null,
+//                sortOrder
+//        );
+    }
+
+    @NonNull
+    private SQLiteQueryBuilder createBookmarkedCharactersQueryBuilder() {
+        SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
+
+        String leftColumn = MarvelShelfContract.BookmarkEntry.TABLE_NAME + "." + MarvelShelfContract.BookmarkEntry.COLUMN_CHARACTER_KEY;
+        String rightColumn = MarvelShelfContract.CharacterEntry.TABLE_NAME + "." + MarvelShelfContract.CharacterEntry.COLUMN_CHARACTER_KEY;
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(MarvelShelfContract.BookmarkEntry.TABLE_NAME);
+        sb.append(" LEFT OUTER JOIN ");
+        sb.append(MarvelShelfContract.CharacterEntry.TABLE_NAME);
+        sb.append(" ON (");
+        sb.append(leftColumn);
+        sb.append(" = ");
+        sb.append(rightColumn);
+        sb.append(")");
+        String table = sb.toString();
+
+        queryBuilder.setTables(table);
+        queryBuilder.setProjectionMap(mBookmarksColumnMap);
+
+        return queryBuilder;
+    }
+
+    private Cursor createBookmarkByCharacterIdQuery(String[] projection, String sortOrder, SQLiteDatabase db, long _id) {
+        return db.query(
+                MarvelShelfContract.CharacterEntry.TABLE_NAME,
+                projection,
+                MarvelShelfContract.CharacterEntry._ID + " = ?",
+                new String[]{String.valueOf(_id)},
+                null,
+                null,
+                sortOrder
+        );
+    }
+
     @Nullable
     @Override
     public String getType(Uri uri) {
@@ -76,6 +176,10 @@ public class MarvelShelfProvider extends ContentProvider {
                 return MarvelShelfContract.CharacterEntry.CONTENT_TYPE;
             case CHARACTER_ID:
                 return MarvelShelfContract.CharacterEntry.CONTENT_ITEM_TYPE;
+            case BOOKMARK:
+                return MarvelShelfContract.BookmarkEntry.CONTENT_TYPE;
+            case BOOKMARK_CHARACTER_ID:
+                return MarvelShelfContract.BookmarkEntry.CONTENT_ITEM_TYPE;
             default:
                 throwErrorForUnknowUri(uri);
                 return null;
@@ -111,6 +215,8 @@ public class MarvelShelfProvider extends ContentProvider {
         UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
         matcher.addURI(content, MarvelShelfContract.PATH_CHARACTER, CHARACTER);
         matcher.addURI(content, MarvelShelfContract.PATH_CHARACTER + "/#", CHARACTER_ID);
+        matcher.addURI(content, MarvelShelfContract.PATH_BOOKMARK, BOOKMARK);
+        matcher.addURI(content, MarvelShelfContract.PATH_BOOKMARK + "/#", BOOKMARK_CHARACTER_ID);
 
         return matcher;
     }
