@@ -243,7 +243,25 @@ public class MarvelShelfProvider extends ContentProvider {
     @Nullable
     @Override
     public Uri insert(Uri uri, ContentValues contentValues) {
-        return null;
+        final SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+        Uri returnUri = null;
+
+        switch (sUriMatcher.match(uri)) {
+            case SEEN_CHARACTER:
+                long _id = db.insert(MarvelShelfContract.SeenCharacterEntry.TABLE_NAME, null, contentValues);
+                if ( _id > 0 )
+                    returnUri = MarvelShelfContract.SeenCharacterEntry.buildSeenCharacterUri(_id);
+                else
+                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                break;
+            default:
+                throwErrorForUnknowUri(uri);
+        }
+
+        getContext().getContentResolver().notifyChange(uri, null);
+
+        return returnUri;
     }
 
     @Override

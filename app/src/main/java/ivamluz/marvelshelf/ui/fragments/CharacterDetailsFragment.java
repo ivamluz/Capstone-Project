@@ -1,5 +1,6 @@
 package ivamluz.marvelshelf.ui.fragments;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -115,11 +116,31 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
 
             MarvelShelfLogger.debug(LOG_TAG, "characterId: " + mCharacterId);
         }
+        
+        registrySeenCharacter();
+
 
         setupComicsLoaderFragment();
         setupSeriesLoaderFragment();
 
         mPicasso = MarvelShelfApplication.getInstance().getPicasso();
+    }
+
+    private void registrySeenCharacter() {
+        ContentValues mNewValues = new ContentValues();
+
+/*
+ * Sets the values of each column and inserts the word. The arguments to the "put"
+ * method are "column name" and "value"
+ */
+        mNewValues.put(MarvelShelfContract.SeenCharacterEntry.COLUMN_CHARACTER_ID, mCharacterId);
+
+        Uri newUri = getContext().getContentResolver().insert(
+                MarvelShelfContract.SeenCharacterEntry.CONTENT_URI,   // the user dictionary content URI
+                mNewValues                          // the values to insert
+        );
+
+        MarvelShelfLogger.debug(LOG_TAG, "New URI: " + newUri);
     }
 
     private void setupComicsLoaderFragment() {

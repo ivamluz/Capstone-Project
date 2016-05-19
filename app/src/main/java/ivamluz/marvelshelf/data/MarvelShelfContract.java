@@ -102,5 +102,9 @@ public class MarvelShelfContract {
                 COLUMN_SEEN_CHARACTER_KEY,
                 COLUMN_ADDED_ON
         };
+
+        public static Uri buildSeenCharacterUri(long id) {
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
     }
 }
