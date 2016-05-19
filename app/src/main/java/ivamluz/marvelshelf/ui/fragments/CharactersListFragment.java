@@ -23,16 +23,26 @@ import ivamluz.marvelshelf.R;
 import ivamluz.marvelshelf.adapter.CharactersCursorAdapter;
 import ivamluz.marvelshelf.data.MarvelShelfContract;
 import ivamluz.marvelshelf.data.model.MarvelCharacter;
+import ivamluz.marvelshelf.infrastructure.MarvelShelfLogger;
 import ivamluz.marvelshelf.ui.activities.CharacterDetailsActivity;
 import ivamluz.marvelshelf.ui.decorators.MarginItemDecoration;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link BookmarksFragment#newInstance} factory method to
+ * Activities that contain this fragment must implement the
+ * Use the {@link CharactersListFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class BookmarksFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, CharactersCursorAdapter.OnItemClickListener {
-    private static final int BOOKMARKS_LOADER = 100;
+public class CharactersListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, CharactersCursorAdapter.OnItemClickListener {
+    public static int LIST_TYPE_ALL = 0;
+    public static int LIST_TYPE_BOOKMARKS = 1;
+    public static int LIST_TYPE_SEEN = 2;
+
+    private static final String LOG_TAG = CharactersListFragment.class.getSimpleName();
+    private static final String EXTRA_LIST_TYPE = "ivamluz.marvelshelf.list_type";
+    private static final int LOADER_ID = 0;
+
+    private int mListType;
 
     @BindView(R.id.recycler_view_characters_list)
     private RecyclerView mCharactersRecyclerView;
@@ -40,7 +50,7 @@ public class BookmarksFragment extends Fragment implements LoaderManager.LoaderC
     private CharactersCursorAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
-    public BookmarksFragment() {
+    public CharactersListFragment() {
         // Required empty public constructor
     }
 
@@ -48,11 +58,12 @@ public class BookmarksFragment extends Fragment implements LoaderManager.LoaderC
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @return A new instance of fragment BookmarksFragment.
+     * @return A new instance of fragment CharactersListFragment.
      */
-    public static BookmarksFragment newInstance() {
-        BookmarksFragment fragment = new BookmarksFragment();
+    public static CharactersListFragment newInstance(int listType) {
+        CharactersListFragment fragment = new CharactersListFragment();
         Bundle args = new Bundle();
+        args.putInt(EXTRA_LIST_TYPE, listType);
         fragment.setArguments(args);
         return fragment;
     }
@@ -60,12 +71,18 @@ public class BookmarksFragment extends Fragment implements LoaderManager.LoaderC
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (getArguments() != null) {
+            mListType = getArguments().getInt(EXTRA_LIST_TYPE);
+
+            MarvelShelfLogger.debug(LOG_TAG, "listType: " + mListType);
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+
         View rootView = inflater.inflate(R.layout.fragment_characters_list, container, false);
         ButterKnife.bind(this, rootView);
 
@@ -77,7 +94,7 @@ public class BookmarksFragment extends Fragment implements LoaderManager.LoaderC
         int marginBottom = getResources().getDimensionPixelSize(R.dimen.card_spacing);
         mCharactersRecyclerView.addItemDecoration(new MarginItemDecoration(0, 0, marginBottom, 0));
 
-        getActivity().getSupportLoaderManager().initLoader(BOOKMARKS_LOADER, null, this);
+        getActivity().getSupportLoaderManager().initLoader(mListType, null, this);
 
         return rootView;
     }
@@ -93,13 +110,12 @@ public class BookmarksFragment extends Fragment implements LoaderManager.LoaderC
     }
 
     @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Uri BOOKMARKS_URI = MarvelShelfContract.BookmarkEntry.CONTENT_URI;
-        return new CursorLoader(getContext(), BOOKMARKS_URI, null, null, null, null);
+    public Loader onCreateLoader(int id, Bundle args) {
+        return new CursorLoader(getContext(), getUri(), null, null, null, null);
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+    public void onLoadFinished(Loader loader, Cursor cursor) {
         cursor.moveToFirst();
 
         mAdapter = new CharactersCursorAdapter(getContext(), cursor);
@@ -109,7 +125,7 @@ public class BookmarksFragment extends Fragment implements LoaderManager.LoaderC
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
+    public void onLoaderReset(Loader loader) {
 
     }
 
@@ -128,5 +144,18 @@ public class BookmarksFragment extends Fragment implements LoaderManager.LoaderC
         );
 
         startActivity(intent, options.toBundle());
+    }
+
+    private Uri getUri() {
+        if (LIST_TYPE_ALL == mListType) {
+            return MarvelShelfContract.CharacterEntry.CONTENT_URI;
+        } else if (LIST_TYPE_BOOKMARKS == mListType) {
+            return MarvelShelfContract.BookmarkEntry.CONTENT_URI;
+        } else if (LIST_TYPE_SEEN == mListType) {
+            return null;
+        } else {
+            String message = String.format("listType should be one of %s.LIST_TYPE_* consts.", CharactersListFragment.class.getSimpleName());
+            throw new IllegalArgumentException(message);
+        }
     }
 }

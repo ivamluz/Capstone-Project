@@ -43,7 +43,7 @@ import ivamluz.marvelshelf.ui.fragments.workers.SeriesLoaderWorkerFragment;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link BookmarksFragment#newInstance} factory method to
+ * Use the {@link CharacterDetailsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class CharacterDetailsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, ComicsLoaderWorkerFragment.TaskCallbacks, SeriesLoaderWorkerFragment.TaskCallbacks, AbstractCharacterRelatedItemsAdapter.OnItemClickListener {
@@ -86,7 +86,7 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
      * this fragment using the provided parameters.
      *
      * @param characterId Parameter 1.
-     * @return A new instance of fragment BookmarksFragment.
+     * @return A new instance of fragment CharacterDetailsFragment.
      */
     public static CharacterDetailsFragment newInstance(long characterId, boolean showName, boolean showThumbnail) {
         CharacterDetailsFragment fragment = new CharacterDetailsFragment();

@@ -16,10 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import ivamluz.marvelshelf.R;
-import ivamluz.marvelshelf.infrastructure.MarvelShelfLogger;
-import ivamluz.marvelshelf.ui.fragments.AllCharactersFragment;
-import ivamluz.marvelshelf.ui.fragments.BookmarksFragment;
-import ivamluz.marvelshelf.ui.fragments.SeenCharactersFragment;
+import ivamluz.marvelshelf.ui.fragments.CharactersListFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -66,7 +63,7 @@ public class MainActivity extends AppCompatActivity
                 mFragmentManager.beginTransaction().replace(R.id.content_holder, fragment).commit();
             }
         } else {
-            Fragment fragment = AllCharactersFragment.newInstance();
+            Fragment fragment = CharactersListFragment.newInstance(CharactersListFragment.LIST_TYPE_ALL);
             setTitle(getString(R.string.characters_all));
             mFragmentManager.beginTransaction().replace(R.id.content_holder, fragment).commit();
         }
@@ -109,27 +106,17 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Create a new fragment and specify the fragment to show based on nav item clicked
         Fragment fragment = null;
-        Class fragmentClass;
         switch (item.getItemId()) {
-            case R.id.nav_bookmarks:
-                fragmentClass = BookmarksFragment.class;
-                break;
             case R.id.nav_characters_all:
-                fragmentClass = AllCharactersFragment.class;
+                fragment = CharactersListFragment.newInstance(CharactersListFragment.LIST_TYPE_ALL);
                 break;
             case R.id.nav_characters_seen:
-                fragmentClass = SeenCharactersFragment.class;
+                fragment = CharactersListFragment.newInstance(CharactersListFragment.LIST_TYPE_SEEN);
                 break;
+            case R.id.nav_bookmarks:
             default:
-                fragmentClass = BookmarksFragment.class;
+                fragment = CharactersListFragment.newInstance(CharactersListFragment.LIST_TYPE_BOOKMARKS);
         }
-
-        try {
-            fragment = (Fragment) fragmentClass.newInstance();
-        } catch (Exception e) {
-            MarvelShelfLogger.error(LOG_TAG, e);
-        }
-
 
         mFragmentManager.beginTransaction().replace(R.id.content_holder, fragment).commit();
 

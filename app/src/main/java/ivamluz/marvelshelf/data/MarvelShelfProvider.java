@@ -73,10 +73,10 @@ public class MarvelShelfProvider extends ContentProvider {
             case BOOKMARK:
                 cursor = createBookmarkedCharactersQueryCursor(projection, selection, selectionArgs, sortOrder, db);
                 break;
-            case BOOKMARK_CHARACTER_ID:
-                long _characterId = ContentUris.parseId(uri);
-                cursor = createBookmarkByCharacterIdQuery(projection, sortOrder, db, _characterId);
-                break;
+//            case BOOKMARK_CHARACTER_ID:
+//                long _characterId = ContentUris.parseId(uri);
+//                cursor = createBookmarkByCharacterIdQuery(projection, sortOrder, db, _characterId);
+//                break;
             default:
                 throwErrorForUnknowUri(uri);
                 return null;
@@ -167,8 +167,8 @@ public class MarvelShelfProvider extends ContentProvider {
                 return MarvelShelfContract.CharacterEntry.CONTENT_ITEM_TYPE;
             case BOOKMARK:
                 return MarvelShelfContract.BookmarkEntry.CONTENT_TYPE;
-            case BOOKMARK_CHARACTER_ID:
-                return MarvelShelfContract.BookmarkEntry.CONTENT_ITEM_TYPE;
+//            case BOOKMARK_CHARACTER_ID:
+//                return MarvelShelfContract.BookmarkEntry.CONTENT_ITEM_TYPE;
             default:
                 throwErrorForUnknowUri(uri);
                 return null;
@@ -205,7 +205,7 @@ public class MarvelShelfProvider extends ContentProvider {
         matcher.addURI(content, MarvelShelfContract.PATH_CHARACTER, CHARACTER);
         matcher.addURI(content, MarvelShelfContract.PATH_CHARACTER + "/#", CHARACTER_ID);
         matcher.addURI(content, MarvelShelfContract.PATH_BOOKMARK, BOOKMARK);
-        matcher.addURI(content, MarvelShelfContract.PATH_BOOKMARK + "/#", BOOKMARK_CHARACTER_ID);
+//        matcher.addURI(content, MarvelShelfContract.PATH_BOOKMARK + "/#", BOOKMARK_CHARACTER_ID);
 
         return matcher;
     }
