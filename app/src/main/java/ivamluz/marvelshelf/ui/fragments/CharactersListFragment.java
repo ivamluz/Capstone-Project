@@ -152,7 +152,7 @@ public class CharactersListFragment extends Fragment implements LoaderManager.Lo
         } else if (LIST_TYPE_BOOKMARKS == mListType) {
             return MarvelShelfContract.BookmarkEntry.CONTENT_URI;
         } else if (LIST_TYPE_SEEN == mListType) {
-            return null;
+            return MarvelShelfContract.SeenCharacterEntry.CONTENT_URI;
         } else {
             String message = String.format("listType should be one of %s.LIST_TYPE_* consts.", CharactersListFragment.class.getSimpleName());
             throw new IllegalArgumentException(message);

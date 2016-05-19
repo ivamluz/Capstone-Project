@@ -21,22 +21,48 @@ public class MarvelShelfProvider extends ContentProvider {
     private static final int CHARACTER_ID = 110;
     private static final int BOOKMARK = 200;
     private static final int BOOKMARK_CHARACTER_ID = 210;
+    private static final int SEEN_CHARACTER = 300;
+    private static final int SEEN_CHARACTER_ID = 310;
 
     private static final UriMatcher sUriMatcher = buildUriMatcher();
     private MarvelShelfDbHelper mDbHelper;
 
     private static final HashMap<String, String> mBookmarksColumnMap = buildBookmarksColumnMap();
+    private static final HashMap<String, String> mSeenCharactersColumnMap = buildSeenCharactersColumnMap();
 
     private static HashMap<String, String> buildBookmarksColumnMap() {
         HashMap<String, String> map = new HashMap<String, String>();
 
         String bookmarkProjection[] = MarvelShelfContract.BookmarkEntry.TABLE_COLUMNS;
-
         for (String column : bookmarkProjection) {
-            String qualifiedCol = MarvelShelfContract.BookmarkEntry.TABLE_NAME + "." + column;
-            map.put(qualifiedCol, qualifiedCol + " as " + column);
+            String qualifiedColumn = MarvelShelfContract.BookmarkEntry.TABLE_NAME + "." + column;
+            map.put(qualifiedColumn, qualifiedColumn + " as " + column);
         }
 
+        HashMap<String, String> mapCharacter = buildCharactersColumnMap();
+        map.putAll(mapCharacter);
+
+        return map;
+    }
+
+    private static HashMap<String, String> buildSeenCharactersColumnMap() {
+        HashMap<String, String> map = new HashMap<String, String>();
+
+        String seenCharactersProjection[] = MarvelShelfContract.SeenCharacterEntry.TABLE_COLUMNS;
+        for (String column : seenCharactersProjection) {
+            String qualifiedColumn = MarvelShelfContract.SeenCharacterEntry.TABLE_NAME + "." + column;
+            map.put(qualifiedColumn, qualifiedColumn + " as " + column);
+        }
+
+        HashMap<String, String> mapCharacter = buildCharactersColumnMap();
+        map.putAll(mapCharacter);
+
+        return map;
+    }
+
+    @NonNull
+    private static HashMap<String, String> buildCharactersColumnMap() {
+        HashMap<String, String> mapCharacter = new HashMap<String, String>();
         String characterProjection[] = MarvelShelfContract.CharacterEntry.TABLE_COLUMNS;
         for (String column : characterProjection) {
             String qualifiedColumn = MarvelShelfContract.CharacterEntry.TABLE_NAME + "." + column;
@@ -44,10 +70,9 @@ public class MarvelShelfProvider extends ContentProvider {
             if (MarvelShelfContract.CharacterEntry.COLUMN_CHARACTER_KEY.equals(column)) {
                 alias = qualifiedColumn.replace(".", "_");
             }
-            map.put(qualifiedColumn, qualifiedColumn + " AS " + alias);
+            mapCharacter.put(qualifiedColumn, qualifiedColumn + " AS " + alias);
         }
-
-        return map;
+        return mapCharacter;
     }
 
     @Override
@@ -77,6 +102,9 @@ public class MarvelShelfProvider extends ContentProvider {
 //                long _characterId = ContentUris.parseId(uri);
 //                cursor = createBookmarkByCharacterIdQuery(projection, sortOrder, db, _characterId);
 //                break;
+            case SEEN_CHARACTER:
+                cursor = createSeenCharactersQueryCursor(projection, selection, selectionArgs, sortOrder, db);
+                break;
             default:
                 throwErrorForUnknowUri(uri);
                 return null;
@@ -157,6 +185,37 @@ public class MarvelShelfProvider extends ContentProvider {
         );
     }
 
+    private Cursor createSeenCharactersQueryCursor(String[] projection, String selection, String[] selectionArgs, String sortOrder, SQLiteDatabase db) {
+        SQLiteQueryBuilder queryBuilder = createSeenCharactersQueryBuilder();
+
+        return queryBuilder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
+    }
+
+    @NonNull
+    // Reference: http://www.copperykeenclaws.com/setting-up-an-android-contentprovider-with-a-join/
+    private SQLiteQueryBuilder createSeenCharactersQueryBuilder() {
+        SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
+
+        String leftColumn = MarvelShelfContract.SeenCharacterEntry.TABLE_NAME + "." + MarvelShelfContract.SeenCharacterEntry.COLUMN_CHARACTER_ID;
+        String rightColumn = MarvelShelfContract.CharacterEntry.TABLE_NAME + "." + MarvelShelfContract.CharacterEntry.COLUMN_CHARACTER_ID;
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(MarvelShelfContract.SeenCharacterEntry.TABLE_NAME);
+        sb.append(" LEFT OUTER JOIN ");
+        sb.append(MarvelShelfContract.CharacterEntry.TABLE_NAME);
+        sb.append(" ON (");
+        sb.append(leftColumn);
+        sb.append(" = ");
+        sb.append(rightColumn);
+        sb.append(")");
+        String table = sb.toString();
+
+        queryBuilder.setTables(table);
+        queryBuilder.setProjectionMap(mSeenCharactersColumnMap);
+
+        return queryBuilder;
+    }
+
     @Nullable
     @Override
     public String getType(Uri uri) {
@@ -169,6 +228,8 @@ public class MarvelShelfProvider extends ContentProvider {
                 return MarvelShelfContract.BookmarkEntry.CONTENT_TYPE;
 //            case BOOKMARK_CHARACTER_ID:
 //                return MarvelShelfContract.BookmarkEntry.CONTENT_ITEM_TYPE;
+            case SEEN_CHARACTER:
+                return MarvelShelfContract.SeenCharacterEntry.CONTENT_TYPE;
             default:
                 throwErrorForUnknowUri(uri);
                 return null;
@@ -206,6 +267,7 @@ public class MarvelShelfProvider extends ContentProvider {
         matcher.addURI(content, MarvelShelfContract.PATH_CHARACTER + "/#", CHARACTER_ID);
         matcher.addURI(content, MarvelShelfContract.PATH_BOOKMARK, BOOKMARK);
 //        matcher.addURI(content, MarvelShelfContract.PATH_BOOKMARK + "/#", BOOKMARK_CHARACTER_ID);
+        matcher.addURI(content, MarvelShelfContract.PATH_SEEN_CHARACTER, SEEN_CHARACTER);
 
         return matcher;
     }
