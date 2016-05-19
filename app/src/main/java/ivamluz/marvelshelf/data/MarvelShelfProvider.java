@@ -125,8 +125,8 @@ public class MarvelShelfProvider extends ContentProvider {
     private SQLiteQueryBuilder createBookmarkedCharactersQueryBuilder() {
         SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
 
-        String leftColumn = MarvelShelfContract.BookmarkEntry.TABLE_NAME + "." + MarvelShelfContract.BookmarkEntry.COLUMN_CHARACTER_KEY;
-        String rightColumn = MarvelShelfContract.CharacterEntry.TABLE_NAME + "." + MarvelShelfContract.CharacterEntry.COLUMN_CHARACTER_KEY;
+        String leftColumn = MarvelShelfContract.BookmarkEntry.TABLE_NAME + "." + MarvelShelfContract.BookmarkEntry.COLUMN_CHARACTER_ID;
+        String rightColumn = MarvelShelfContract.CharacterEntry.TABLE_NAME + "." + MarvelShelfContract.CharacterEntry.COLUMN_CHARACTER_ID;
 
         StringBuilder sb = new StringBuilder();
         sb.append(MarvelShelfContract.BookmarkEntry.TABLE_NAME);

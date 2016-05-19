@@ -23,7 +23,7 @@ public class MarvelCharacter implements Parcelable {
 
     public static MarvelCharacter fromCursor(Cursor cursor) {
         MarvelCharacter character = new MarvelCharacter();
-        character.setId(cursor.getLong(cursor.getColumnIndex(MarvelShelfContract.CharacterEntry.COLUMN_CHARACTER_KEY)));
+        character.setId(cursor.getLong(cursor.getColumnIndex(MarvelShelfContract.CharacterEntry.COLUMN_CHARACTER_ID)));
         character.setName(cursor.getString(cursor.getColumnIndex(MarvelShelfContract.CharacterEntry.COLUMN_NAME)));
         character.setDescription(cursor.getString(cursor.getColumnIndex(MarvelShelfContract.CharacterEntry.COLUMN_DESCRIPTION)));
         character.setThumbnailUrl(cursor.getString(cursor.getColumnIndex(MarvelShelfContract.CharacterEntry.COLUMN_THUMBNAIL)));

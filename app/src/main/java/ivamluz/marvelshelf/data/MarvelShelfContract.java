@@ -34,6 +34,7 @@ public class MarvelShelfContract {
 
         public static final String TABLE_NAME = "Character";
         public static final String COLUMN_CHARACTER_KEY = "_id";
+        public static final String COLUMN_CHARACTER_ID = "character_id";
         public static final String COLUMN_NAME = "name";
         public static final String COLUMN_DESCRIPTION = "description";
         public static final String COLUMN_MODIFIED = "modified";
@@ -42,6 +43,7 @@ public class MarvelShelfContract {
 
         public static final String[] TABLE_COLUMNS = {
                 COLUMN_CHARACTER_KEY,
+                COLUMN_CHARACTER_ID,
                 COLUMN_NAME,
                 COLUMN_DESCRIPTION,
                 COLUMN_MODIFIED,
@@ -69,12 +71,11 @@ public class MarvelShelfContract {
 
         public static final String TABLE_NAME = "FavoriteCharacter";
         public static final String COLUMN_BOOKMARK_KEY = "_id";
-        public static final String COLUMN_CHARACTER_KEY = "character_id";
+        public static final String COLUMN_CHARACTER_ID = "character_id";
         public static final String COLUMN_ADDED_ON = "added_on";
 
         public static final String[] TABLE_COLUMNS = {
                 COLUMN_BOOKMARK_KEY,
-                COLUMN_CHARACTER_KEY,
                 COLUMN_ADDED_ON
         };
 

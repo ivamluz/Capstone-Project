@@ -42,7 +42,7 @@
             android:theme="@style/MarvelShelfTheme.NoActionBar">
         </activity>
         <activity android:name=".ui.activities.ImageViewerActivity"
-                  android:theme="@style/MarvelShelfTheme.NoActionModeOverlay">
+                  android:theme="@style/MarvelShelfTheme.NoActionBar">
         </activity>
     </application>
 
