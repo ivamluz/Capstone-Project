@@ -33,4 +33,7 @@
     <string name="shared_transition_comic_thumb">SharedTransitionComicThumb</string>
     <string name="shared_transition_comic_image">SharedTransitionComicImage</string>
     <string name="shared_transition_series_image">SharedTransitionSeriesImage</string>
+
+    <string name="cards_list_empty">Uh-oh, nothing to show here!</string>
+    <string name="retry">RETRY</string>
 </resources>

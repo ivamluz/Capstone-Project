@@ -12,6 +12,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -20,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.karumi.marvelapiclient.model.ComicDto;
@@ -65,6 +67,11 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
     //    @BindView(R.id.recycler_view_character_comics)
     private RecyclerView mRecyclerViewCharacterComics;
     private RecyclerView mRecyclerViewCharacterSeries;
+
+    private CardView mCardCharacterComics;
+    private View mViewEmptyComics;
+    private ProgressBar mProgressComics;
+
 
     private ComicsLoaderWorkerFragment mComicsLoaderWorkerFragment;
     private SeriesLoaderWorkerFragment mSeriesLoaderWorkerFragment;
@@ -214,6 +221,11 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
         mImageCharacterThumbnail.setVisibility(mShowThumbnail ? View.VISIBLE : View.GONE);
         mTextCharacterName.setVisibility(mShowCharacterName ? View.VISIBLE : View.GONE);
 
+
+        mCardCharacterComics = (CardView) rootView.findViewById(R.id.card_character_comics);
+        mViewEmptyComics = mCardCharacterComics.findViewById(R.id.view_blank_state);
+        mProgressComics = (ProgressBar) mCardCharacterComics.findViewById(R.id.progress_bar);
+
         setupComicsAdapterAndRecyclerView(rootView);
         setupSeriesAdapterAndRecyclerView(rootView);
 
@@ -339,11 +351,19 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
     @Override
     public void onComicsLoadingPreExecute() {
         MarvelShelfLogger.debug(LOG_TAG, "onComicsLoadingPreExecute");
+
+        mViewEmptyComics.setVisibility(View.GONE);
+        mRecyclerViewCharacterComics.setVisibility(View.GONE);
+        mProgressComics.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void onComicsLoadingCancelled() {
         MarvelShelfLogger.debug(LOG_TAG, "onComicsLoadingCancelled");
+
+        mViewEmptyComics.setVisibility(View.VISIBLE);
+        mRecyclerViewCharacterComics.setVisibility(View.GONE);
+        mProgressComics.setVisibility(View.GONE);
     }
 
     @Override
@@ -352,6 +372,10 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
 
         mAdapterCharacterComics.setItems(comics);
         mAdapterCharacterComics.notifyDataSetChanged();
+
+        mViewEmptyComics.setVisibility(comics.isEmpty() ? View.VISIBLE : View.GONE);
+        mRecyclerViewCharacterComics.setVisibility(comics.isEmpty() ? View.GONE: View.VISIBLE);
+        mProgressComics.setVisibility(View.GONE);
     }
 
     @Override
