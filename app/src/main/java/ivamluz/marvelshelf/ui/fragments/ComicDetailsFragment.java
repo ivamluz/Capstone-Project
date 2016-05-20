@@ -166,7 +166,7 @@ public class ComicDetailsFragment extends Fragment implements ImagesAdapter.OnIt
     @Override
     public void onItemClick(int position, View view) {
         String url = mImagesAdapter.getItem(position);
-        String id = url.toString();
+        String id = String.valueOf(url.hashCode());
         Intent intent = ImageViewerActivity.newIntent(getContext(), id, url, getString(R.string.shared_transition_comic_image));
 
         ImageView imageComic = (ImageView) view.findViewById(R.id.image_thumbnail);

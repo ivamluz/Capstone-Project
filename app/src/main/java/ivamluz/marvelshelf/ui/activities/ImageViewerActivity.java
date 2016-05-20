@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 
+import ivamluz.marvelshelf.BuildConfig;
 import ivamluz.marvelshelf.MarvelShelfApplication;
 import ivamluz.marvelshelf.R;
 import ivamluz.marvelshelf.helpers.ImageHelper;
@@ -34,10 +35,11 @@ import uk.co.senab.photoview.PhotoView;
 import uk.co.senab.photoview.PhotoViewAttacher;
 
 public class ImageViewerActivity extends AppCompatActivity {
-    private static final String EXTRA_IMAGE_ID = "ivamluz.marvelshelf.image_id";
-    private static final String EXTRA_IMAGE_URL = "ivamluz.marvelshelf.image_url";
-    private static final String EXTRA_IMAGE_TRANSITION_NAME = "ivamluz.marvelshelf.image_transition_namel";
     private static final String LOG_TAG = ImageViewerActivity.class.getSimpleName();
+
+    private static final String EXTRA_IMAGE_ID = String.format("%s.image_id", BuildConfig.APPLICATION_ID);
+    private static final String EXTRA_IMAGE_URL = String.format("%s.image_url", BuildConfig.APPLICATION_ID);
+    private static final String EXTRA_IMAGE_TRANSITION_NAME = String.format("%s.image_transition_name", BuildConfig.APPLICATION_ID);
 
     //    @Bind(R.id.photo)
     protected PhotoView mPhotoView;
