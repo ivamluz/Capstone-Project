@@ -13,10 +13,14 @@ import android.support.annotation.Nullable;
 
 import java.util.HashMap;
 
+import ivamluz.marvelshelf.infrastructure.MarvelShelfLogger;
+
 /**
  * Created by iluz on 5/5/16.
  */
 public class MarvelShelfProvider extends ContentProvider {
+    private static final String LOG_TAG = MarvelShelfProvider.class.getSimpleName();
+
     private static final int CHARACTER = 100;
     private static final int CHARACTER_ID = 110;
     private static final int BOOKMARK = 200;
@@ -25,6 +29,7 @@ public class MarvelShelfProvider extends ContentProvider {
     private static final int SEEN_CHARACTER_ID = 310;
 
     private static final UriMatcher sUriMatcher = buildUriMatcher();
+
     private MarvelShelfDbHelper mDbHelper;
 
     private static final HashMap<String, String> mBookmarksColumnMap = buildBookmarksColumnMap();
@@ -243,17 +248,15 @@ public class MarvelShelfProvider extends ContentProvider {
     @Nullable
     @Override
     public Uri insert(Uri uri, ContentValues contentValues) {
-        final SQLiteDatabase db = mDbHelper.getWritableDatabase();
-
         Uri returnUri = null;
 
         switch (sUriMatcher.match(uri)) {
             case SEEN_CHARACTER:
-                long _id = db.insert(MarvelShelfContract.SeenCharacterEntry.TABLE_NAME, null, contentValues);
-                if ( _id > 0 )
-                    returnUri = MarvelShelfContract.SeenCharacterEntry.buildSeenCharacterUri(_id);
-                else
-                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                returnUri = insertSeenCharacter(contentValues);
+                if (returnUri == null) {
+                    throwSqlExceptionForFailedInsertion(uri);
+                }
+
                 break;
             default:
                 throwErrorForUnknowUri(uri);
@@ -262,6 +265,27 @@ public class MarvelShelfProvider extends ContentProvider {
         getContext().getContentResolver().notifyChange(uri, null);
 
         return returnUri;
+    }
+
+    private Uri insertSeenCharacter(ContentValues contentValues) {
+        final SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+
+        Uri returnUri = null;
+
+        long _id = db.insertWithOnConflict(MarvelShelfContract.SeenCharacterEntry.TABLE_NAME, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
+        if (_id > 0) {
+            returnUri = MarvelShelfContract.SeenCharacterEntry.buildSeenCharacterUri(_id);
+
+            String message = String.format("%s new URI: %s", MarvelShelfContract.SeenCharacterEntry.TABLE_NAME, returnUri);
+            MarvelShelfLogger.debug(LOG_TAG, message);
+        }
+
+        return returnUri;
+    }
+
+    private Uri throwSqlExceptionForFailedInsertion(Uri uri) {
+        throw new android.database.SQLException("Failed to insert row into " + uri);
     }
 
     @Override

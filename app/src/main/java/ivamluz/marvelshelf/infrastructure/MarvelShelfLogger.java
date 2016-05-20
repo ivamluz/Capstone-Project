@@ -25,6 +25,8 @@ public class MarvelShelfLogger {
     private static final int LOG_LEVEL_WARN = 2;
     private static final int LOG_LEVEL_ERROR = 1;
 
+    public static final String SEPARATOR = "===================================================";
+
     private MarvelShelfLogger() {
         // just to disable default constructor
     }

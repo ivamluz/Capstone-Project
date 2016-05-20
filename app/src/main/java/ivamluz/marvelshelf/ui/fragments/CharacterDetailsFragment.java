@@ -1,6 +1,5 @@
 package ivamluz.marvelshelf.ui.fragments;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -30,13 +29,14 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import ivamluz.marvelshelf.BuildConfig;
 import ivamluz.marvelshelf.MarvelShelfApplication;
 import ivamluz.marvelshelf.R;
 import ivamluz.marvelshelf.adapter.AbstractCharacterRelatedItemsAdapter;
 import ivamluz.marvelshelf.data.MarvelShelfContract;
 import ivamluz.marvelshelf.data.model.MarvelComic;
 import ivamluz.marvelshelf.infrastructure.MarvelShelfLogger;
-import ivamluz.marvelshelf.ui.activities.CharacterDetailsActivity;
+import ivamluz.marvelshelf.managers.SeenCharactersManager;
 import ivamluz.marvelshelf.ui.activities.ComicDetailsActivity;
 import ivamluz.marvelshelf.ui.decorators.MarginItemDecoration;
 import ivamluz.marvelshelf.ui.fragments.workers.ComicsLoaderWorkerFragment;
@@ -51,13 +51,13 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
     private static final String LOG_TAG = CharacterDetailsFragment.class.getSimpleName();
     private static final int CHARACTER_LOADER = 100;
 
-    private static final String ARG_CHARACTER_ID = "ivamluz.marvelshelf.character_id";
-    private static final String ARG_SHOW_NAME = "ivamluz.marvelshelf.show_name";
-    private static final String ARG_SHOW_THUMBNAIL = "ivamluz.marvelshelf.show_thumbnail";
+    private static final String KEY_CHARACTER_ID = String.format("%s.character_id", BuildConfig.APPLICATION_ID);
+    private static final String KEY_SHOW_CHARACTER_NAME = String.format("%s.show_name", BuildConfig.APPLICATION_ID);
+    private static final String KEY_SHOW_CHARACTER_THUMBNAIL = String.format("%s.show_thumbnail", BuildConfig.APPLICATION_ID);
+
+    private static final String KEY_CHARACTER_REGISTERED_AS_SEEN = String.format("%s.character_seen", BuildConfig.APPLICATION_ID);
 
     private Picasso mPicasso;
-
-    private long mCharacterId;
 
     private AbstractCharacterRelatedItemsAdapter mAdapterCharacterComics;
     private AbstractCharacterRelatedItemsAdapter mAdapterCharacterSeries;
@@ -69,6 +69,7 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
     private ComicsLoaderWorkerFragment mComicsLoaderWorkerFragment;
     private SeriesLoaderWorkerFragment mSeriesLoaderWorkerFragment;
 
+    private long mCharacterId;
     private boolean mShowThumbnail;
     private boolean mShowCharacterName;
 
@@ -76,6 +77,8 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
     private TextView mTextCharacterName;
     private TextView mTextCharacterDescription;
     private ImageView mImageCharacterThumbnail;
+
+    private boolean mRegisteredAsSeen = false;
 
 
     public CharacterDetailsFragment() {
@@ -93,9 +96,9 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
         CharacterDetailsFragment fragment = new CharacterDetailsFragment();
 
         Bundle args = new Bundle();
-        args.putLong(ARG_CHARACTER_ID, characterId);
-        args.putBoolean(ARG_SHOW_NAME, showName);
-        args.putBoolean(ARG_SHOW_THUMBNAIL, showThumbnail);
+        args.putLong(KEY_CHARACTER_ID, characterId);
+        args.putBoolean(KEY_SHOW_CHARACTER_NAME, showName);
+        args.putBoolean(KEY_SHOW_CHARACTER_THUMBNAIL, showThumbnail);
 
         fragment.setArguments(args);
 
@@ -109,16 +112,20 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mCharacterId = getArguments().getLong(ARG_CHARACTER_ID);
-            mShowThumbnail = getArguments().getBoolean(ARG_SHOW_THUMBNAIL);
-            mShowCharacterName = getArguments().getBoolean(ARG_SHOW_NAME);
 
-            MarvelShelfLogger.debug(LOG_TAG, "characterId: " + mCharacterId);
+        MarvelShelfLogger.debug(LOG_TAG, MarvelShelfLogger.SEPARATOR);
+        MarvelShelfLogger.debug(LOG_TAG, "onCreate()");
+        MarvelShelfLogger.debug(LOG_TAG, MarvelShelfLogger.SEPARATOR);
+
+        if (!restoreState(savedInstanceState) && getArguments() != null) {
+             mCharacterId = getArguments().getLong(KEY_CHARACTER_ID);
+             mShowThumbnail = getArguments().getBoolean(KEY_SHOW_CHARACTER_THUMBNAIL);
+             mShowCharacterName = getArguments().getBoolean(KEY_SHOW_CHARACTER_NAME);
         }
-        
-        registrySeenCharacter();
 
+        logState();
+
+        registerSeenCharacter();
 
         setupComicsLoaderFragment();
         setupSeriesLoaderFragment();
@@ -126,21 +133,52 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
         mPicasso = MarvelShelfApplication.getInstance().getPicasso();
     }
 
-    private void registrySeenCharacter() {
-        ContentValues mNewValues = new ContentValues();
+    private void logState() {
+        MarvelShelfLogger.debug(LOG_TAG, "mCharacterId: " + mCharacterId);
+        MarvelShelfLogger.debug(LOG_TAG, "mShowThumbnail: " + mShowThumbnail);
+        MarvelShelfLogger.debug(LOG_TAG, "mShowCharacterName: " + mShowCharacterName);
+        MarvelShelfLogger.debug(LOG_TAG, "mRegisteredAsSeen: " + mRegisteredAsSeen);
+    }
 
-/*
- * Sets the values of each column and inserts the word. The arguments to the "put"
- * method are "column name" and "value"
- */
-        mNewValues.put(MarvelShelfContract.SeenCharacterEntry.COLUMN_CHARACTER_ID, mCharacterId);
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
 
-        Uri newUri = getContext().getContentResolver().insert(
-                MarvelShelfContract.SeenCharacterEntry.CONTENT_URI,   // the user dictionary content URI
-                mNewValues                          // the values to insert
-        );
+        outState.putLong(KEY_CHARACTER_ID, mCharacterId);
+        outState.putBoolean(KEY_SHOW_CHARACTER_THUMBNAIL, mShowThumbnail);
+        outState.putBoolean(KEY_SHOW_CHARACTER_NAME, mShowCharacterName);
 
-        MarvelShelfLogger.debug(LOG_TAG, "New URI: " + newUri);
+        outState.putBoolean(KEY_CHARACTER_REGISTERED_AS_SEEN, mRegisteredAsSeen);
+    }
+
+    private void registerSeenCharacter() {
+        if (mRegisteredAsSeen) {
+            MarvelShelfLogger.debug(LOG_TAG, String.format("Character %s has already been registered as seen. Skipping it.", mCharacterId));
+            return;
+        }
+
+        MarvelShelfLogger.debug(LOG_TAG, String.format("Registering character %s as seen.", mCharacterId));
+
+        new SeenCharactersManager(getContext()).registrySeenCharacter(mCharacterId, new SeenCharactersManager.OnCharacterRegisteredAsSeen() {
+            @Override
+            public void onRegisteredAsSeen(Uri uri) {
+                CharacterDetailsFragment.this.mRegisteredAsSeen = true;
+                MarvelShelfLogger.debug(LOG_TAG, "Register callback. Uri: " + uri.toString());
+            }
+        });
+    }
+
+    private boolean restoreState(Bundle savedInstanceState) {
+        if (savedInstanceState == null) {
+            return false;
+        }
+        mCharacterId = savedInstanceState.getLong(KEY_CHARACTER_ID);
+        mShowThumbnail = savedInstanceState.getBoolean(KEY_SHOW_CHARACTER_THUMBNAIL);
+        mShowCharacterName = savedInstanceState.getBoolean(KEY_SHOW_CHARACTER_NAME);
+
+        mRegisteredAsSeen = savedInstanceState.getBoolean(KEY_CHARACTER_REGISTERED_AS_SEEN, false);
+
+        return true;
     }
 
     private void setupComicsLoaderFragment() {
