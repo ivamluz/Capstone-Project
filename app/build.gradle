@@ -31,6 +31,8 @@ android {
     }
 }
 
+apply plugin: 'com.neenbedankt.android-apt'
+
 def supportLibraryVersion = '23.3.0'
 
 dependencies {
@@ -43,6 +45,7 @@ dependencies {
     compile "com.android.support:recyclerview-v7:${supportLibraryVersion}"
 
     compile 'com.jakewharton:butterknife:8.0.1'
+    apt 'com.jakewharton:butterknife-compiler:8.0.1'
 
     // Images
     compile 'com.squareup.picasso:picasso:2.5.2'

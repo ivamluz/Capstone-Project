@@ -17,15 +17,18 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import ivamluz.marvelshelf.MarvelShelfApplication;
 import ivamluz.marvelshelf.R;
 import ivamluz.marvelshelf.adapter.ImagesAdapter;
-import ivamluz.marvelshelf.data.model.MarvelCharacter;
 import ivamluz.marvelshelf.data.model.MarvelComic;
 import ivamluz.marvelshelf.infrastructure.MarvelShelfLogger;
-import ivamluz.marvelshelf.ui.activities.CharacterDetailsActivity;
 import ivamluz.marvelshelf.ui.activities.ImageViewerActivity;
 import ivamluz.marvelshelf.ui.decorators.MarginItemDecoration;
+
+import static butterknife.ButterKnife.findById;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -50,11 +53,16 @@ public class ComicDetailsFragment extends Fragment implements ImagesAdapter.OnIt
     private boolean mShowThumbnail;
     private boolean mShowTitle;
 
-    //    @BindView(R.id.characterName)
-    private TextView mTextTitle;
-    private TextView mTextDescription;
-    private ImageView mImageThumbnail;
+    @BindView(R.id.text_name)
+    protected TextView mTextTitle;
 
+    @BindView(R.id.text_description)
+    protected TextView mTextDescription;
+
+    @BindView(R.id.image_details_thumb)
+    protected ImageView mImageThumbnail;
+
+    private Unbinder mUnbinder;
 
     public ComicDetailsFragment() {
         // Required empty public constructor
@@ -103,11 +111,7 @@ public class ComicDetailsFragment extends Fragment implements ImagesAdapter.OnIt
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_comic_details, container, false);
-//        ButterKnife.bind(this, rootView);
-
-        mImageThumbnail = (ImageView) rootView.findViewById(R.id.image_details_thumb);
-        mTextTitle = (TextView) rootView.findViewById(R.id.text_name);
-        mTextDescription = (TextView) rootView.findViewById(R.id.text_description);
+        mUnbinder = ButterKnife.bind(this, rootView);
 
         mImageThumbnail.setVisibility(mShowThumbnail ? View.VISIBLE : View.GONE);
         mTextTitle.setVisibility(mShowTitle ? View.VISIBLE : View.GONE);
@@ -119,13 +123,20 @@ public class ComicDetailsFragment extends Fragment implements ImagesAdapter.OnIt
         return rootView;
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        mUnbinder.unbind();
+    }
+
     private void setupImagesRecyclerViewAndAdapter(View view) {
         mImagesAdapter = new ImagesAdapter(mComic.getImageUrls(), getString(R.string.shared_transition_comic_image));
         mImagesAdapter.setOnItemClickListener(this);
 
         StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(LAYOUT_COLUMNS, StaggeredGridLayoutManager.VERTICAL);
 
-        mImagesRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_comics_images);
+        mImagesRecyclerView = findById(view, R.id.recycler_view_comics_images);
         mImagesRecyclerView.setLayoutManager(layoutManager);
         mImagesRecyclerView.setAdapter(mImagesAdapter);
         int margin = getResources().getDimensionPixelSize(R.dimen.card_spacing);
@@ -169,7 +180,7 @@ public class ComicDetailsFragment extends Fragment implements ImagesAdapter.OnIt
         String id = String.valueOf(url.hashCode());
         Intent intent = ImageViewerActivity.newIntent(getContext(), id, url, getString(R.string.shared_transition_comic_image));
 
-        ImageView imageComic = (ImageView) view.findViewById(R.id.image_thumbnail);
+        ImageView imageComic = findById(view, R.id.image_thumbnail);
         ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
                 getActivity(),
                 imageComic,

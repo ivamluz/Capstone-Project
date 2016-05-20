@@ -4,6 +4,7 @@ import android.app.Application;
 import android.net.Uri;
 
 import com.karumi.marvelapiclient.MarvelApiConfig;
+import com.squareup.okhttp.Cache;
 import com.squareup.picasso.Picasso;
 
 import java.util.concurrent.TimeUnit;
@@ -63,6 +64,14 @@ public class MarvelShelfApplication extends Application {
         mMarvelApiConfig = new MarvelApiConfig.Builder(BuildConfig.MARVEL_API_PUBLIC_KEY, BuildConfig.MARVEL_API_PRIVATE_KEY).build();
         mMarvelApiConfig.getRetrofit().client().setConnectTimeout(BuildConfig.HTTP_CONNECTION_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
         mMarvelApiConfig.getRetrofit().client().setReadTimeout(BuildConfig.HTTP_READ_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
+
+
+        int cacheSize = 10 * 1024 * 1024; // 10 MiB
+        Cache cache = new Cache(getCacheDir(), cacheSize);
+
+        mMarvelApiConfig.getRetrofit().client().setCache(cache);
+
+
 
         return mMarvelApiConfig;
     }

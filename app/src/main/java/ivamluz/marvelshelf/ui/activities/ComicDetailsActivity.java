@@ -10,6 +10,9 @@ import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import ivamluz.marvelshelf.BuildConfig;
 import ivamluz.marvelshelf.MarvelShelfApplication;
 import ivamluz.marvelshelf.R;
 import ivamluz.marvelshelf.adapter.ImagesAdapter;
@@ -17,13 +20,15 @@ import ivamluz.marvelshelf.data.model.MarvelComic;
 import ivamluz.marvelshelf.ui.fragments.ComicDetailsFragment;
 
 public class ComicDetailsActivity extends AppCompatActivity {
-    private static final String EXTRA_COMIC = "ivamluz.marvelshelf.comic";
+    private static final String EXTRA_COMIC = String.format("%s.comic", BuildConfig.APPLICATION_ID);
 
     private MarvelComic mComic;
 
     private ComicDetailsFragment mComicDetailsFragment;
     private Picasso mPicasso;
-    private ImageView mComicThumbnail;
+
+    @BindView(R.id.image_details_thumb)
+    protected ImageView mComicThumbnail;
 
     public static Intent newIntent(Context packageContext, MarvelComic comic) {
         Intent intent = new Intent(packageContext, ComicDetailsActivity.class);
@@ -35,7 +40,10 @@ public class ComicDetailsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_details);
+        ButterKnife.bind(this);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 

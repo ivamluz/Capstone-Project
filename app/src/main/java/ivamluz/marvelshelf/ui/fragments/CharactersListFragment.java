@@ -19,6 +19,8 @@ import android.widget.ImageView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
+import ivamluz.marvelshelf.BuildConfig;
 import ivamluz.marvelshelf.R;
 import ivamluz.marvelshelf.adapter.CharactersCursorAdapter;
 import ivamluz.marvelshelf.data.MarvelShelfContract;
@@ -26,6 +28,8 @@ import ivamluz.marvelshelf.data.model.MarvelCharacter;
 import ivamluz.marvelshelf.infrastructure.MarvelShelfLogger;
 import ivamluz.marvelshelf.ui.activities.CharacterDetailsActivity;
 import ivamluz.marvelshelf.ui.decorators.MarginItemDecoration;
+
+import static butterknife.ButterKnife.findById;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -39,16 +43,16 @@ public class CharactersListFragment extends Fragment implements LoaderManager.Lo
     public static int LIST_TYPE_SEEN = 2;
 
     private static final String LOG_TAG = CharactersListFragment.class.getSimpleName();
-    private static final String EXTRA_LIST_TYPE = "ivamluz.marvelshelf.list_type";
-    private static final int LOADER_ID = 0;
+    private static final String EXTRA_LIST_TYPE = String.format("%s.list_type", BuildConfig.APPLICATION_ID);
 
     private int mListType;
 
     @BindView(R.id.recycler_view_characters_list)
-    private RecyclerView mCharactersRecyclerView;
+    protected RecyclerView mCharactersRecyclerView;
 
     private CharactersCursorAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+    private Unbinder mUnbinder;
 
     public CharactersListFragment() {
         // Required empty public constructor
@@ -84,10 +88,9 @@ public class CharactersListFragment extends Fragment implements LoaderManager.Lo
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_characters_list, container, false);
-        ButterKnife.bind(this, rootView);
+        mUnbinder = ButterKnife.bind(this, rootView);
 
         mLayoutManager = new LinearLayoutManager(getContext());
-        mCharactersRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view_characters_list);
         mCharactersRecyclerView.setLayoutManager(mLayoutManager);
         mCharactersRecyclerView.setAdapter(mAdapter);
 
@@ -97,6 +100,13 @@ public class CharactersListFragment extends Fragment implements LoaderManager.Lo
         getActivity().getSupportLoaderManager().initLoader(mListType, null, this);
 
         return rootView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        mUnbinder.unbind();
     }
 
     @Override
@@ -136,7 +146,7 @@ public class CharactersListFragment extends Fragment implements LoaderManager.Lo
         MarvelCharacter character = MarvelCharacter.fromCursor(mAdapter.getCursor());
         Intent intent = CharacterDetailsActivity.newIntent(getContext(), character);
 
-        ImageView characterImage = (ImageView) view.findViewById(R.id.image_details_thumb);
+        ImageView characterImage = findById(view, R.id.image_details_thumb);
         ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
                 getActivity(),
                 characterImage,

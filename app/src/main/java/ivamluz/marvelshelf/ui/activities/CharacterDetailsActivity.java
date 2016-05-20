@@ -14,6 +14,8 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import ivamluz.marvelshelf.MarvelShelfApplication;
 import ivamluz.marvelshelf.R;
 import ivamluz.marvelshelf.data.model.MarvelCharacter;
@@ -28,7 +30,10 @@ public class CharacterDetailsActivity extends AppCompatActivity implements Comic
 
     private CharacterDetailsFragment mCharacterDetailsFragment;
     private Picasso mPicasso;
-    private ImageView mCharacterThumbnail;
+
+    @BindView(R.id.image_details_thumb)
+    protected ImageView mCharacterThumbnail;
+
 
     public static Intent newIntent(Context packageContext, MarvelCharacter character) {
         Intent intent = new Intent(packageContext, CharacterDetailsActivity.class);
@@ -41,6 +46,9 @@ public class CharacterDetailsActivity extends AppCompatActivity implements Comic
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
+
+        ButterKnife.bind(this);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -48,7 +56,6 @@ public class CharacterDetailsActivity extends AppCompatActivity implements Comic
 
         mCharacter = getIntent().getParcelableExtra(EXTRA_CHARACTER);
 
-        mCharacterThumbnail = (ImageView) findViewById(R.id.image_details_thumb);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mCharacterThumbnail.setTransitionName(getString(R.string.shared_transition_character_image));
         }
