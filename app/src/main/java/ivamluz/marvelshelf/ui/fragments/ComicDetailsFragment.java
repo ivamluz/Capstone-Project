@@ -3,6 +3,7 @@ package ivamluz.marvelshelf.ui.fragments;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -19,8 +20,10 @@ import com.squareup.picasso.Picasso;
 import ivamluz.marvelshelf.MarvelShelfApplication;
 import ivamluz.marvelshelf.R;
 import ivamluz.marvelshelf.adapter.ImagesAdapter;
+import ivamluz.marvelshelf.data.model.MarvelCharacter;
 import ivamluz.marvelshelf.data.model.MarvelComic;
 import ivamluz.marvelshelf.infrastructure.MarvelShelfLogger;
+import ivamluz.marvelshelf.ui.activities.CharacterDetailsActivity;
 import ivamluz.marvelshelf.ui.activities.ImageViewerActivity;
 import ivamluz.marvelshelf.ui.decorators.MarginItemDecoration;
 
@@ -166,7 +169,14 @@ public class ComicDetailsFragment extends Fragment implements ImagesAdapter.OnIt
         String id = url.toString();
         Intent intent = ImageViewerActivity.newIntent(getContext(), id, url, getString(R.string.shared_transition_comic_image));
 
-        startActivity(intent);
+        ImageView imageComic = (ImageView) view.findViewById(R.id.image_thumbnail);
+        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                getActivity(),
+                imageComic,
+                getContext().getString(R.string.shared_transition_comic_image)
+        );
+
+        startActivity(intent, options.toBundle());
     }
 }
 

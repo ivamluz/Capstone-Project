@@ -75,10 +75,11 @@ public class ImageViewerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_image_viewer);
 //        ButterKnife.bind(this);
 
-
         mPicasso = MarvelShelfApplication.getInstance().getPicasso();
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        mTransitionName = getIntent().getStringExtra(EXTRA_IMAGE_TRANSITION_NAME);
 
         mPhotoView = (PhotoView) findViewById(R.id.photo);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
