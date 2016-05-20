@@ -23,6 +23,7 @@ public class ComicDetailsActivity extends AppCompatActivity {
 
     private ComicDetailsFragment mComicDetailsFragment;
     private Picasso mPicasso;
+    private ImageView mComicThumbnail;
 
     public static Intent newIntent(Context packageContext, MarvelComic comic) {
         Intent intent = new Intent(packageContext, ComicDetailsActivity.class);
@@ -42,21 +43,21 @@ public class ComicDetailsActivity extends AppCompatActivity {
 
         mComic = getIntent().getParcelableExtra(EXTRA_COMIC);
 
+        mComicThumbnail = (ImageView) findViewById(R.id.image_details_thumb);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mComicThumbnail.setTransitionName(getString(R.string.shared_transition_comic_thumb));
+        }
+
         bindCharacterInfo();
         setupComicDetailsFragment();
     }
 
     private void bindCharacterInfo() {
-        ImageView comicThumbnail = (ImageView) findViewById(R.id.image_details_thumb);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            comicThumbnail.setTransitionName(getString(R.string.shared_transition_comic_image));
-        }
-
         mPicasso.load(mComic.getThumbnailUrl())
                 .fit()
                 .centerCrop()
                 .error(R.drawable.character_placeholder)
-                .into(comicThumbnail);
+                .into(mComicThumbnail);
 
         setTitle(mComic.getTitle());
     }

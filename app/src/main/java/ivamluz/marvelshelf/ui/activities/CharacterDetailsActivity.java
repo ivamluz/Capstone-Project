@@ -2,6 +2,7 @@ package ivamluz.marvelshelf.ui.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -27,6 +28,7 @@ public class CharacterDetailsActivity extends AppCompatActivity implements Comic
 
     private CharacterDetailsFragment mCharacterDetailsFragment;
     private Picasso mPicasso;
+    private ImageView mCharacterThumbnail;
 
     public static Intent newIntent(Context packageContext, MarvelCharacter character) {
         Intent intent = new Intent(packageContext, CharacterDetailsActivity.class);
@@ -46,18 +48,21 @@ public class CharacterDetailsActivity extends AppCompatActivity implements Comic
 
         mCharacter = getIntent().getParcelableExtra(EXTRA_CHARACTER);
 
+        mCharacterThumbnail = (ImageView) findViewById(R.id.image_details_thumb);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mCharacterThumbnail.setTransitionName(getString(R.string.shared_transition_character_image));
+        }
+
         bindCharacterInfo();
         setupCharacterDetailsFragment();
     }
 
     private void bindCharacterInfo() {
-        ImageView characterThumbnail = (ImageView) findViewById(R.id.image_details_thumb);
-
         mPicasso.load(mCharacter.getThumbnailUrl())
                 .fit()
                 .centerCrop()
                 .error(R.drawable.character_placeholder)
-                .into(characterThumbnail);
+                .into(mCharacterThumbnail);
 
         setTitle(mCharacter.getName());
     }

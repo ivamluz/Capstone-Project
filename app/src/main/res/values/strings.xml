@@ -30,6 +30,7 @@
 
     <!-- Transitions -->
     <string name="shared_transition_character_image">SharedTransitionCharacterImage</string>
+    <string name="shared_transition_comic_thumb">SharedTransitionComicThumb</string>
     <string name="shared_transition_comic_image">SharedTransitionComicImage</string>
     <string name="shared_transition_series_image">SharedTransitionSeriesImage</string>
 </resources>

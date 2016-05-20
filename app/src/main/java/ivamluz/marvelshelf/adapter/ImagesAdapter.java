@@ -1,5 +1,6 @@
 package ivamluz.marvelshelf.adapter;
 
+import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,7 +46,9 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
 //            ButterKnife.setDebug(true);
 //            ButterKnife.bind(this, view);
             mImageViewThumbnail = (ImageView) view.findViewById(R.id.image_thumbnail);
-            mImageViewThumbnail.setTransitionName(transitionName);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                mImageViewThumbnail.setTransitionName(transitionName);
+            }
 
             view.setOnClickListener(this);
         }

@@ -228,13 +228,13 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
 
                 ComicDto comic = mItems.get(position);
 
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    holder.mImageViewThumbnail.setTransitionName(getString(R.string.shared_transition_comic_thumb));
+                }
+
                 if (!comic.getImages().isEmpty()) {
                     MarvelImage image = comic.getImages().get(0);
                     setThumbnail(holder, image);
-                }
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    holder.mImageViewThumbnail.setTransitionName(getString(R.string.shared_transition_comic_image));
                 }
 
                 setTitle(holder, comic.getTitle());
@@ -392,15 +392,16 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
         MarvelComic marvelComic = MarvelComic.fromComicDto(comic);
         Intent intent = ComicDetailsActivity.newIntent(getContext(), marvelComic);
 
-        startDetailsActivity(view, intent);
+        String sharedTransitionName = getContext().getString(R.string.shared_transition_comic_thumb);
+        startDetailsActivity(view, intent, sharedTransitionName);
     }
 
-    private void startDetailsActivity(View view, Intent intent) {
+    private void startDetailsActivity(View view, Intent intent, String sharedTransitionName) {
         ImageView imageView = (ImageView) view.findViewById(R.id.image_item_thumb);
         ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
                 getActivity(),
                 imageView,
-                getContext().getString(R.string.shared_transition_character_image)
+                sharedTransitionName
         );
 
         startActivity(intent, options.toBundle());

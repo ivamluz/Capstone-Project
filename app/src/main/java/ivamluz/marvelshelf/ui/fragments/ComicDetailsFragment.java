@@ -163,7 +163,8 @@ public class ComicDetailsFragment extends Fragment implements ImagesAdapter.OnIt
     @Override
     public void onItemClick(int position, View view) {
         String url = mImagesAdapter.getItem(position);
-        Intent intent = ImageViewerActivity.newIntent(getContext(), "1", url, getString(R.string.shared_transition_comic_image));
+        String id = url.toString();
+        Intent intent = ImageViewerActivity.newIntent(getContext(), id, url, getString(R.string.shared_transition_comic_image));
 
         startActivity(intent);
     }
