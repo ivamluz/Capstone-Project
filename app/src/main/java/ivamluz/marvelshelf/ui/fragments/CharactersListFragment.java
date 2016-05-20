@@ -111,7 +111,7 @@ public class CharactersListFragment extends Fragment implements LoaderManager.Lo
 
     @Override
     public Loader onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(getContext(), getUri(), null, null, null, null);
+        return new CursorLoader(getContext(), getUri(), null, null, null, getSortOrder());
     }
 
     @Override
@@ -157,5 +157,19 @@ public class CharactersListFragment extends Fragment implements LoaderManager.Lo
             String message = String.format("listType should be one of %s.LIST_TYPE_* consts.", CharactersListFragment.class.getSimpleName());
             throw new IllegalArgumentException(message);
         }
+    }
+
+    public String getSortOrder() {
+        String sortOrder = null;
+
+        if (LIST_TYPE_ALL == mListType) {
+            sortOrder = String.format("%s ASC", MarvelShelfContract.CharacterEntry.COLUMN_NAME);
+        } else if (LIST_TYPE_BOOKMARKS == mListType) {
+            sortOrder = String.format("%s DESC", MarvelShelfContract.BookmarkEntry.COLUMN_ADDED_ON);
+        } else if (LIST_TYPE_SEEN == mListType) {
+            sortOrder = String.format("%s DESC", MarvelShelfContract.SeenCharacterEntry.COLUMN_ADDED_ON);
+        }
+
+        return sortOrder;
     }
 }
