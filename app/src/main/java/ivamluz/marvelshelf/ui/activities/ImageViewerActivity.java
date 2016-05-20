@@ -16,11 +16,10 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -35,9 +34,6 @@ import uk.co.senab.photoview.PhotoView;
 import uk.co.senab.photoview.PhotoViewAttacher;
 
 public class ImageViewerActivity extends AppCompatActivity {
-    private static final int DOWNLOAD_TAG = 101;
-    private static final int SHARE_TAG = 102;
-
     private static final String EXTRA_IMAGE_ID = "ivamluz.marvelshelf.image_id";
     private static final String EXTRA_IMAGE_URL = "ivamluz.marvelshelf.image_url";
     private static final String EXTRA_IMAGE_TRANSITION_NAME = "ivamluz.marvelshelf.image_transition_namel";
@@ -46,7 +42,7 @@ public class ImageViewerActivity extends AppCompatActivity {
     //    @Bind(R.id.photo)
     protected PhotoView mPhotoView;
     //    @Bind(R.id.photo_loading)
-    protected ProgressBar mLoadingView;
+    protected ProgressBar mProgressBar;
     //    @Bind(R.id.toolbar)
     private Toolbar mToolbar;
 
@@ -98,7 +94,7 @@ public class ImageViewerActivity extends AppCompatActivity {
             }
         });
 
-        mLoadingView = (ProgressBar) findViewById(R.id.photo_loading);
+        mProgressBar = (ProgressBar) findViewById(R.id.photo_loading);
 
         configToolbar();
         setupPhoto(savedInstanceState);
@@ -106,15 +102,15 @@ public class ImageViewerActivity extends AppCompatActivity {
 
     @Override
     public void onDestroy() {
-
         super.onDestroy();
+
         mPhotoViewAttacher.cleanup();
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-
         super.onSaveInstanceState(outState);
+
         outState.putString(EXTRA_IMAGE_ID, mId);
         outState.putString(EXTRA_IMAGE_URL, mUrl);
         outState.putString(EXTRA_IMAGE_TRANSITION_NAME, mTransitionName);
@@ -122,21 +118,19 @@ public class ImageViewerActivity extends AppCompatActivity {
 
     @Override
     public void onStop() {
-
         super.onStop();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_image_viewer, menu);
+
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         switch (item.getItemId()) {
             case R.id.action_download_photo:
                 downloadPhoto();
@@ -167,7 +161,6 @@ public class ImageViewerActivity extends AppCompatActivity {
     }
 
     public void setupPhoto(Bundle savedInstanceBundle) {
-
         if (savedInstanceBundle != null) {
             mId = savedInstanceBundle.getString(EXTRA_IMAGE_ID);
             mUrl = savedInstanceBundle.getString(EXTRA_IMAGE_URL);
@@ -178,9 +171,18 @@ public class ImageViewerActivity extends AppCompatActivity {
             mTransitionName = getIntent().getStringExtra(EXTRA_IMAGE_TRANSITION_NAME);
         }
 
-        // Glide.with(this).load(mUrl).into(mPhotoView);
+        mProgressBar.setVisibility(View.VISIBLE);
+        mPicasso.load(mUrl).fit().into(mPhotoView, new Callback() {
+            @Override
+            public void onSuccess() {
+                mProgressBar.setVisibility(View.GONE);
+            }
 
-        mPicasso.load(mUrl).fit().into(mPhotoView);
+            @Override
+            public void onError() {
+                mProgressBar.setVisibility(View.GONE);
+            }
+        });
     }
 
     private void downloadPhoto() {
@@ -188,17 +190,14 @@ public class ImageViewerActivity extends AppCompatActivity {
     }
 
     private void downloadMedia() {
-
         download(false);
     }
 
     private void downloadAndShare() {
-
         download(true);
     }
 
     private void download(boolean share) {
-
         File storageDir = new File(
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
                 getString(R.string.app_name)
@@ -212,7 +211,6 @@ public class ImageViewerActivity extends AppCompatActivity {
     }
 
     private void openInBrowser() {
-
         try {
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(Uri.parse(mUrl));
@@ -223,14 +221,12 @@ public class ImageViewerActivity extends AppCompatActivity {
     }
 
     private synchronized void toggleVisibility() {
-
         int newVisibility = (mToolbar.getVisibility() == View.VISIBLE) ? View.GONE : View.VISIBLE;
 
         mToolbar.setVisibility(newVisibility);
     }
 
     private class DownloadImageTask extends AsyncTask<String, Void, Boolean> {
-
         private File mDirectory;
         private String mFilename;
         private Context mContext;
@@ -238,7 +234,6 @@ public class ImageViewerActivity extends AppCompatActivity {
         private File mSavedImage;
 
         public DownloadImageTask(Context context, File directory, String filename, Boolean shareAfterDownload) {
-
             this.mDirectory = directory;
             this.mFilename = filename;
             this.mContext = context;
@@ -247,7 +242,6 @@ public class ImageViewerActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(String... urls) {
-
             try {
                 for (int i = 0; i < urls.length; i++) {
                     String url = urls[i];
