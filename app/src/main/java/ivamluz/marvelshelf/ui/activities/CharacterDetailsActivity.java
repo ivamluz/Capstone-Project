@@ -34,6 +34,8 @@ public class CharacterDetailsActivity extends AppCompatActivity implements Comic
     @BindView(R.id.image_details_thumb)
     protected ImageView mCharacterThumbnail;
 
+    @BindView(R.id.toolbar)
+    protected Toolbar mToolbar;
 
     public static Intent newIntent(Context packageContext, MarvelCharacter character) {
         Intent intent = new Intent(packageContext, CharacterDetailsActivity.class);
@@ -45,12 +47,11 @@ public class CharacterDetailsActivity extends AppCompatActivity implements Comic
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_details);
 
+        setContentView(R.layout.activity_details);
         ButterKnife.bind(this);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        setSupportActionBar(mToolbar);
 
         mPicasso = MarvelShelfApplication.getInstance().getPicasso();
 

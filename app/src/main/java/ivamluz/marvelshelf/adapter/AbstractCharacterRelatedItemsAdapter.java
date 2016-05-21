@@ -13,6 +13,8 @@ import com.squareup.picasso.Picasso;
 import java.util.LinkedList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import ivamluz.marvelshelf.MarvelShelfApplication;
 import ivamluz.marvelshelf.R;
 import ivamluz.marvelshelf.infrastructure.MarvelShelfLogger;
@@ -37,7 +39,11 @@ public abstract class AbstractCharacterRelatedItemsAdapter<T> extends RecyclerVi
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         // each data item is just a string in this case
         public Class mType;
+
+        @BindView(R.id.image_item_thumb)
         public ImageView mImageViewThumbnail;
+
+        @BindView(R.id.text_item_title)
         public TextView mTxtViewTitle;
 
         private OnItemClickListener mOnItemClickListener;
@@ -45,10 +51,8 @@ public abstract class AbstractCharacterRelatedItemsAdapter<T> extends RecyclerVi
 
         public ViewHolder(View view) {
             super(view);
-//            ButterKnife.setDebug(true);
-//            ButterKnife.bind(this, view);
-            mImageViewThumbnail = (ImageView) view.findViewById(R.id.image_item_thumb);
-            mTxtViewTitle = (TextView) view.findViewById(R.id.text_item_title);
+
+            ButterKnife.bind(this, view);
 
             view.setOnClickListener(this);
         }

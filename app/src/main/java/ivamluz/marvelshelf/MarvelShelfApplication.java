@@ -72,7 +72,6 @@ public class MarvelShelfApplication extends Application {
         mMarvelApiConfig.getRetrofit().client().setCache(cache);
 
 
-
         return mMarvelApiConfig;
     }
 

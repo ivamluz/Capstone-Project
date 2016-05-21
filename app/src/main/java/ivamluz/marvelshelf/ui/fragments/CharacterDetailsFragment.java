@@ -31,6 +31,9 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import ivamluz.marvelshelf.BuildConfig;
 import ivamluz.marvelshelf.MarvelShelfApplication;
 import ivamluz.marvelshelf.R;
@@ -43,6 +46,8 @@ import ivamluz.marvelshelf.ui.activities.ComicDetailsActivity;
 import ivamluz.marvelshelf.ui.decorators.MarginItemDecoration;
 import ivamluz.marvelshelf.ui.fragments.workers.ComicsLoaderWorkerFragment;
 import ivamluz.marvelshelf.ui.fragments.workers.SeriesLoaderWorkerFragment;
+
+import static butterknife.ButterKnife.findById;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -64,14 +69,26 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
     private AbstractCharacterRelatedItemsAdapter mAdapterCharacterComics;
     private AbstractCharacterRelatedItemsAdapter mAdapterCharacterSeries;
 
-    //    @BindView(R.id.recycler_view_character_comics)
-    private RecyclerView mRecyclerViewCharacterComics;
-    private RecyclerView mRecyclerViewCharacterSeries;
+    @BindView(R.id.text_name)
+    protected TextView mTextCharacterName;
 
-    private CardView mCardCharacterComics;
+    @BindView(R.id.text_description)
+    protected TextView mTextCharacterDescription;
+
+    @BindView(R.id.image_details_thumb)
+    protected ImageView mImageCharacterThumbnail;
+
+    @BindView(R.id.recycler_view_character_comics)
+    protected RecyclerView mRecyclerViewCharacterComics;
+
+    @BindView(R.id.recycler_view_character_series)
+    protected RecyclerView mRecyclerViewCharacterSeries;
+
+    @BindView(R.id.card_character_comics)
+    protected CardView mCardCharacterComics;
+
     private View mViewEmptyComics;
     private ProgressBar mProgressComics;
-
 
     private ComicsLoaderWorkerFragment mComicsLoaderWorkerFragment;
     private SeriesLoaderWorkerFragment mSeriesLoaderWorkerFragment;
@@ -80,13 +97,9 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
     private boolean mShowThumbnail;
     private boolean mShowCharacterName;
 
-    //    @BindView(R.id.characterName)
-    private TextView mTextCharacterName;
-    private TextView mTextCharacterDescription;
-    private ImageView mImageCharacterThumbnail;
-
     private boolean mRegisteredAsSeen = false;
 
+    private Unbinder mUnbinder;
 
     public CharacterDetailsFragment() {
         // Required empty public constructor
@@ -125,9 +138,9 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
         MarvelShelfLogger.debug(LOG_TAG, MarvelShelfLogger.SEPARATOR);
 
         if (!restoreState(savedInstanceState) && getArguments() != null) {
-             mCharacterId = getArguments().getLong(KEY_CHARACTER_ID);
-             mShowThumbnail = getArguments().getBoolean(KEY_SHOW_CHARACTER_THUMBNAIL);
-             mShowCharacterName = getArguments().getBoolean(KEY_SHOW_CHARACTER_NAME);
+            mCharacterId = getArguments().getLong(KEY_CHARACTER_ID);
+            mShowThumbnail = getArguments().getBoolean(KEY_SHOW_CHARACTER_THUMBNAIL);
+            mShowCharacterName = getArguments().getBoolean(KEY_SHOW_CHARACTER_NAME);
         }
 
         logState();
@@ -210,26 +223,26 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_character_details, container, false);
-//        ButterKnife.bind(this, rootView);
-
-        mImageCharacterThumbnail = (ImageView) rootView.findViewById(R.id.image_details_thumb);
-        mTextCharacterName = (TextView) rootView.findViewById(R.id.text_name);
-        mTextCharacterDescription = (TextView) rootView.findViewById(R.id.text_description);
+        mUnbinder = ButterKnife.bind(this, rootView);
 
         mImageCharacterThumbnail.setVisibility(mShowThumbnail ? View.VISIBLE : View.GONE);
         mTextCharacterName.setVisibility(mShowCharacterName ? View.VISIBLE : View.GONE);
 
-
-        mCardCharacterComics = (CardView) rootView.findViewById(R.id.card_character_comics);
-        mViewEmptyComics = mCardCharacterComics.findViewById(R.id.view_blank_state);
-        mProgressComics = (ProgressBar) mCardCharacterComics.findViewById(R.id.progress_bar);
+        mViewEmptyComics = findById(mCardCharacterComics, R.id.view_blank_state);
+        mProgressComics = findById(mCardCharacterComics, R.id.progress_bar);
 
         setupComicsAdapterAndRecyclerView(rootView);
         setupSeriesAdapterAndRecyclerView(rootView);
 
         return rootView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        mUnbinder.unbind();
     }
 
     private void setupComicsAdapterAndRecyclerView(View view) {
@@ -257,7 +270,6 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
 
-        mRecyclerViewCharacterComics = (RecyclerView) view.findViewById(R.id.recycler_view_character_comics);
         mRecyclerViewCharacterComics.setLayoutManager(layoutManager);
         mRecyclerViewCharacterComics.setAdapter(mAdapterCharacterComics);
         int marginRight = getResources().getDimensionPixelSize(R.dimen.card_spacing);
@@ -288,7 +300,6 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
 
-        mRecyclerViewCharacterSeries = (RecyclerView) view.findViewById(R.id.recycler_view_character_series);
         mRecyclerViewCharacterSeries.setLayoutManager(layoutManager);
         mRecyclerViewCharacterSeries.setAdapter(mAdapterCharacterSeries);
         int marginRight = getResources().getDimensionPixelSize(R.dimen.card_spacing);
@@ -374,7 +385,7 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
         mAdapterCharacterComics.notifyDataSetChanged();
 
         mViewEmptyComics.setVisibility(comics.isEmpty() ? View.VISIBLE : View.GONE);
-        mRecyclerViewCharacterComics.setVisibility(comics.isEmpty() ? View.GONE: View.VISIBLE);
+        mRecyclerViewCharacterComics.setVisibility(comics.isEmpty() ? View.GONE : View.VISIBLE);
         mProgressComics.setVisibility(View.GONE);
     }
 
@@ -421,7 +432,7 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
     }
 
     private void startDetailsActivity(View view, Intent intent, String sharedTransitionName) {
-        ImageView imageView = (ImageView) view.findViewById(R.id.image_item_thumb);
+        ImageView imageView = findById(view, R.id.image_item_thumb);
         ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
                 getActivity(),
                 imageView,

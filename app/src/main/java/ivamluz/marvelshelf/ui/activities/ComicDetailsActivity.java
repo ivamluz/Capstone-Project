@@ -30,6 +30,9 @@ public class ComicDetailsActivity extends AppCompatActivity {
     @BindView(R.id.image_details_thumb)
     protected ImageView mComicThumbnail;
 
+    @BindView(R.id.toolbar)
+    protected Toolbar mToolbar;
+
     public static Intent newIntent(Context packageContext, MarvelComic comic) {
         Intent intent = new Intent(packageContext, ComicDetailsActivity.class);
         intent.putExtra(EXTRA_COMIC, comic);
@@ -44,14 +47,12 @@ public class ComicDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_details);
         ButterKnife.bind(this);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        setSupportActionBar(mToolbar);
 
         mPicasso = MarvelShelfApplication.getInstance().getPicasso();
 
         mComic = getIntent().getParcelableExtra(EXTRA_COMIC);
 
-        mComicThumbnail = (ImageView) findViewById(R.id.image_details_thumb);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mComicThumbnail.setTransitionName(getString(R.string.shared_transition_comic_thumb));
         }

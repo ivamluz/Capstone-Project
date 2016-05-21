@@ -13,6 +13,8 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import ivamluz.marvelshelf.MarvelShelfApplication;
 import ivamluz.marvelshelf.R;
 import ivamluz.marvelshelf.data.MarvelShelfContract;
@@ -38,10 +40,13 @@ public class CharactersCursorAdapter extends AbstractCursorRecyclerViewAdapter<C
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        // TODO: fix problem with ButterKnife binding
-//        @BindView(R.id.txt_view_character_name)
+        @BindView(R.id.image_details_thumb)
         public ImageView mImageViewCharacterThumbnail;
+
+        @BindView(R.id.text_name)
         public TextView mTxtViewCharacterName;
+
+        @BindView(R.id.text_description)
         public TextView mTxtViewCharacterDescription;
 
         private OnItemClickListener mOnItemClickListener;
@@ -49,11 +54,8 @@ public class CharactersCursorAdapter extends AbstractCursorRecyclerViewAdapter<C
 
         public ViewHolder(View view) {
             super(view);
-//            ButterKnife.setDebug(true);
-//            ButterKnife.bind(this, view);
-            mImageViewCharacterThumbnail = (ImageView) view.findViewById(R.id.image_details_thumb);
-            mTxtViewCharacterName = (TextView) view.findViewById(R.id.text_name);
-            mTxtViewCharacterDescription = (TextView) view.findViewById(R.id.text_description);
+
+            ButterKnife.bind(this, view);
 
             view.setOnClickListener(this);
         }

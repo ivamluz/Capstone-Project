@@ -13,6 +13,8 @@ import com.squareup.picasso.Picasso;
 import java.util.LinkedList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import ivamluz.marvelshelf.MarvelShelfApplication;
 import ivamluz.marvelshelf.R;
 import ivamluz.marvelshelf.helpers.MarvelImageHelper;
@@ -37,15 +39,16 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        @BindView(R.id.image_thumbnail)
         public ImageView mImageViewThumbnail;
 
         private OnItemClickListener mOnItemClickListener;
 
         public ViewHolder(View view, String transitionName) {
             super(view);
-//            ButterKnife.setDebug(true);
-//            ButterKnife.bind(this, view);
-            mImageViewThumbnail = (ImageView) view.findViewById(R.id.image_thumbnail);
+
+            ButterKnife.bind(this, view);
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 mImageViewThumbnail.setTransitionName(transitionName);
             }

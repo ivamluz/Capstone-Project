@@ -52,6 +52,7 @@ public class CharactersListFragment extends Fragment implements LoaderManager.Lo
 
     private CharactersCursorAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+
     private Unbinder mUnbinder;
 
     public CharactersListFragment() {

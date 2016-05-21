@@ -26,6 +26,8 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import ivamluz.marvelshelf.BuildConfig;
 import ivamluz.marvelshelf.MarvelShelfApplication;
 import ivamluz.marvelshelf.R;
@@ -41,12 +43,14 @@ public class ImageViewerActivity extends AppCompatActivity {
     private static final String EXTRA_IMAGE_URL = String.format("%s.image_url", BuildConfig.APPLICATION_ID);
     private static final String EXTRA_IMAGE_TRANSITION_NAME = String.format("%s.image_transition_name", BuildConfig.APPLICATION_ID);
 
-    //    @Bind(R.id.photo)
+    @BindView(R.id.photo)
     protected PhotoView mPhotoView;
-    //    @Bind(R.id.photo_loading)
+
+    @BindView(R.id.photo_loading)
     protected ProgressBar mProgressBar;
-    //    @Bind(R.id.toolbar)
-    private Toolbar mToolbar;
+
+    @BindView(R.id.toolbar)
+    protected Toolbar mToolbar;
 
     private Picasso mPicasso;
 
@@ -71,15 +75,12 @@ public class ImageViewerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_image_viewer);
-//        ButterKnife.bind(this);
+        ButterKnife.bind(this);
 
         mPicasso = MarvelShelfApplication.getInstance().getPicasso();
 
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-
         mTransitionName = getIntent().getStringExtra(EXTRA_IMAGE_TRANSITION_NAME);
 
-        mPhotoView = (PhotoView) findViewById(R.id.photo);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             if (mTransitionName != null) {
                 mPhotoView.setTransitionName(mTransitionName);
@@ -95,8 +96,6 @@ public class ImageViewerActivity extends AppCompatActivity {
                 toggleVisibility();
             }
         });
-
-        mProgressBar = (ProgressBar) findViewById(R.id.photo_loading);
 
         configToolbar();
         setupPhoto(savedInstanceState);
