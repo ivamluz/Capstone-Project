@@ -34,6 +34,14 @@
     <string name="shared_transition_comic_image">SharedTransitionComicImage</string>
     <string name="shared_transition_series_image">SharedTransitionSeriesImage</string>
 
+    <!-- Permissions -->
+    <string name="rationale_permission_write_external_storage">Needs permission to write file.</string>
+    <string name="permission_denied_write_external_storage">File won\'t be saved.</string>
+    <string name="permission_never_ask_again_write_external_storage">Please allow app to write file under app settings.</string>
+
     <string name="cards_list_empty">Uh-oh, nothing to show here!</string>
-    <string name="retry">RETRY</string>
+
+    <string name="action_retry">RETRY</string>
+    <string name="action_allow">ALLOW</string>
+    <string name="action_deny">DENY</string>
 </resources>

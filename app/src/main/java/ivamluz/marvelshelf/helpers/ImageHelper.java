@@ -9,15 +9,22 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 
+import ivamluz.marvelshelf.infrastructure.MarvelShelfLogger;
+
 /**
  * Created by iluz on 5/15/16.
  */
 public class ImageHelper {
 
+    private static final String LOG_TAG = ImageHelper.class.getSimpleName();
+
     public static File saveBitmapToPNG(Bitmap bitmap, File directory, String filename) throws Exception {
 
         if (!directory.exists()) {
-            directory.mkdirs();
+            boolean created = directory.mkdirs();
+
+            String message = String.format("Created new directory [%s]? %s", directory.getPath(), created);
+            MarvelShelfLogger.debug(LOG_TAG, message);
         }
 
         String formattedFilename = filename + "_" + System.currentTimeMillis() + ".png";

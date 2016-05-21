@@ -41,7 +41,7 @@
         android:clickable="true"
         android:gravity="center"
         android:padding="2dp"
-        android:text="@string/retry"
+        android:text="@string/action_retry"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/colorAccent"
         android:textSize="18sp"

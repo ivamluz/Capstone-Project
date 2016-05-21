@@ -1,6 +1,8 @@
 package ivamluz.marvelshelf.ui.activities;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.os.AsyncTaskCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -33,9 +36,16 @@ import ivamluz.marvelshelf.MarvelShelfApplication;
 import ivamluz.marvelshelf.R;
 import ivamluz.marvelshelf.helpers.ImageHelper;
 import ivamluz.marvelshelf.infrastructure.MarvelShelfLogger;
+import permissions.dispatcher.NeedsPermission;
+import permissions.dispatcher.OnNeverAskAgain;
+import permissions.dispatcher.OnPermissionDenied;
+import permissions.dispatcher.OnShowRationale;
+import permissions.dispatcher.PermissionRequest;
+import permissions.dispatcher.RuntimePermissions;
 import uk.co.senab.photoview.PhotoView;
 import uk.co.senab.photoview.PhotoViewAttacher;
 
+@RuntimePermissions
 public class ImageViewerActivity extends AppCompatActivity {
     private static final String LOG_TAG = ImageViewerActivity.class.getSimpleName();
 
@@ -89,11 +99,9 @@ public class ImageViewerActivity extends AppCompatActivity {
 
         mPhotoViewAttacher = new PhotoViewAttacher(mPhotoView);
         mPhotoViewAttacher.setOnViewTapListener(new PhotoViewAttacher.OnViewTapListener() {
-
             @Override
             public void onViewTap(View view, float x, float y) {
-
-                toggleVisibility();
+                toggleToolbarVisibility();
             }
         });
 
@@ -134,11 +142,11 @@ public class ImageViewerActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_download_photo:
-                downloadPhoto();
+                ImageViewerActivityPermissionsDispatcher.downloadPhotoWithCheck(this);
                 break;
 
             case R.id.action_share_photo:
-                sharePhoto();
+                ImageViewerActivityPermissionsDispatcher.downloadAndShareWithCheck(this);
                 break;
 
             case R.id.action_open_in_browser:
@@ -151,6 +159,13 @@ public class ImageViewerActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        ImageViewerActivityPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
     }
 
     private void configToolbar() {
@@ -186,17 +201,45 @@ public class ImageViewerActivity extends AppCompatActivity {
         });
     }
 
-    private void downloadPhoto() {
-        downloadMedia();
-    }
-
-    private void downloadMedia() {
+    @NeedsPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    protected void downloadPhoto() {
         download(false);
     }
 
-    private void downloadAndShare() {
+    @NeedsPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    protected void downloadAndShare() {
         download(true);
     }
+
+    @OnShowRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    void showRationaleForWriteExternalStorage(final PermissionRequest request) {
+        new AlertDialog.Builder(this)
+                .setMessage(R.string.rationale_permission_write_external_storage)
+                .setPositiveButton(R.string.action_allow, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        request.proceed();
+                    }
+                })
+                .setNegativeButton(R.string.action_deny, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        request.cancel();
+                    }
+                })
+                .show();
+    }
+
+    @OnPermissionDenied(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    void showDeniedForExternalStorage() {
+        Toast.makeText(this, R.string.permission_denied_write_external_storage, Toast.LENGTH_SHORT).show();
+    }
+
+    @OnNeverAskAgain(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    void showNeverAskForExternalStorage() {
+        Toast.makeText(this, R.string.permission_never_ask_again_write_external_storage, Toast.LENGTH_SHORT).show();
+    }
+
 
     private void download(boolean share) {
         File storageDir = new File(
@@ -205,10 +248,6 @@ public class ImageViewerActivity extends AppCompatActivity {
         );
 
         AsyncTaskCompat.executeParallel(new DownloadImageTask(this, storageDir, mId + ".png", share), mUrl);
-    }
-
-    private void sharePhoto() {
-        downloadAndShare();
     }
 
     private void openInBrowser() {
@@ -221,7 +260,7 @@ public class ImageViewerActivity extends AppCompatActivity {
         }
     }
 
-    private synchronized void toggleVisibility() {
+    private synchronized void toggleToolbarVisibility() {
         int newVisibility = (mToolbar.getVisibility() == View.VISIBLE) ? View.GONE : View.VISIBLE;
 
         mToolbar.setVisibility(newVisibility);
@@ -239,6 +278,13 @@ public class ImageViewerActivity extends AppCompatActivity {
             this.mFilename = filename;
             this.mContext = context;
             this.mShareAfter = shareAfterDownload;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            ImageViewerActivity.this.mProgressBar.setVisibility(View.VISIBLE);
         }
 
         @Override
@@ -267,7 +313,16 @@ public class ImageViewerActivity extends AppCompatActivity {
         }
 
         @Override
+        protected void onCancelled() {
+            super.onCancelled();
+
+            ImageViewerActivity.this.mProgressBar.setVisibility(View.GONE);
+        }
+
+        @Override
         protected void onPostExecute(Boolean success) {
+            ImageViewerActivity.this.mProgressBar.setVisibility(View.GONE);
+
             if (!success) {
                 Toast.makeText(ImageViewerActivity.this, getString(R.string.error_try_again), Toast.LENGTH_SHORT).show();
                 return;
