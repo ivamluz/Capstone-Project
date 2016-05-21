@@ -23,13 +23,14 @@
 
     <style name="MarvelShelfTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
-    <style name="MarvelShelfTheme.Widget.Toolbar.Transparent" parent="@style/MarvelShelfTheme.AppBarOverlay">
-        <item name="windowActionBar">false</item>
+    <style name="MarvelShelfTheme.Widget.Toolbar.Translucent" parent="@style/MarvelShelfTheme.AppBarOverlay">
+        <item name="android:windowFullscreen">true</item>
+        <item name="windowActionBar">true</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBarOverlay">true</item>
         <item name="android:windowActionBarOverlay">true</item>
         <item name="android:windowContentOverlay">@null</item>
-        <item name="android:background">@color/transparent</item>
+        <item name="android:background">@color/black_alpha_87</item>
     </style>
 
     <style name="MarvelShelfTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
@@ -53,6 +54,7 @@
 
     <style name="MarvelShelfTheme.Card.Description" parent="@android:style/TextAppearance.Medium">
         <item name="fontPath">fonts/Roboto-Regular.ttf</item>
+        <item name="android:textColor">@color/black_alpha_87</item>
     </style>
 
     <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
