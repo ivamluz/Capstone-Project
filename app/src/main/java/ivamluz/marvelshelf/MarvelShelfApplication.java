@@ -5,6 +5,7 @@ import android.net.Uri;
 
 import com.karumi.marvelapiclient.MarvelApiConfig;
 import com.squareup.okhttp.Cache;
+import com.squareup.okhttp.OkHttpClient;
 import com.squareup.picasso.Picasso;
 
 import java.util.concurrent.TimeUnit;
@@ -17,6 +18,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
  */
 public class MarvelShelfApplication extends Application {
     private static final String LOG_TAG = MarvelShelfApplication.class.getSimpleName();
+    private static final int SIZE_10_MB = 10 * 1024 * 1024;
     private static MarvelShelfApplication sInstance;
 
     private Picasso mPicasso;
@@ -62,17 +64,18 @@ public class MarvelShelfApplication extends Application {
         }
 
         mMarvelApiConfig = new MarvelApiConfig.Builder(BuildConfig.MARVEL_API_PUBLIC_KEY, BuildConfig.MARVEL_API_PRIVATE_KEY).build();
-        mMarvelApiConfig.getRetrofit().client().setConnectTimeout(BuildConfig.HTTP_CONNECTION_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
-        mMarvelApiConfig.getRetrofit().client().setReadTimeout(BuildConfig.HTTP_READ_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
-
-
-        int cacheSize = 10 * 1024 * 1024; // 10 MiB
-        Cache cache = new Cache(getCacheDir(), cacheSize);
-
-        mMarvelApiConfig.getRetrofit().client().setCache(cache);
-
+        configureMarvelApiHttpClient();
 
         return mMarvelApiConfig;
+    }
+
+    protected void configureMarvelApiHttpClient() {
+        OkHttpClient client = mMarvelApiConfig.getRetrofit().client();
+        client.setConnectTimeout(BuildConfig.HTTP_CONNECTION_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
+        client.setReadTimeout(BuildConfig.HTTP_READ_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
+
+        Cache cache = new Cache(getCacheDir(), SIZE_10_MB);
+        client.setCache(cache);
     }
 
     private void setupCaligraphy() {

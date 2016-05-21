@@ -36,6 +36,8 @@ public class MarvelShelfDebugApplication extends MarvelShelfApplication {
                 .debug()
                 .build();
 
+        configureMarvelApiHttpClient();
+
         return mMarvelApiConfig;
     }
 
