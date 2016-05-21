@@ -196,6 +196,7 @@ public class ImageViewerActivity extends AppCompatActivity {
                 .load(mUrl)
                 .fit()
                 .centerInside()
+                .error(R.drawable.character_placeholder_portrait)
                 .into(mPhotoView, new Callback() {
                     @Override
                     public void onSuccess() {
