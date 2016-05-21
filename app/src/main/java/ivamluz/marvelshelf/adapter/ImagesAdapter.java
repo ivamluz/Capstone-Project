@@ -106,7 +106,7 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
         mPicasso.load(thumbnailUrl)
                 .placeholder(R.drawable.character_placeholder_portrait)
                 .fit()
-                .centerCrop()
+                .centerInside()
                 .error(R.drawable.character_placeholder_portrait)
                 .into(holder.mImageViewThumbnail);
     }
