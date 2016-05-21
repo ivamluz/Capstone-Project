@@ -74,7 +74,7 @@ public class SeriesLoaderWorkerFragment extends AbstractWorkerFragment {
         }
 
         mTask = new LoadSeriesTask();
-        mTask.execute();
+        mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     /**

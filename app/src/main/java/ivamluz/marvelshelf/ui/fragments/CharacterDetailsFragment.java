@@ -20,6 +20,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -100,6 +101,7 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
     private boolean mRegisteredAsSeen = false;
 
     private Unbinder mUnbinder;
+    private Button mButtonRetryLoadingComics;
 
     public CharacterDetailsFragment() {
         // Required empty public constructor
@@ -229,13 +231,26 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
         mImageCharacterThumbnail.setVisibility(mShowThumbnail ? View.VISIBLE : View.GONE);
         mTextCharacterName.setVisibility(mShowCharacterName ? View.VISIBLE : View.GONE);
 
-        mViewEmptyComics = findById(mCardCharacterComics, R.id.view_blank_state);
         mProgressComics = findById(mCardCharacterComics, R.id.progress_bar);
+        mViewEmptyComics = findById(mCardCharacterComics, R.id.view_blank_state);
+        mButtonRetryLoadingComics = findById(mViewEmptyComics, R.id.button_blank_state_action);
+        setupRetryButton();
 
         setupComicsAdapterAndRecyclerView(rootView);
         setupSeriesAdapterAndRecyclerView(rootView);
 
         return rootView;
+    }
+
+    private void setupRetryButton() {
+        mButtonRetryLoadingComics.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!mComicsLoaderWorkerFragment.isLoading()) {
+                    mComicsLoaderWorkerFragment.load();
+                }
+            }
+        });
     }
 
     @Override
@@ -363,7 +378,7 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
     public void onComicsLoadingPreExecute() {
         MarvelShelfLogger.debug(LOG_TAG, "onComicsLoadingPreExecute");
 
-        mViewEmptyComics.setVisibility(View.GONE);
+        mViewEmptyComics.setVisibility(View.INVISIBLE);
         mRecyclerViewCharacterComics.setVisibility(View.GONE);
         mProgressComics.setVisibility(View.VISIBLE);
     }
@@ -384,7 +399,7 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
         mAdapterCharacterComics.setItems(comics);
         mAdapterCharacterComics.notifyDataSetChanged();
 
-        mViewEmptyComics.setVisibility(comics.isEmpty() ? View.VISIBLE : View.GONE);
+        mViewEmptyComics.setVisibility(comics.isEmpty() ? View.VISIBLE : View.INVISIBLE);
         mRecyclerViewCharacterComics.setVisibility(comics.isEmpty() ? View.GONE : View.VISIBLE);
         mProgressComics.setVisibility(View.GONE);
     }

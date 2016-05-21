@@ -73,8 +73,15 @@ public class ComicsLoaderWorkerFragment extends AbstractWorkerFragment {
             mCharacterId = getArguments().getLong(ARG_CHARACTER_ID);
         }
 
+        load();
+    }
+
+    @Override
+    public void load() {
+        super.load();
+
         mTask = new LoadComicsTask();
-        mTask.execute();
+        mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     /**
@@ -94,6 +101,8 @@ public class ComicsLoaderWorkerFragment extends AbstractWorkerFragment {
 
         @Override
         protected void onPreExecute() {
+            ComicsLoaderWorkerFragment.this.mIsLoading = true;
+
             if (mListener != null) {
                 mListener.onComicsLoadingPreExecute();
             }
@@ -121,6 +130,8 @@ public class ComicsLoaderWorkerFragment extends AbstractWorkerFragment {
 
         @Override
         protected void onCancelled() {
+            ComicsLoaderWorkerFragment.this.mIsLoading = false;
+
             if (mListener != null) {
                 mListener.onComicsLoadingCancelled();
             }
@@ -128,6 +139,8 @@ public class ComicsLoaderWorkerFragment extends AbstractWorkerFragment {
 
         @Override
         protected void onPostExecute(List<ComicDto> comics) {
+            ComicsLoaderWorkerFragment.this.mIsLoading = false;
+
             if (mListener != null) {
                 mListener.onComicsLoaded(comics);
             }
