@@ -15,7 +15,6 @@ import butterknife.ButterKnife;
 import ivamluz.marvelshelf.BuildConfig;
 import ivamluz.marvelshelf.MarvelShelfApplication;
 import ivamluz.marvelshelf.R;
-import ivamluz.marvelshelf.adapter.ImagesAdapter;
 import ivamluz.marvelshelf.data.model.MarvelComic;
 import ivamluz.marvelshelf.ui.fragments.ComicDetailsFragment;
 
@@ -57,15 +56,15 @@ public class ComicDetailsActivity extends AppCompatActivity {
             mComicThumbnail.setTransitionName(getString(R.string.shared_transition_comic_thumb));
         }
 
-        bindCharacterInfo();
+        bindComicInfo();
         setupComicDetailsFragment();
     }
 
-    private void bindCharacterInfo() {
+    private void bindComicInfo() {
         mPicasso.load(mComic.getThumbnailUrl())
                 .fit()
                 .centerCrop()
-                .error(R.drawable.character_placeholder)
+                .error(R.drawable.character_placeholder_landscape)
                 .into(mComicThumbnail);
 
         setTitle(mComic.getTitle());

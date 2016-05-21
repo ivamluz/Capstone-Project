@@ -156,10 +156,10 @@ public class ComicDetailsFragment extends Fragment implements ImagesAdapter.OnIt
     private void bindValues() {
         if (mShowThumbnail) {
             mPicasso.load(mComic.getThumbnailUrl())
-                    .placeholder(R.drawable.character_placeholder)
+                    .placeholder(R.drawable.character_placeholder_landscape)
                     .fit()
                     .centerCrop()
-                    .error(R.drawable.character_placeholder)
+                    .error(R.drawable.character_placeholder_landscape)
                     .into(mImageThumbnail);
         }
 

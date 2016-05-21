@@ -340,10 +340,10 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
         if (mShowThumbnail) {
             String thumbnailUrl = cursor.getString(cursor.getColumnIndex(MarvelShelfContract.CharacterEntry.COLUMN_THUMBNAIL));
             mPicasso.load(thumbnailUrl)
-                    .placeholder(R.drawable.character_placeholder)
+                    .placeholder(R.drawable.character_placeholder_landscape)
                     .fit()
                     .centerCrop()
-                    .error(R.drawable.character_placeholder)
+                    .error(R.drawable.character_placeholder_landscape)
                     .into(mImageCharacterThumbnail);
         }
 

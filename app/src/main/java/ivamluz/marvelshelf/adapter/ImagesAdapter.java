@@ -104,10 +104,10 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
     protected void setThumbnail(ViewHolder holder, String imageUrl) {
         String thumbnailUrl = MarvelImageHelper.buildSizedImageUrl(imageUrl, MarvelImage.Size.PORTRAIT_XLARGE);
         mPicasso.load(thumbnailUrl)
-                .placeholder(R.drawable.character_placeholder)
+                .placeholder(R.drawable.character_placeholder_portrait)
                 .fit()
                 .centerCrop()
-                .error(R.drawable.character_placeholder)
+                .error(R.drawable.character_placeholder_portrait)
                 .into(holder.mImageViewThumbnail);
     }
 

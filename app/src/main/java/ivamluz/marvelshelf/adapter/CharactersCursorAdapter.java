@@ -85,10 +85,10 @@ public class CharactersCursorAdapter extends AbstractCursorRecyclerViewAdapter<C
     public void onBindViewHolder(ViewHolder viewHolder, Cursor cursor) {
         String thumbnailUrl = cursor.getString(cursor.getColumnIndex(MarvelShelfContract.CharacterEntry.COLUMN_THUMBNAIL));
         mPicasso.load(thumbnailUrl)
-                .placeholder(R.drawable.character_placeholder)
+                .placeholder(R.drawable.character_placeholder_landscape)
                 .fit()
                 .centerCrop()
-                .error(R.drawable.character_placeholder)
+                .error(R.drawable.character_placeholder_landscape)
                 .into(viewHolder.mImageViewCharacterThumbnail);
 
         String name = cursor.getString(cursor.getColumnIndex(MarvelShelfContract.CharacterEntry.COLUMN_NAME));

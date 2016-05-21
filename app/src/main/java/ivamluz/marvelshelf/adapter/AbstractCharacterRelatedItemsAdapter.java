@@ -48,7 +48,6 @@ public abstract class AbstractCharacterRelatedItemsAdapter<T> extends RecyclerVi
 
         private OnItemClickListener mOnItemClickListener;
 
-
         public ViewHolder(View view) {
             super(view);
 
@@ -105,10 +104,10 @@ public abstract class AbstractCharacterRelatedItemsAdapter<T> extends RecyclerVi
     protected void setThumbnail(ViewHolder holder, MarvelImage image) {
         String thumbnailUrl = image.getPath() + "." + image.getExtension();
         mPicasso.load(thumbnailUrl)
-                .placeholder(R.drawable.character_placeholder)
+                .placeholder(R.drawable.character_placeholder_portrait)
                 .fit()
                 .centerCrop()
-                .error(R.drawable.character_placeholder)
+                .error(R.drawable.character_placeholder_portrait)
                 .into(holder.mImageViewThumbnail);
     }
 
@@ -124,6 +123,7 @@ public abstract class AbstractCharacterRelatedItemsAdapter<T> extends RecyclerVi
         }
     }
 
+    @SuppressWarnings("unused")
     public void addItems(List<T> items) {
         if (mItems == null) {
             mItems = new LinkedList<>();
@@ -132,6 +132,7 @@ public abstract class AbstractCharacterRelatedItemsAdapter<T> extends RecyclerVi
         mItems.addAll(items);
     }
 
+    @SuppressWarnings("unused")
     public void addItem(T item) {
         if (mItems == null) {
             mItems = new LinkedList<>();

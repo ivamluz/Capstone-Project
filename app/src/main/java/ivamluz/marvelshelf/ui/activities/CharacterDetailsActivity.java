@@ -69,7 +69,7 @@ public class CharacterDetailsActivity extends AppCompatActivity implements Comic
         mPicasso.load(mCharacter.getThumbnailUrl())
                 .fit()
                 .centerCrop()
-                .error(R.drawable.character_placeholder)
+                .error(R.drawable.character_placeholder_landscape)
                 .into(mCharacterThumbnail);
 
         setTitle(mCharacter.getName());
