@@ -187,18 +187,26 @@ public class ImageViewerActivity extends AppCompatActivity {
             mTransitionName = getIntent().getStringExtra(EXTRA_IMAGE_TRANSITION_NAME);
         }
 
-        mProgressBar.setVisibility(View.VISIBLE);
-        mPicasso.load(mUrl).fit().into(mPhotoView, new Callback() {
-            @Override
-            public void onSuccess() {
-                mProgressBar.setVisibility(View.GONE);
-            }
+        loadPhoto();
+    }
 
-            @Override
-            public void onError() {
-                mProgressBar.setVisibility(View.GONE);
-            }
-        });
+    private void loadPhoto() {
+        mProgressBar.setVisibility(View.VISIBLE);
+        mPicasso
+                .load(mUrl)
+                .fit()
+                .centerInside()
+                .into(mPhotoView, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        mProgressBar.setVisibility(View.GONE);
+                    }
+
+                    @Override
+                    public void onError() {
+                        mProgressBar.setVisibility(View.GONE);
+                    }
+                });
     }
 
     @NeedsPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
