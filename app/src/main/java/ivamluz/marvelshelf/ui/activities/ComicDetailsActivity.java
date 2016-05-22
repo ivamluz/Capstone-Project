@@ -74,7 +74,7 @@ public class ComicDetailsActivity extends BaseDetailsActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_bookmark:
+            case R.id.action_toggle_bookmark:
                 Toast.makeText(this, "NOT IMPLEMEMENTED YET.", Toast.LENGTH_SHORT).show();
                 break;
 

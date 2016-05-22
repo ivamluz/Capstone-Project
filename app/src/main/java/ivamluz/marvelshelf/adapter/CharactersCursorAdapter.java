@@ -2,12 +2,15 @@ package ivamluz.marvelshelf.adapter;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.support.v4.content.res.ResourcesCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,6 +21,7 @@ import butterknife.ButterKnife;
 import ivamluz.marvelshelf.MarvelShelfApplication;
 import ivamluz.marvelshelf.R;
 import ivamluz.marvelshelf.data.MarvelShelfContract;
+import ivamluz.marvelshelf.infrastructure.MarvelShelfLogger;
 
 /**
  * Created by iluz on 5/3/16.
@@ -48,6 +52,9 @@ public class CharactersCursorAdapter extends AbstractCursorRecyclerViewAdapter<C
 
         @BindView(R.id.text_description)
         public TextView mTxtViewCharacterDescription;
+
+        @BindView(R.id.action_toggle_bookmark)
+        public ImageButton mButtomToggleBookmark;
 
         private OnItemClickListener mOnItemClickListener;
 
@@ -99,6 +106,15 @@ public class CharactersCursorAdapter extends AbstractCursorRecyclerViewAdapter<C
             description = mContext.getString(R.string.not_available_description);
         }
         viewHolder.mTxtViewCharacterDescription.setText(Html.fromHtml(description));
+
+
+        int bookmarkId = cursor.getInt(cursor.getColumnIndex(MarvelShelfContract.CharacterEntry.COLUMN_BOOKMARK_KEY));
+        boolean isBookmarked = (bookmarkId > 0);
+        int bookmarkIconId = R.drawable.ic_bookmark_border;
+        if (isBookmarked) {
+            bookmarkIconId = R.drawable.ic_bookmark_filled;
+        }
+        viewHolder.mButtomToggleBookmark.setImageDrawable(ResourcesCompat.getDrawable(mContext.getResources(), bookmarkIconId, mContext.getTheme()));
     }
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {

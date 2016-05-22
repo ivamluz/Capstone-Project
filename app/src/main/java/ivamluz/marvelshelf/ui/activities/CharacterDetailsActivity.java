@@ -11,7 +11,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.karumi.marvelapiclient.model.ComicDto;
 import com.karumi.marvelapiclient.model.SeriesDto;
@@ -128,14 +127,14 @@ public class CharacterDetailsActivity extends BaseDetailsActivity implements Com
             bookmarkIcon = R.drawable.ic_bookmark_filled;
         }
 
-        MenuItem bookmarkMenuItem = menu.findItem(R.id.action_bookmark);
+        MenuItem bookmarkMenuItem = menu.findItem(R.id.action_toggle_bookmark);
         bookmarkMenuItem.setIcon(ResourcesCompat.getDrawable(getResources(), bookmarkIcon, getTheme()));
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_bookmark:
+            case R.id.action_toggle_bookmark:
                 mBookmarksManager.toggleBookmark(mCharacter.getId());
                 break;
 

@@ -3,7 +3,7 @@
       xmlns:tools="http://schemas.android.com/tools"
       tools:context=".ui.activities.CharacterDetailsActivity">
     <item
-        android:id="@+id/action_bookmark"
+        android:id="@+id/action_toggle_bookmark"
         android:orderInCategory="100"
         android:icon="@drawable/ic_bookmark_border"
         android:title="@string/action_bookmark_add"

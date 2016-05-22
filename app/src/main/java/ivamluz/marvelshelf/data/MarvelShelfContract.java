@@ -42,6 +42,8 @@ public class MarvelShelfContract {
         public static final String COLUMN_DETAILS_URL = "details_url";
         public static final String COLUMN_THUMBNAIL = "thumbnail";
 
+        public static final String COLUMN_BOOKMARK_KEY = "FavoriteCharacter__id";
+
         public static final String[] TABLE_COLUMNS = {
                 COLUMN_CHARACTER_KEY,
                 COLUMN_CHARACTER_ID,

@@ -32,8 +32,33 @@ public class MarvelShelfProvider extends ContentProvider {
 
     private MarvelShelfDbHelper mDbHelper;
 
+    private static final HashMap<String, String> mAllCharactersColumnMap = buildAllCharactersColumnMap();
     private static final HashMap<String, String> mBookmarksColumnMap = buildBookmarksColumnMap();
     private static final HashMap<String, String> mSeenCharactersColumnMap = buildSeenCharactersColumnMap();
+
+    private static HashMap<String, String> buildAllCharactersColumnMap() {
+        HashMap<String, String> map = new HashMap<String, String>();
+
+        String characterProjection[] = MarvelShelfContract.CharacterEntry.TABLE_COLUMNS;
+        for (String column : characterProjection) {
+            String qualifiedColumn = MarvelShelfContract.CharacterEntry.TABLE_NAME + "." + column;
+            map.put(qualifiedColumn, qualifiedColumn + " AS " + column);
+        }
+
+        String bookmarkProjection[] = MarvelShelfContract.BookmarkEntry.TABLE_COLUMNS;
+        for (String column : bookmarkProjection) {
+            String qualifiedColumn = MarvelShelfContract.BookmarkEntry.TABLE_NAME + "." + column;
+
+            String alias = column;
+            if (MarvelShelfContract.BookmarkEntry.COLUMN_BOOKMARK_KEY.equals(column)) {
+                alias = qualifiedColumn.replace(".", "_");
+            }
+
+            map.put(qualifiedColumn, qualifiedColumn + " as " + alias);
+        }
+
+        return map;
+    }
 
     private static HashMap<String, String> buildBookmarksColumnMap() {
         HashMap<String, String> map = new HashMap<String, String>();
@@ -41,6 +66,12 @@ public class MarvelShelfProvider extends ContentProvider {
         String bookmarkProjection[] = MarvelShelfContract.BookmarkEntry.TABLE_COLUMNS;
         for (String column : bookmarkProjection) {
             String qualifiedColumn = MarvelShelfContract.BookmarkEntry.TABLE_NAME + "." + column;
+
+            if (MarvelShelfContract.BookmarkEntry.COLUMN_BOOKMARK_KEY.equals(column)) {
+                String alias = qualifiedColumn.replace(".", "_");
+                map.put(qualifiedColumn, qualifiedColumn + " as " + alias);
+            }
+
             map.put(qualifiedColumn, qualifiedColumn + " as " + column);
         }
 
@@ -124,15 +155,32 @@ public class MarvelShelfProvider extends ContentProvider {
     }
 
     private Cursor createAllCharactersQueryCursor(String[] projection, String selection, String[] selectionArgs, String sortOrder, SQLiteDatabase db) {
-        return db.query(
-                MarvelShelfContract.CharacterEntry.TABLE_NAME,
-                projection,
-                selection,
-                selectionArgs,
-                null,
-                null,
-                sortOrder
-        );
+        SQLiteQueryBuilder queryBuilder = createAllCharactersQueryBuilder();
+
+        return queryBuilder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
+    }
+
+    private SQLiteQueryBuilder createAllCharactersQueryBuilder() {
+        SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
+
+        String leftColumn = MarvelShelfContract.CharacterEntry.TABLE_NAME + "." + MarvelShelfContract.CharacterEntry.COLUMN_CHARACTER_ID;
+        String rightColumn = MarvelShelfContract.BookmarkEntry.TABLE_NAME + "." + MarvelShelfContract.BookmarkEntry.COLUMN_CHARACTER_ID;
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(MarvelShelfContract.CharacterEntry.TABLE_NAME);
+        sb.append(" LEFT OUTER JOIN ");
+        sb.append(MarvelShelfContract.BookmarkEntry.TABLE_NAME);
+        sb.append(" ON (");
+        sb.append(leftColumn);
+        sb.append(" = ");
+        sb.append(rightColumn);
+        sb.append(")");
+        String table = sb.toString();
+
+        queryBuilder.setTables(table);
+        queryBuilder.setProjectionMap(mAllCharactersColumnMap);
+
+        return queryBuilder;
     }
 
     private Cursor createCharacterByIdQueryCursor(String[] projection, String sortOrder, SQLiteDatabase db, long _id) {
@@ -264,6 +312,10 @@ public class MarvelShelfProvider extends ContentProvider {
                     throwSqlExceptionForFailedInsertion(uri);
                 }
 
+                getContext().getContentResolver().notifyChange(MarvelShelfContract.SeenCharacterEntry.CONTENT_URI, null);
+                getContext().getContentResolver().notifyChange(MarvelShelfContract.BookmarkEntry.CONTENT_URI, null);
+                getContext().getContentResolver().notifyChange(MarvelShelfContract.CharacterEntry.CONTENT_URI, null);
+
                 break;
             default:
                 throwErrorForUnknowUri(uri);
@@ -325,7 +377,12 @@ public class MarvelShelfProvider extends ContentProvider {
                 throwErrorForUnknowUri(uri);
         }
 
-        getContext().getContentResolver().notifyChange(uri, null);
+        if (rowsDeleted > 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+            getContext().getContentResolver().notifyChange(MarvelShelfContract.CharacterEntry.CONTENT_URI, null);
+            getContext().getContentResolver().notifyChange(MarvelShelfContract.BookmarkEntry.CONTENT_URI, null);
+            getContext().getContentResolver().notifyChange(MarvelShelfContract.SeenCharacterEntry.CONTENT_URI, null);
+        }
 
         return rowsDeleted;
     }
