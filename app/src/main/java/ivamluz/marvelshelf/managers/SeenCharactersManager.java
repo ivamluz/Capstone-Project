@@ -3,6 +3,7 @@ package ivamluz.marvelshelf.managers;
 import android.content.ContentValues;
 import android.content.Context;
 import android.net.Uri;
+import android.os.AsyncTask;
 
 import ivamluz.marvelshelf.data.MarvelShelfContract;
 import ivamluz.marvelshelf.infrastructure.MarvelShelfLogger;
@@ -19,21 +20,33 @@ public class SeenCharactersManager {
         mContext = context;
     }
 
-    public void registrySeenCharacter(long characterId, OnCharacterRegisteredAsSeen callback) {
-        ContentValues values = new ContentValues();
+    public void registrySeenCharacter(final long characterId, final OnCharacterRegisteredAsSeen callback) {
+        new AsyncTask<Void, Void, Uri>() {
+            @Override
+            protected Uri doInBackground(Void... voids) {
+                ContentValues values = new ContentValues();
 
-        values.put(MarvelShelfContract.SeenCharacterEntry.COLUMN_CHARACTER_ID, characterId);
+                values.put(MarvelShelfContract.SeenCharacterEntry.COLUMN_CHARACTER_ID, characterId);
 
-        Uri uri = mContext.getContentResolver().insert(
-                MarvelShelfContract.SeenCharacterEntry.CONTENT_URI,
-                values
-        );
+                Uri uri = mContext.getContentResolver().insert(
+                        MarvelShelfContract.SeenCharacterEntry.CONTENT_URI,
+                        values
+                );
 
-        MarvelShelfLogger.debug(LOG_TAG, "SeenCharacter URI: " + uri);
+                MarvelShelfLogger.debug(LOG_TAG, "SeenCharacter URI: " + uri);
 
-        if (callback != null) {
-            callback.onRegisteredAsSeen(uri);
-        }
+                return uri;
+            }
+
+            @Override
+            protected void onPostExecute(Uri uri) {
+                super.onPostExecute(uri);
+
+                if (callback != null) {
+                    callback.onRegisteredAsSeen(uri);
+                }
+            }
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     public interface OnCharacterRegisteredAsSeen {
