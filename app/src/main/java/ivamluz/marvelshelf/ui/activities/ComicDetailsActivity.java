@@ -76,6 +76,11 @@ public class ComicDetailsActivity extends BaseDetailsActivity {
         switch (item.getItemId()) {
             case R.id.action_bookmark:
                 Toast.makeText(this, "NOT IMPLEMEMENTED YET.", Toast.LENGTH_SHORT).show();
+                break;
+
+            case R.id.action_share:
+                share(mComic.getTitle(), mComic.getDetailsUrl());
+                break;
 
             case R.id.action_see_details:
                 openUrlExternally(mComic.getDetailsUrl());
