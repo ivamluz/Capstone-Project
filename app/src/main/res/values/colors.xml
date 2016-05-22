@@ -10,7 +10,10 @@
 
     <color name="black">#000000</color>
     <color name="black_alpha_87">#DD000000</color>
+    <color name="black_alpha_80">#CC000000</color>
     <color name="black_alpha_70">#B2000000</color>
     <color name="black_alpha_50">#80000000</color>
+    <color name="black_alpha_38">#61000000</color>
+    <color name="black_alpha_12">#1E000000</color>
     <color name="black_alpha_6">#0F000000</color>
 </resources>

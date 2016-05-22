@@ -171,9 +171,7 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        restoreInstaceState(savedInstanceState);
-
-
+        restoreInstanceState(savedInstanceState);
     }
 
     private void logState() {
@@ -215,7 +213,7 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
         });
     }
 
-    private void restoreInstaceState(Bundle savedInstanceState) {
+    private void restoreInstanceState(Bundle savedInstanceState) {
         if (savedInstanceState == null) {
             return;
         }

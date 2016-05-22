@@ -5,8 +5,11 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -61,8 +64,23 @@ public class ComicDetailsActivity extends BaseDetailsActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_comic, menu);
+
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.action_bookmark:
+                Toast.makeText(this, "NOT IMPLEMEMENTED YET.", Toast.LENGTH_SHORT).show();
+
+            case R.id.action_see_details:
+                openUrlExternally(mComic.getDetailsUrl());
+                break;
+
             case android.R.id.home:
                 onBackPressed();
                 break;
@@ -78,7 +96,7 @@ public class ComicDetailsActivity extends BaseDetailsActivity {
                 .error(R.drawable.character_placeholder_landscape)
                 .into(mComicThumbnail);
 
-        setTitle(mComic.getTitle());
+        getSupportActionBar().setTitle(mComic.getTitle());
     }
 
     private void setupComicDetailsFragment() {

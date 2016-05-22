@@ -5,8 +5,11 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.karumi.marvelapiclient.model.ComicDto;
 import com.karumi.marvelapiclient.model.SeriesDto;
@@ -74,8 +77,23 @@ public class CharacterDetailsActivity extends BaseDetailsActivity implements Com
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_character, menu);
+
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.action_bookmark:
+                Toast.makeText(this, "NOT IMPLEMEMENTED YET.", Toast.LENGTH_SHORT).show();
+
+            case R.id.action_see_details:
+                openUrlExternally(mCharacter.getDetailsUrl());
+                break;
+
             case android.R.id.home:
                 onBackPressed();
                 break;
@@ -91,7 +109,7 @@ public class CharacterDetailsActivity extends BaseDetailsActivity implements Com
                 .error(R.drawable.character_placeholder_landscape)
                 .into(mCharacterThumbnail);
 
-        setTitle(mCharacter.getName());
+        getSupportActionBar().setTitle(mCharacter.getName());
     }
 
     private void setupCharacterDetailsFragment(Bundle savedInstanceState) {

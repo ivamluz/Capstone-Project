@@ -20,8 +20,11 @@
     <string name="not_available_description">Description not available.</string>
 
     <string name="save_image_success">Image saved successfully.</string>
-    <string name="error_try_again">Something was wrong. Please try again.</string>
     <string name="share_with">Share with...</string>
+
+    <!-- errors -->
+    <string name="error_try_again">Something was wrong. Please try again.</string>
+    <string name="invalid_url">URL is invalid.</string>
 
     <!-- menus -->
     <string name="menu_share_image">Share image</string>
@@ -44,4 +47,8 @@
     <string name="action_retry">RETRY</string>
     <string name="action_allow">ALLOW</string>
     <string name="action_deny">DENY</string>
+    <string name="action_see_details">See details</string>
+    <string name="action_share">Share</string>
+    <string name="action_bookmark_add">Add to bookmarks</string>
+    <string name="action_bookmark_remove">Remove from bookmarks</string>
 </resources>
