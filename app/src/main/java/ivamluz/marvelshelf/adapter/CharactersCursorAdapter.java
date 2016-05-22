@@ -74,7 +74,7 @@ public class CharactersCursorAdapter extends AbstractCursorRecyclerViewAdapter<C
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_main_info, parent, false);
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_character_main_info, parent, false);
         ViewHolder vh = new ViewHolder(itemView);
         vh.setOnItemClickListener(mOnItemClickListener);
 
