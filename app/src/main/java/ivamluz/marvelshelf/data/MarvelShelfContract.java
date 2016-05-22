@@ -79,6 +79,10 @@ public class MarvelShelfContract {
                 COLUMN_BOOKMARK_KEY,
                 COLUMN_ADDED_ON
         };
+
+        public static Uri buildBookmarkUri(long id) {
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
     }
 
     public static final class SeenCharacterEntry implements BaseColumns {

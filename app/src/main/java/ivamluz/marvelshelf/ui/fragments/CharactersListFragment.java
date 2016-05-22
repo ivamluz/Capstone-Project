@@ -17,6 +17,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import java.util.Arrays;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -91,6 +93,9 @@ public class CharactersListFragment extends Fragment implements LoaderManager.Lo
         View rootView = inflater.inflate(R.layout.fragment_characters_list, container, false);
         mUnbinder = ButterKnife.bind(this, rootView);
 
+        mAdapter = new CharactersCursorAdapter(getContext(), null);
+        mAdapter.setOnItemClickListener(this);
+
         mLayoutManager = new LinearLayoutManager(getContext());
         mCharactersRecyclerView.setLayoutManager(mLayoutManager);
         mCharactersRecyclerView.setAdapter(mAdapter);
@@ -127,13 +132,20 @@ public class CharactersListFragment extends Fragment implements LoaderManager.Lo
 
     @Override
     public void onLoadFinished(Loader loader, Cursor cursor) {
+        if (!isKnownLoader(loader.getId())) {
+            return;
+        }
+
         cursor.moveToFirst();
 
-        mAdapter = new CharactersCursorAdapter(getContext(), cursor);
-        mAdapter.setOnItemClickListener(this);
-
-        mCharactersRecyclerView.setAdapter(mAdapter);
+        mAdapter.swapCursor(cursor);
+        mAdapter.notifyDataSetChanged();
     }
+
+    private boolean isKnownLoader(int loaderId) {
+        return Arrays.asList(LIST_TYPE_ALL, LIST_TYPE_BOOKMARKS, LIST_TYPE_SEEN).contains(loaderId);
+    }
+
 
     @Override
     public void onLoaderReset(Loader loader) {

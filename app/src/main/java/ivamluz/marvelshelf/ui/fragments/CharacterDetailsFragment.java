@@ -375,17 +375,26 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
 
     @Override
     public Loader onCreateLoader(int id, Bundle args) {
-        Uri characterUri = MarvelShelfContract.CharacterEntry.buildCharacterUri(mCharacterId);
-        return new CursorLoader(getContext(), characterUri, null, null, null, null);
+        switch (id) {
+            case CHARACTER_LOADER:
+                Uri characterUri = MarvelShelfContract.CharacterEntry.buildCharacterUri(mCharacterId);
+                return new CursorLoader(getContext(), characterUri, null, null, null, null);
+            default:
+                String message = String.format("Invalid loader id: %s", id);
+                throw new IllegalArgumentException(message);
+        }
     }
 
     @Override
     public void onLoadFinished(Loader loader, Cursor cursor) {
-        cursor.moveToFirst();
+        switch (loader.getId()) {
+            case CHARACTER_LOADER:
+                cursor.moveToFirst();
+                mMarvelCharacter = MarvelCharacter.fromCursor(cursor);
+                bindValues();
 
-        mMarvelCharacter = MarvelCharacter.fromCursor(cursor);
-
-        bindValues();
+                return;
+        }
     }
 
     @Override

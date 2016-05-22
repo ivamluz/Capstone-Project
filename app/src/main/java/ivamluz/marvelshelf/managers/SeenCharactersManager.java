@@ -23,7 +23,6 @@ public class SeenCharactersManager {
         ContentValues values = new ContentValues();
 
         values.put(MarvelShelfContract.SeenCharacterEntry.COLUMN_CHARACTER_ID, characterId);
-//        values.put(MarvelShelfContract.SeenCharacterEntry.FLAG_REPLACE, true);
 
         Uri uri = mContext.getContentResolver().insert(
                 MarvelShelfContract.SeenCharacterEntry.CONTENT_URI,

@@ -103,10 +103,10 @@ public class MarvelShelfProvider extends ContentProvider {
             case BOOKMARK:
                 cursor = createBookmarkedCharactersQueryCursor(projection, selection, selectionArgs, sortOrder, db);
                 break;
-//            case BOOKMARK_CHARACTER_ID:
-//                long _characterId = ContentUris.parseId(uri);
-//                cursor = createBookmarkByCharacterIdQuery(projection, sortOrder, db, _characterId);
-//                break;
+            case BOOKMARK_CHARACTER_ID:
+                long characterId = ContentUris.parseId(uri);
+                cursor = createBookmarkByCharacterIdQuery(projection, sortOrder, db, characterId);
+                break;
             case SEEN_CHARACTER:
                 cursor = createSeenCharactersQueryCursor(projection, selection, selectionArgs, sortOrder, db);
                 break;
@@ -178,12 +178,12 @@ public class MarvelShelfProvider extends ContentProvider {
         return queryBuilder;
     }
 
-    private Cursor createBookmarkByCharacterIdQuery(String[] projection, String sortOrder, SQLiteDatabase db, long _id) {
+    private Cursor createBookmarkByCharacterIdQuery(String[] projection, String sortOrder, SQLiteDatabase db, long characterId) {
         return db.query(
-                MarvelShelfContract.CharacterEntry.TABLE_NAME,
+                MarvelShelfContract.BookmarkEntry.TABLE_NAME,
                 projection,
-                MarvelShelfContract.CharacterEntry._ID + " = ?",
-                new String[]{String.valueOf(_id)},
+                MarvelShelfContract.BookmarkEntry.COLUMN_CHARACTER_ID + " = ?",
+                new String[]{String.valueOf(characterId)},
                 null,
                 null,
                 sortOrder
@@ -258,6 +258,13 @@ public class MarvelShelfProvider extends ContentProvider {
                 }
 
                 break;
+            case BOOKMARK:
+                returnUri = insertBookmarkedCharacter(contentValues);
+                if (returnUri == null) {
+                    throwSqlExceptionForFailedInsertion(uri);
+                }
+
+                break;
             default:
                 throwErrorForUnknowUri(uri);
         }
@@ -269,7 +276,6 @@ public class MarvelShelfProvider extends ContentProvider {
 
     private Uri insertSeenCharacter(ContentValues contentValues) {
         final SQLiteDatabase db = mDbHelper.getWritableDatabase();
-
 
         Uri returnUri = null;
 
@@ -284,13 +290,44 @@ public class MarvelShelfProvider extends ContentProvider {
         return returnUri;
     }
 
+    private Uri insertBookmarkedCharacter(ContentValues contentValues) {
+        final SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+        Uri returnUri = null;
+
+        long _id = db.insertWithOnConflict(MarvelShelfContract.BookmarkEntry.TABLE_NAME, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
+        if (_id > 0) {
+            returnUri = MarvelShelfContract.BookmarkEntry.buildBookmarkUri(_id);
+
+            String message = String.format("%s new URI: %s", MarvelShelfContract.BookmarkEntry.TABLE_NAME, returnUri);
+            MarvelShelfLogger.debug(LOG_TAG, message);
+        }
+
+        return returnUri;
+    }
+
     private Uri throwSqlExceptionForFailedInsertion(Uri uri) {
         throw new android.database.SQLException("Failed to insert row into " + uri);
     }
 
     @Override
-    public int delete(Uri uri, String s, String[] strings) {
-        return 0;
+    public int delete(Uri uri, String whereClause, String[] whereArgs) {
+        final SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+        int rowsDeleted = 0;
+
+        switch (sUriMatcher.match(uri)) {
+            case BOOKMARK:
+                rowsDeleted = db.delete(MarvelShelfContract.BookmarkEntry.TABLE_NAME, whereClause, whereArgs);
+
+                break;
+            default:
+                throwErrorForUnknowUri(uri);
+        }
+
+        getContext().getContentResolver().notifyChange(uri, null);
+
+        return rowsDeleted;
     }
 
     @Override
@@ -308,7 +345,7 @@ public class MarvelShelfProvider extends ContentProvider {
         matcher.addURI(content, MarvelShelfContract.PATH_CHARACTER, CHARACTER);
         matcher.addURI(content, MarvelShelfContract.PATH_CHARACTER + "/#", CHARACTER_ID);
         matcher.addURI(content, MarvelShelfContract.PATH_BOOKMARK, BOOKMARK);
-//        matcher.addURI(content, MarvelShelfContract.PATH_BOOKMARK + "/#", BOOKMARK_CHARACTER_ID);
+        matcher.addURI(content, MarvelShelfContract.PATH_BOOKMARK + "/#", BOOKMARK_CHARACTER_ID);
         matcher.addURI(content, MarvelShelfContract.PATH_SEEN_CHARACTER, SEEN_CHARACTER);
 
         return matcher;

@@ -2,8 +2,10 @@ package ivamluz.marvelshelf.ui.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,6 +25,7 @@ import ivamluz.marvelshelf.BuildConfig;
 import ivamluz.marvelshelf.MarvelShelfApplication;
 import ivamluz.marvelshelf.R;
 import ivamluz.marvelshelf.data.model.MarvelCharacter;
+import ivamluz.marvelshelf.managers.BookmarksManager;
 import ivamluz.marvelshelf.ui.fragments.CharacterDetailsFragment;
 import ivamluz.marvelshelf.ui.fragments.workers.ComicsLoaderWorkerFragment;
 import ivamluz.marvelshelf.ui.fragments.workers.SeriesLoaderWorkerFragment;
@@ -41,6 +44,10 @@ public class CharacterDetailsActivity extends BaseDetailsActivity implements Com
     @BindView(R.id.toolbar)
     protected Toolbar mToolbar;
 
+    private BookmarksManager mBookmarksManager;
+
+    private Uri mBookmarkUri;
+
     public static Intent newIntent(Context packageContext, MarvelCharacter character) {
         Intent intent = new Intent(packageContext, CharacterDetailsActivity.class);
         intent.putExtra(EXTRA_CHARACTER, character);
@@ -55,6 +62,8 @@ public class CharacterDetailsActivity extends BaseDetailsActivity implements Com
         setContentView(R.layout.activity_details);
         ButterKnife.bind(this);
 
+        setupBookmarksManager();
+
         configToolbar(mToolbar);
 
         mPicasso = MarvelShelfApplication.getInstance().getPicasso();
@@ -67,6 +76,33 @@ public class CharacterDetailsActivity extends BaseDetailsActivity implements Com
 
         bindCharacterInfo();
         setupCharacterDetailsFragment(savedInstanceState);
+
+        mBookmarksManager.loadBookmark(mCharacter.getId());
+    }
+
+    private void setupBookmarksManager() {
+        mBookmarksManager = new BookmarksManager(this, new BookmarksManager.BookmarkCallbacks() {
+            @Override
+            public void onBookmarkLoaded(Uri uri) {
+                mBookmarkUri = uri;
+
+                invalidateOptionsMenu();
+            }
+
+            @Override
+            public void onBookmarkAdded(Uri uri) {
+                mBookmarkUri = uri;
+
+                invalidateOptionsMenu();
+            }
+
+            @Override
+            public void onBookmarkRemoved() {
+                mBookmarkUri = null;
+
+                invalidateOptionsMenu();
+            }
+        });
     }
 
     @Override
@@ -81,14 +117,26 @@ public class CharacterDetailsActivity extends BaseDetailsActivity implements Com
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_character, menu);
 
+        setBookmarkMenuItemIcon(menu);
+
         return true;
+    }
+
+    private void setBookmarkMenuItemIcon(Menu menu) {
+        int bookmarkIcon = R.drawable.ic_bookmark_border;
+        if (null != mBookmarkUri) {
+            bookmarkIcon = R.drawable.ic_bookmark_filled;
+        }
+
+        MenuItem bookmarkMenuItem = menu.findItem(R.id.action_bookmark);
+        bookmarkMenuItem.setIcon(ResourcesCompat.getDrawable(getResources(), bookmarkIcon, getTheme()));
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_bookmark:
-                Toast.makeText(this, "NOT IMPLEMEMENTED YET.", Toast.LENGTH_SHORT).show();
+                mBookmarksManager.toggleBookmark(mCharacter.getId());
                 break;
 
             case R.id.action_share:
