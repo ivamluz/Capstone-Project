@@ -208,11 +208,12 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
 
         MarvelShelfLogger.debug(LOG_TAG, String.format("Registering character %s as seen.", mCharacterId));
 
-        new SeenCharactersManager(getContext()).registrySeenCharacter(mCharacterId, new SeenCharactersManager.OnCharacterRegisteredAsSeen() {
+        new SeenCharactersManager(getContext()).registrySeenCharacter(mCharacterId, new SeenCharactersManager.OnRegisterCharacterAsSeen() {
             @Override
-            public void onRegisteredAsSeen(Uri uri) {
-                CharacterDetailsFragment.this.mRegisteredAsSeen = true;
-                MarvelShelfLogger.debug(LOG_TAG, "Register callback. Uri: " + uri.toString());
+            public void onRegisterAsSeen(boolean wasRegistered) {
+                CharacterDetailsFragment.this.mRegisteredAsSeen = wasRegistered;
+
+                MarvelShelfLogger.debug(LOG_TAG, "onRegisterAsSeen - Registered: " + wasRegistered);
             }
         });
     }

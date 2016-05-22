@@ -3,7 +3,6 @@ package ivamluz.marvelshelf.adapter;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.content.res.ResourcesCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.TextUtils;
@@ -18,10 +17,10 @@ import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import ivamluz.marvelshelf.MarvelShelfApplication;
 import ivamluz.marvelshelf.R;
 import ivamluz.marvelshelf.data.MarvelShelfContract;
-import ivamluz.marvelshelf.infrastructure.MarvelShelfLogger;
 
 /**
  * Created by iluz on 5/3/16.
@@ -36,6 +35,8 @@ public class CharactersCursorAdapter extends AbstractCursorRecyclerViewAdapter<C
 
     private OnItemClickListener mOnItemClickListener;
 
+    private OnToogleBookmarkListener mOnToogleBookmarkListener;
+
     public CharactersCursorAdapter(Context context, Cursor cursor) {
         super(context, cursor);
         mContext = context;
@@ -44,6 +45,8 @@ public class CharactersCursorAdapter extends AbstractCursorRecyclerViewAdapter<C
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        public long mCharacterId;
+
         @BindView(R.id.image_details_thumb)
         public ImageView mImageViewCharacterThumbnail;
 
@@ -58,6 +61,8 @@ public class CharactersCursorAdapter extends AbstractCursorRecyclerViewAdapter<C
 
         private OnItemClickListener mOnItemClickListener;
 
+        private OnToogleBookmarkListener mOnToogleBookmarkListener;
+
 
         public ViewHolder(View view) {
             super(view);
@@ -71,10 +76,22 @@ public class CharactersCursorAdapter extends AbstractCursorRecyclerViewAdapter<C
             mOnItemClickListener = onItemClickListener;
         }
 
+        public void setOnToogleBookmarkListener(OnToogleBookmarkListener onToogleBookmarkListener) {
+            mOnToogleBookmarkListener = onToogleBookmarkListener;
+        }
+
         @Override
         public void onClick(View view) {
             if (mOnItemClickListener != null) {
                 mOnItemClickListener.onItemClick(getAdapterPosition(), view);
+            }
+        }
+
+        @SuppressWarnings("unused")
+        @OnClick(R.id.action_toggle_bookmark)
+        public void toggleBookmark(View view) {
+            if (mOnToogleBookmarkListener != null) {
+                mOnToogleBookmarkListener.onToogleBookmark(mCharacterId);
             }
         }
     }
@@ -84,12 +101,15 @@ public class CharactersCursorAdapter extends AbstractCursorRecyclerViewAdapter<C
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_character_main_info, parent, false);
         ViewHolder vh = new ViewHolder(itemView);
         vh.setOnItemClickListener(mOnItemClickListener);
+        vh.setOnToogleBookmarkListener(mOnToogleBookmarkListener);
 
         return vh;
     }
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, Cursor cursor) {
+        viewHolder.mCharacterId = cursor.getLong(cursor.getColumnIndex(MarvelShelfContract.CharacterEntry.COLUMN_CHARACTER_ID));
+
         String thumbnailUrl = cursor.getString(cursor.getColumnIndex(MarvelShelfContract.CharacterEntry.COLUMN_THUMBNAIL));
         mPicasso.load(thumbnailUrl)
                 .placeholder(R.drawable.character_placeholder_landscape)
@@ -108,8 +128,7 @@ public class CharactersCursorAdapter extends AbstractCursorRecyclerViewAdapter<C
         viewHolder.mTxtViewCharacterDescription.setText(Html.fromHtml(description));
 
 
-        int bookmarkId = cursor.getInt(cursor.getColumnIndex(MarvelShelfContract.CharacterEntry.COLUMN_BOOKMARK_KEY));
-        boolean isBookmarked = (bookmarkId > 0);
+        boolean isBookmarked = cursor.getInt(cursor.getColumnIndex(MarvelShelfContract.CharacterEntry.COLUMN_IS_BOOKMARK)) > 0;
         int bookmarkIconId = R.drawable.ic_bookmark_border;
         if (isBookmarked) {
             bookmarkIconId = R.drawable.ic_bookmark_filled;
@@ -121,7 +140,15 @@ public class CharactersCursorAdapter extends AbstractCursorRecyclerViewAdapter<C
         mOnItemClickListener = onItemClickListener;
     }
 
+    public void setOnToogleBookmarkListener(OnToogleBookmarkListener onToogleBookmarkListener) {
+        mOnToogleBookmarkListener = onToogleBookmarkListener;
+    }
+
     public interface OnItemClickListener {
-        void onItemClick(int position, View v);
+        void onItemClick(int position, View view);
+    }
+
+    public interface OnToogleBookmarkListener {
+        void onToogleBookmark(long characterId);
     }
 }

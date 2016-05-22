@@ -20,7 +20,8 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/details_thumb_height"
             android:layout_alignParentTop="true"
-            android:transitionName="@string/shared_transition_character_image"/>
+            android:transitionName="@string/shared_transition_character_image"
+            tools:src="@drawable/character_placeholder_landscape"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -59,9 +60,10 @@
                     android:id="@+id/action_toggle_bookmark"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:background="@color/transparent"
+
                     android:src="@drawable/ic_bookmark_border"
-                    android:tint="@color/black_alpha_50"/>
+                    android:tint="@color/black_alpha_50"
+                    android:background="?attr/selectableItemBackgroundBorderless"/>
             </RelativeLayout>
         </android.support.v7.widget.Toolbar>
 

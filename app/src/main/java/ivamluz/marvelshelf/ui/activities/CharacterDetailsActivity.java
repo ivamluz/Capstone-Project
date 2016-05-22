@@ -2,7 +2,6 @@ package ivamluz.marvelshelf.ui.activities;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.res.ResourcesCompat;
@@ -45,8 +44,6 @@ public class CharacterDetailsActivity extends BaseDetailsActivity implements Com
 
     private BookmarksManager mBookmarksManager;
 
-    private Uri mBookmarkUri;
-
     public static Intent newIntent(Context packageContext, MarvelCharacter character) {
         Intent intent = new Intent(packageContext, CharacterDetailsActivity.class);
         intent.putExtra(EXTRA_CHARACTER, character);
@@ -75,29 +72,13 @@ public class CharacterDetailsActivity extends BaseDetailsActivity implements Com
 
         bindCharacterInfo();
         setupCharacterDetailsFragment(savedInstanceState);
-
-        mBookmarksManager.loadBookmark(mCharacter.getId());
     }
 
     private void setupBookmarksManager() {
         mBookmarksManager = new BookmarksManager(this, new BookmarksManager.BookmarkCallbacks() {
             @Override
-            public void onBookmarkLoaded(Uri uri) {
-                mBookmarkUri = uri;
-
-                invalidateOptionsMenu();
-            }
-
-            @Override
-            public void onBookmarkAdded(Uri uri) {
-                mBookmarkUri = uri;
-
-                invalidateOptionsMenu();
-            }
-
-            @Override
-            public void onBookmarkRemoved() {
-                mBookmarkUri = null;
+            public void onBookmarkToogled(boolean isBookmarked) {
+                mCharacter.setBookmarked(isBookmarked);
 
                 invalidateOptionsMenu();
             }
@@ -123,7 +104,7 @@ public class CharacterDetailsActivity extends BaseDetailsActivity implements Com
 
     private void setBookmarkMenuItemIcon(Menu menu) {
         int bookmarkIcon = R.drawable.ic_bookmark_border;
-        if (null != mBookmarkUri) {
+        if (mCharacter.isBookmarked()) {
             bookmarkIcon = R.drawable.ic_bookmark_filled;
         }
 

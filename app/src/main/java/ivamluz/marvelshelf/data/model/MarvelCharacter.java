@@ -16,6 +16,8 @@ public class MarvelCharacter implements Parcelable {
     private String mThumbnailUrl;
     private String mDetailsUrl;
     private String mModified;
+    private boolean mIsBookmarked;
+    private String mLastSeen;
 
     public MarvelCharacter() {
         super();
@@ -29,6 +31,8 @@ public class MarvelCharacter implements Parcelable {
         character.setThumbnailUrl(cursor.getString(cursor.getColumnIndex(MarvelShelfContract.CharacterEntry.COLUMN_THUMBNAIL)));
         character.setDetailsUrl(cursor.getString(cursor.getColumnIndex(MarvelShelfContract.CharacterEntry.COLUMN_DETAILS_URL)));
         character.setModified(cursor.getString(cursor.getColumnIndex(MarvelShelfContract.CharacterEntry.COLUMN_MODIFIED)));
+        character.setBookmarked(cursor.getInt(cursor.getColumnIndex(MarvelShelfContract.CharacterEntry.COLUMN_IS_BOOKMARK)) > 0);
+        character.setLastSeen(cursor.getString(cursor.getColumnIndex(MarvelShelfContract.CharacterEntry.COLUMN_LAST_SEEN)));
 
         return character;
     }
@@ -40,6 +44,8 @@ public class MarvelCharacter implements Parcelable {
         mThumbnailUrl = parcel.readString();
         mDetailsUrl = parcel.readString();
         mModified = parcel.readString();
+        mIsBookmarked = (parcel.readByte() == 1);
+        mLastSeen = parcel.readString();
     }
 
     public static final Creator<MarvelCharacter> CREATOR = new Creator<MarvelCharacter>() {
@@ -67,6 +73,8 @@ public class MarvelCharacter implements Parcelable {
         parcel.writeString(mThumbnailUrl);
         parcel.writeString(mDetailsUrl);
         parcel.writeString(mModified);
+        parcel.writeByte((byte) (mIsBookmarked ? 1 : 0));
+        parcel.writeString(mLastSeen);
     }
 
     public long getId() {
@@ -120,6 +128,24 @@ public class MarvelCharacter implements Parcelable {
 
     public MarvelCharacter setModified(String modified) {
         mModified = modified;
+        return this;
+    }
+
+    public boolean isBookmarked() {
+        return mIsBookmarked;
+    }
+
+    public MarvelCharacter setBookmarked(boolean bookmarked) {
+        mIsBookmarked = bookmarked;
+        return this;
+    }
+
+    public String getLastSeen() {
+        return mLastSeen;
+    }
+
+    public MarvelCharacter setLastSeen(String lastSeen) {
+        mLastSeen = lastSeen;
         return this;
     }
 }
