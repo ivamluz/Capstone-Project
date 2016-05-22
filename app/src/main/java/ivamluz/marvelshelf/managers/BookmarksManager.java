@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 
 import ivamluz.marvelshelf.data.MarvelShelfContract;
 import ivamluz.marvelshelf.infrastructure.MarvelShelfLogger;
@@ -35,31 +36,43 @@ public class BookmarksManager {
         }
     }
 
-    public void toggleBookmark(long characterId) {
-        Uri uri = MarvelShelfContract.BookmarkEntry.buildBookmarkUri(characterId);
-        Cursor cursor = mContext.getContentResolver().query(uri, null, null, null, null);
+    public void toggleBookmark(final long characterId) {
+        new AsyncTask<Void, Void, Uri>() {
+            @Override
+            protected Uri doInBackground(Void... voids) {
+                Uri uri = MarvelShelfContract.BookmarkEntry.buildBookmarkUri(characterId);
+                Cursor cursor = mContext.getContentResolver().query(uri, null, null, null, null);
 
-        boolean isBookmarked = (cursor.getCount() != 0);
-        if (isBookmarked) { // delete
-            cursor.moveToFirst();
+                boolean isBookmarked = (cursor.getCount() != 0);
+                if (isBookmarked) { // delete
+                    cursor.moveToFirst();
 
-            int _id = cursor.getInt(cursor.getColumnIndex(MarvelShelfContract.BookmarkEntry.COLUMN_BOOKMARK_KEY));
+                    int _id = cursor.getInt(cursor.getColumnIndex(MarvelShelfContract.BookmarkEntry.COLUMN_BOOKMARK_KEY));
 
-            String where = "_id = ?";
-            String[] args = new String[]{String.valueOf(_id)};
+                    String where = "_id = ?";
+                    String[] args = new String[]{String.valueOf(_id)};
 
-            int rowsDeleted = mContext.getContentResolver().delete(MarvelShelfContract.BookmarkEntry.CONTENT_URI, where, args);
+                    int rowsDeleted = mContext.getContentResolver().delete(MarvelShelfContract.BookmarkEntry.CONTENT_URI, where, args);
 
-            if (rowsDeleted > 0) {
-                uri = null;
+                    if (rowsDeleted > 0) {
+                        uri = null;
+                    }
+                } else { // insert
+                    uri = insertBookmark(characterId);
+                }
+
+                return uri;
             }
-        } else { // insert
-            uri = insertBookmark(characterId);
-        }
 
-        if (mBookmarkCallbacks != null) {
-            mBookmarkCallbacks.onBookmarkAdded(uri);
-        }
+            @Override
+            protected void onPostExecute(Uri uri) {
+                super.onPostExecute(uri);
+
+                if (mBookmarkCallbacks != null) {
+                    mBookmarkCallbacks.onBookmarkAdded(uri);
+                }
+            }
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     private Uri insertBookmark(long characterId) {
