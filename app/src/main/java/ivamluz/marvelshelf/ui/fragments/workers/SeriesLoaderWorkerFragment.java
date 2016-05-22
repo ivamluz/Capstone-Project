@@ -23,7 +23,7 @@ import ivamluz.marvelshelf.infrastructure.MarvelShelfLogger;
  * This Fragment manages a single background task responsible for loading series asyncly and retains
  * itself across configuration changes.
  */
-public class SeriesLoaderWorkerFragment extends AbstractWorkerFragment {
+public class SeriesLoaderWorkerFragment extends AbstractWorkerFragment<SeriesDto> {
     public static final String TAG = SeriesLoaderWorkerFragment.class.getSimpleName();
 
     private static final String LOG_TAG = TAG;
@@ -73,8 +73,27 @@ public class SeriesLoaderWorkerFragment extends AbstractWorkerFragment {
             mCharacterId = getArguments().getLong(ARG_CHARACTER_ID);
         }
 
-        mTask = new LoadSeriesTask();
-        mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        load();
+    }
+
+    @Override
+    public void load() {
+        super.load();
+
+        if (mCachedResults == null || mCachedResults.isEmpty()) {
+            String message = "No series cached. Fetching from API.";
+            MarvelShelfLogger.debug(LOG_TAG, message);
+
+            mTask = new LoadSeriesTask();
+            mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        } else {
+            String message = String.format("Found series %s cached. Returning from cache.", mCachedResults.size());
+            MarvelShelfLogger.debug(LOG_TAG, message);
+
+            if (mListener != null) {
+                mListener.onSeriesLoaded(mCachedResults);
+            }
+        }
     }
 
     /**
@@ -94,6 +113,8 @@ public class SeriesLoaderWorkerFragment extends AbstractWorkerFragment {
 
         @Override
         protected void onPreExecute() {
+            SeriesLoaderWorkerFragment.this.mIsLoading = true;
+
             if (mListener != null) {
                 mListener.onSeriesLoadingPreExecute();
             }
@@ -121,6 +142,8 @@ public class SeriesLoaderWorkerFragment extends AbstractWorkerFragment {
 
         @Override
         protected void onCancelled() {
+            SeriesLoaderWorkerFragment.this.mIsLoading = false;
+
             if (mListener != null) {
                 mListener.onSeriesLoadingCancelled();
             }
@@ -128,6 +151,9 @@ public class SeriesLoaderWorkerFragment extends AbstractWorkerFragment {
 
         @Override
         protected void onPostExecute(List<SeriesDto> series) {
+            SeriesLoaderWorkerFragment.this.mIsLoading = false;
+            SeriesLoaderWorkerFragment.this.mCachedResults = series;
+
             if (mListener != null) {
                 mListener.onSeriesLoaded(series);
             }

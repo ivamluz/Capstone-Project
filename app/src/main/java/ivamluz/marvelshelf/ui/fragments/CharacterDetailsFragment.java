@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -30,6 +31,7 @@ import com.karumi.marvelapiclient.model.MarvelImage;
 import com.karumi.marvelapiclient.model.SeriesDto;
 import com.squareup.picasso.Picasso;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -40,6 +42,7 @@ import ivamluz.marvelshelf.MarvelShelfApplication;
 import ivamluz.marvelshelf.R;
 import ivamluz.marvelshelf.adapter.AbstractCharacterRelatedItemsAdapter;
 import ivamluz.marvelshelf.data.MarvelShelfContract;
+import ivamluz.marvelshelf.data.model.MarvelCharacter;
 import ivamluz.marvelshelf.data.model.MarvelComic;
 import ivamluz.marvelshelf.infrastructure.MarvelShelfLogger;
 import ivamluz.marvelshelf.managers.SeenCharactersManager;
@@ -56,14 +59,19 @@ import static butterknife.ButterKnife.findById;
  * create an instance of this fragment.
  */
 public class CharacterDetailsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, ComicsLoaderWorkerFragment.TaskCallbacks, SeriesLoaderWorkerFragment.TaskCallbacks, AbstractCharacterRelatedItemsAdapter.OnItemClickListener {
-    private static final String LOG_TAG = CharacterDetailsFragment.class.getSimpleName();
+    public static final String TAG = CharacterDetailsFragment.class.getSimpleName();
+    private static final String LOG_TAG = TAG;
+
     private static final int CHARACTER_LOADER = 100;
 
     private static final String KEY_CHARACTER_ID = String.format("%s.character_id", BuildConfig.APPLICATION_ID);
+    private static final String KEY_CHARACTER = String.format("%s.character", BuildConfig.APPLICATION_ID);
     private static final String KEY_SHOW_CHARACTER_NAME = String.format("%s.show_name", BuildConfig.APPLICATION_ID);
     private static final String KEY_SHOW_CHARACTER_THUMBNAIL = String.format("%s.show_thumbnail", BuildConfig.APPLICATION_ID);
 
     private static final String KEY_CHARACTER_REGISTERED_AS_SEEN = String.format("%s.character_seen", BuildConfig.APPLICATION_ID);
+
+    private static final String KEY_COMICS_LIST_LAYOUT_STATE = String.format("%s.comics_layout_list_state", BuildConfig.APPLICATION_ID);
 
     private Picasso mPicasso;
 
@@ -100,8 +108,12 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
 
     private boolean mRegisteredAsSeen = false;
 
+    private MarvelCharacter mMarvelCharacter;
+
     private Unbinder mUnbinder;
     private Button mButtonRetryLoadingComics;
+
+    private Parcelable mRecyclerViewCharacterComicsState;
 
     public CharacterDetailsFragment() {
         // Required empty public constructor
@@ -139,7 +151,7 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
         MarvelShelfLogger.debug(LOG_TAG, "onCreate()");
         MarvelShelfLogger.debug(LOG_TAG, MarvelShelfLogger.SEPARATOR);
 
-        if (!restoreState(savedInstanceState) && getArguments() != null) {
+        if (savedInstanceState == null && getArguments() != null) {
             mCharacterId = getArguments().getLong(KEY_CHARACTER_ID);
             mShowThumbnail = getArguments().getBoolean(KEY_SHOW_CHARACTER_THUMBNAIL);
             mShowCharacterName = getArguments().getBoolean(KEY_SHOW_CHARACTER_NAME);
@@ -155,11 +167,21 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
         mPicasso = MarvelShelfApplication.getInstance().getPicasso();
     }
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        restoreInstaceState(savedInstanceState);
+
+
+    }
+
     private void logState() {
         MarvelShelfLogger.debug(LOG_TAG, "mCharacterId: " + mCharacterId);
         MarvelShelfLogger.debug(LOG_TAG, "mShowThumbnail: " + mShowThumbnail);
         MarvelShelfLogger.debug(LOG_TAG, "mShowCharacterName: " + mShowCharacterName);
         MarvelShelfLogger.debug(LOG_TAG, "mRegisteredAsSeen: " + mRegisteredAsSeen);
+        MarvelShelfLogger.debug(LOG_TAG, "mRecyclerViewCharacterComicsState: " + mRecyclerViewCharacterComicsState);
     }
 
     @Override
@@ -167,8 +189,11 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
         super.onSaveInstanceState(outState);
 
         outState.putLong(KEY_CHARACTER_ID, mCharacterId);
+        outState.putParcelable(KEY_CHARACTER, mMarvelCharacter);
         outState.putBoolean(KEY_SHOW_CHARACTER_THUMBNAIL, mShowThumbnail);
         outState.putBoolean(KEY_SHOW_CHARACTER_NAME, mShowCharacterName);
+
+        outState.putParcelable(KEY_COMICS_LIST_LAYOUT_STATE, mRecyclerViewCharacterComics.getLayoutManager().onSaveInstanceState());
 
         outState.putBoolean(KEY_CHARACTER_REGISTERED_AS_SEEN, mRegisteredAsSeen);
     }
@@ -190,17 +215,19 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
         });
     }
 
-    private boolean restoreState(Bundle savedInstanceState) {
+    private void restoreInstaceState(Bundle savedInstanceState) {
         if (savedInstanceState == null) {
-            return false;
+            return;
         }
+
         mCharacterId = savedInstanceState.getLong(KEY_CHARACTER_ID);
+        mMarvelCharacter = savedInstanceState.getParcelable(KEY_CHARACTER);
         mShowThumbnail = savedInstanceState.getBoolean(KEY_SHOW_CHARACTER_THUMBNAIL);
         mShowCharacterName = savedInstanceState.getBoolean(KEY_SHOW_CHARACTER_NAME);
 
         mRegisteredAsSeen = savedInstanceState.getBoolean(KEY_CHARACTER_REGISTERED_AS_SEEN, false);
 
-        return true;
+        mRecyclerViewCharacterComicsState = savedInstanceState.getParcelable(KEY_COMICS_LIST_LAYOUT_STATE);
     }
 
     private void setupComicsLoaderFragment() {
@@ -233,16 +260,22 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
 
         mProgressComics = findById(mCardCharacterComics, R.id.progress_bar);
         mViewEmptyComics = findById(mCardCharacterComics, R.id.view_blank_state);
-        mButtonRetryLoadingComics = findById(mViewEmptyComics, R.id.button_blank_state_action);
         setupRetryButton();
 
         setupComicsAdapterAndRecyclerView(rootView);
         setupSeriesAdapterAndRecyclerView(rootView);
 
+        if (mMarvelCharacter == null) {
+            getActivity().getSupportLoaderManager().initLoader(CHARACTER_LOADER, null, this);
+        } else {
+            bindValues();
+        }
+
         return rootView;
     }
 
     private void setupRetryButton() {
+        mButtonRetryLoadingComics = findById(mViewEmptyComics, R.id.button_blank_state_action);
         mButtonRetryLoadingComics.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -261,7 +294,12 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
     }
 
     private void setupComicsAdapterAndRecyclerView(View view) {
-        mAdapterCharacterComics = new AbstractCharacterRelatedItemsAdapter<ComicDto>(ComicDto.class, null) {
+        List<ComicDto> comics = new LinkedList<>();
+        if (!mComicsLoaderWorkerFragment.isLoading() && mComicsLoaderWorkerFragment.hasCachedResults()) {
+            comics = mComicsLoaderWorkerFragment.getCachedResults();
+        }
+
+        mAdapterCharacterComics = new AbstractCharacterRelatedItemsAdapter<ComicDto>(ComicDto.class, comics) {
             @Override
             public void onBindViewHolder(ViewHolder holder, int position) {
                 super.onBindViewHolder(holder, position);
@@ -289,6 +327,12 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
         mRecyclerViewCharacterComics.setAdapter(mAdapterCharacterComics);
         int marginRight = getResources().getDimensionPixelSize(R.dimen.card_spacing);
         mRecyclerViewCharacterComics.addItemDecoration(new MarginItemDecoration(0, marginRight, 0, 0));
+
+        if (mRecyclerViewCharacterComicsState != null) {
+            mRecyclerViewCharacterComics.getLayoutManager().onRestoreInstanceState(mRecyclerViewCharacterComicsState);
+        }
+
+        showOrHideComicsList(comics);
     }
 
     private void setupSeriesAdapterAndRecyclerView(View view) {
@@ -319,8 +363,6 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
         mRecyclerViewCharacterSeries.setAdapter(mAdapterCharacterSeries);
         int marginRight = getResources().getDimensionPixelSize(R.dimen.card_spacing);
         mRecyclerViewCharacterSeries.addItemDecoration(new MarginItemDecoration(0, marginRight, 0, 0));
-
-        getActivity().getSupportLoaderManager().initLoader(CHARACTER_LOADER, null, this);
     }
 
     @Override
@@ -343,7 +385,9 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
     public void onLoadFinished(Loader loader, Cursor cursor) {
         cursor.moveToFirst();
 
-        bindValues(cursor);
+        mMarvelCharacter = MarvelCharacter.fromCursor(cursor);
+
+        bindValues();
     }
 
     @Override
@@ -351,10 +395,9 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
 
     }
 
-    private void bindValues(Cursor cursor) {
+    private void bindValues() {
         if (mShowThumbnail) {
-            String thumbnailUrl = cursor.getString(cursor.getColumnIndex(MarvelShelfContract.CharacterEntry.COLUMN_THUMBNAIL));
-            mPicasso.load(thumbnailUrl)
+            mPicasso.load(mMarvelCharacter.getThumbnailUrl())
                     .placeholder(R.drawable.character_placeholder_landscape)
                     .fit()
                     .centerCrop()
@@ -363,11 +406,11 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
         }
 
         if (mShowCharacterName) {
-            String name = cursor.getString(cursor.getColumnIndex(MarvelShelfContract.CharacterEntry.COLUMN_NAME));
+            String name = mMarvelCharacter.getName();
             mTextCharacterName.setText(name);
         }
 
-        String description = cursor.getString(cursor.getColumnIndex(MarvelShelfContract.CharacterEntry.COLUMN_DESCRIPTION));
+        String description = mMarvelCharacter.getDescription();
         if (TextUtils.isEmpty(description)) {
             description = getString(R.string.not_available_description);
         }
@@ -399,6 +442,10 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
         mAdapterCharacterComics.setItems(comics);
         mAdapterCharacterComics.notifyDataSetChanged();
 
+        showOrHideComicsList(comics);
+    }
+
+    private void showOrHideComicsList(List<ComicDto> comics) {
         mViewEmptyComics.setVisibility(comics.isEmpty() ? View.VISIBLE : View.INVISIBLE);
         mRecyclerViewCharacterComics.setVisibility(comics.isEmpty() ? View.GONE : View.VISIBLE);
         mProgressComics.setVisibility(View.GONE);

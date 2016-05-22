@@ -62,7 +62,14 @@ public class CharacterDetailsActivity extends AppCompatActivity implements Comic
         }
 
         bindCharacterInfo();
-        setupCharacterDetailsFragment();
+        setupCharacterDetailsFragment(savedInstanceState);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        getSupportFragmentManager().putFragment(outState, CharacterDetailsFragment.TAG, mCharacterDetailsFragment);
     }
 
     private void bindCharacterInfo() {
@@ -75,13 +82,17 @@ public class CharacterDetailsActivity extends AppCompatActivity implements Comic
         setTitle(mCharacter.getName());
     }
 
-    private void setupCharacterDetailsFragment() {
-        mCharacterDetailsFragment = CharacterDetailsFragment.newInstance(mCharacter.getId());
+    private void setupCharacterDetailsFragment(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            mCharacterDetailsFragment = (CharacterDetailsFragment) getSupportFragmentManager().getFragment(savedInstanceState, CharacterDetailsFragment.TAG);
+        } else {
+            mCharacterDetailsFragment = CharacterDetailsFragment.newInstance(mCharacter.getId());
 
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.details_fragment_container, mCharacterDetailsFragment)
-                .commit();
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.details_fragment_container, mCharacterDetailsFragment)
+                    .commit();
+        }
     }
 
     @Override

@@ -14,6 +14,7 @@ import com.karumi.marvelapiclient.model.MarvelResponse;
 import java.util.LinkedList;
 import java.util.List;
 
+import ivamluz.marvelshelf.BuildConfig;
 import ivamluz.marvelshelf.MarvelShelfApplication;
 import ivamluz.marvelshelf.infrastructure.MarvelShelfLogger;
 
@@ -23,12 +24,12 @@ import ivamluz.marvelshelf.infrastructure.MarvelShelfLogger;
  * This Fragment manages a single background task responsible for loading comics asyncly and retains
  * itself across configuration changes.
  */
-public class ComicsLoaderWorkerFragment extends AbstractWorkerFragment {
+public class ComicsLoaderWorkerFragment extends AbstractWorkerFragment<ComicDto> {
     public static final String TAG = ComicsLoaderWorkerFragment.class.getSimpleName();
 
     private static final String LOG_TAG = TAG;
 
-    private static final String ARG_CHARACTER_ID = "ivamluz.marvelshelf.character_id";
+    private static final String ARG_CHARACTER_ID = String.format(".character_id", BuildConfig.APPLICATION_ID);
 
     private long mCharacterId;
 
@@ -58,7 +59,6 @@ public class ComicsLoaderWorkerFragment extends AbstractWorkerFragment {
         return fragment;
     }
 
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -80,8 +80,20 @@ public class ComicsLoaderWorkerFragment extends AbstractWorkerFragment {
     public void load() {
         super.load();
 
-        mTask = new LoadComicsTask();
-        mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        if (mCachedResults == null || mCachedResults.isEmpty()) {
+            String message = "No comics cached. Fetching from API.";
+            MarvelShelfLogger.debug(LOG_TAG, message);
+
+            mTask = new LoadComicsTask();
+            mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        } else {
+            String message = String.format("Found comics %s cached. Returning from cache.", mCachedResults.size());
+            MarvelShelfLogger.debug(LOG_TAG, message);
+
+            if (mListener != null) {
+                mListener.onComicsLoaded(mCachedResults);
+            }
+        }
     }
 
     /**
@@ -140,6 +152,7 @@ public class ComicsLoaderWorkerFragment extends AbstractWorkerFragment {
         @Override
         protected void onPostExecute(List<ComicDto> comics) {
             ComicsLoaderWorkerFragment.this.mIsLoading = false;
+            ComicsLoaderWorkerFragment.this.mCachedResults = comics;
 
             if (mListener != null) {
                 mListener.onComicsLoaded(comics);
