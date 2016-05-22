@@ -4,8 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
@@ -18,7 +18,7 @@ import ivamluz.marvelshelf.R;
 import ivamluz.marvelshelf.data.model.MarvelComic;
 import ivamluz.marvelshelf.ui.fragments.ComicDetailsFragment;
 
-public class ComicDetailsActivity extends AppCompatActivity {
+public class ComicDetailsActivity extends BaseDetailsActivity {
     private static final String EXTRA_COMIC = String.format("%s.comic", BuildConfig.APPLICATION_ID);
 
     private MarvelComic mComic;
@@ -46,7 +46,7 @@ public class ComicDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_details);
         ButterKnife.bind(this);
 
-        setSupportActionBar(mToolbar);
+        configToolbar(mToolbar);
 
         mPicasso = MarvelShelfApplication.getInstance().getPicasso();
 
@@ -58,6 +58,17 @@ public class ComicDetailsActivity extends AppCompatActivity {
 
         bindComicInfo();
         setupComicDetailsFragment();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private void bindComicInfo() {

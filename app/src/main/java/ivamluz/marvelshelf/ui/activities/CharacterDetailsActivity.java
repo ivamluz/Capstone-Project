@@ -4,8 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.widget.ImageView;
 
 import com.karumi.marvelapiclient.model.ComicDto;
@@ -16,6 +16,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import ivamluz.marvelshelf.BuildConfig;
 import ivamluz.marvelshelf.MarvelShelfApplication;
 import ivamluz.marvelshelf.R;
 import ivamluz.marvelshelf.data.model.MarvelCharacter;
@@ -23,8 +24,8 @@ import ivamluz.marvelshelf.ui.fragments.CharacterDetailsFragment;
 import ivamluz.marvelshelf.ui.fragments.workers.ComicsLoaderWorkerFragment;
 import ivamluz.marvelshelf.ui.fragments.workers.SeriesLoaderWorkerFragment;
 
-public class CharacterDetailsActivity extends AppCompatActivity implements ComicsLoaderWorkerFragment.TaskCallbacks, SeriesLoaderWorkerFragment.TaskCallbacks {
-    private static final String EXTRA_CHARACTER = "ivamluz.marvelshelf.character";
+public class CharacterDetailsActivity extends BaseDetailsActivity implements ComicsLoaderWorkerFragment.TaskCallbacks, SeriesLoaderWorkerFragment.TaskCallbacks {
+    private static final String EXTRA_CHARACTER = String.format("%s.character", BuildConfig.APPLICATION_ID);
 
     private MarvelCharacter mCharacter;
 
@@ -51,7 +52,7 @@ public class CharacterDetailsActivity extends AppCompatActivity implements Comic
         setContentView(R.layout.activity_details);
         ButterKnife.bind(this);
 
-        setSupportActionBar(mToolbar);
+        configToolbar(mToolbar);
 
         mPicasso = MarvelShelfApplication.getInstance().getPicasso();
 
@@ -70,6 +71,17 @@ public class CharacterDetailsActivity extends AppCompatActivity implements Comic
         super.onSaveInstanceState(outState);
 
         getSupportFragmentManager().putFragment(outState, CharacterDetailsFragment.TAG, mCharacterDetailsFragment);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private void bindCharacterInfo() {
