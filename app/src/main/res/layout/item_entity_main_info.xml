@@ -49,6 +49,7 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:id="@+id/card_toolbar"
+            android:visibility="gone"
             android:background="@color/black_alpha_6">
 
             <RelativeLayout

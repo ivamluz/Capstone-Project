@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -56,6 +57,9 @@ public class CharactersCursorAdapter extends AbstractCursorRecyclerViewAdapter<C
         @BindView(R.id.text_description)
         public TextView mTxtViewCharacterDescription;
 
+        @BindView(R.id.card_toolbar)
+        protected Toolbar mCardToolbar;
+
         @BindView(R.id.action_toggle_bookmark)
         public ImageButton mButtomToggleBookmark;
 
@@ -68,6 +72,8 @@ public class CharactersCursorAdapter extends AbstractCursorRecyclerViewAdapter<C
             super(view);
 
             ButterKnife.bind(this, view);
+
+            mCardToolbar.setVisibility(View.VISIBLE);
 
             view.setOnClickListener(this);
         }
@@ -98,7 +104,7 @@ public class CharactersCursorAdapter extends AbstractCursorRecyclerViewAdapter<C
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_character_main_info, parent, false);
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_entity_main_info, parent, false);
         ViewHolder vh = new ViewHolder(itemView);
         vh.setOnItemClickListener(mOnItemClickListener);
         vh.setOnToogleBookmarkListener(mOnToogleBookmarkListener);
