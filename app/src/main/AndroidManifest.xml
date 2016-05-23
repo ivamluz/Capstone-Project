@@ -45,6 +45,10 @@
             android:name=".ui.activities.ImageViewerActivity"
             android:theme="@style/MarvelShelfTheme.NoActionBar">
         </activity>
+        <activity
+            android:name=".ui.activities.SearchActivity"
+            android:theme="@style/MarvelShelfTheme.NoActionBar">
+        </activity>
     </application>
 
 </manifest>

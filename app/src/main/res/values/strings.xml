@@ -8,7 +8,6 @@
     <string name="characters_all">All characters</string>
     <string name="characters_seen">Seen characters</string>
 
-    <string name="action_settings">Settings</string>
     <string name="title_details_activity">Details Activity</string>
 
     <string name="title_comics">Comics</string>
@@ -51,4 +50,5 @@
     <string name="action_share">Share</string>
     <string name="action_bookmark_add">Add to bookmarks</string>
     <string name="action_bookmark_remove">Remove from bookmarks</string>
+    <string name="action_search">Search</string>
 </resources>

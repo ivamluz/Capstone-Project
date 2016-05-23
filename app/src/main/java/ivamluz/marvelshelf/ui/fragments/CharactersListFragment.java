@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import java.util.Arrays;
 
@@ -41,9 +42,12 @@ import static butterknife.ButterKnife.findById;
  * create an instance of this fragment.
  */
 public class CharactersListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+    public final static String TAG = CharactersListFragment.class.getSimpleName();
+
     public static int LIST_TYPE_ALL = 0;
     public static int LIST_TYPE_BOOKMARKS = 1;
     public static int LIST_TYPE_SEEN = 2;
+    public static final int LIST_TYPE_SEARCH = 4;
 
     private static final String LOG_TAG = CharactersListFragment.class.getSimpleName();
     private static final String EXTRA_LIST_TYPE = String.format("%s.list_type", BuildConfig.APPLICATION_ID);
@@ -53,14 +57,22 @@ public class CharactersListFragment extends Fragment implements LoaderManager.Lo
     @BindView(R.id.recycler_view_characters_list)
     protected RecyclerView mCharactersRecyclerView;
 
+    @BindView(R.id.progress_bar)
+    protected ProgressBar mProgressBar;
+
+    @BindView(R.id.view_blank_state)
+    protected View mViewEmptyList;
+
     private CharactersCursorAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
     private Unbinder mUnbinder;
 
     private BookmarksManager mBookmarksManager;
-    private String[] mSelectionArgs;
-    private String mSelection;
+
+//    private LoaderManager mLoaderManager;
+
+    private String mSearchTerm;
 
     public CharactersListFragment() {
         // Required empty public constructor
@@ -118,7 +130,13 @@ public class CharactersListFragment extends Fragment implements LoaderManager.Lo
         int marginBottom = getResources().getDimensionPixelSize(R.dimen.card_spacing);
         mCharactersRecyclerView.addItemDecoration(new MarginItemDecoration(0, 0, marginBottom, 0));
 
-        getActivity().getSupportLoaderManager().initLoader(mListType, null, this);
+        mViewEmptyList.setVisibility(View.GONE);
+        View retryButton = findById(mViewEmptyList, R.id.button_blank_state_action);
+        retryButton.setVisibility(View.GONE);
+
+        if (LIST_TYPE_SEARCH != mListType) {
+            getActivity().getSupportLoaderManager().initLoader(mListType, null, this);
+        }
 
         return rootView;
     }
@@ -173,12 +191,20 @@ public class CharactersListFragment extends Fragment implements LoaderManager.Lo
 
     @Override
     public Loader onCreateLoader(int id, Bundle args) {
+        mViewEmptyList.setVisibility(View.GONE);
+        mProgressBar.setVisibility(View.VISIBLE);
+        mCharactersRecyclerView.setVisibility(View.GONE);
+
         Pair<String, String[]> selectionArgs = getSelectionArgs();
         return new CursorLoader(getContext(), MarvelShelfContract.CharacterEntry.CONTENT_URI, null, selectionArgs.first, selectionArgs.second, getSortOrder());
     }
 
     @Override
     public void onLoadFinished(Loader loader, Cursor cursor) {
+        if (!isAdded()) {
+            return;
+        }
+
         if (!isKnownLoader(loader.getId())) {
             return;
         }
@@ -187,6 +213,32 @@ public class CharactersListFragment extends Fragment implements LoaderManager.Lo
 
         mAdapter.swapCursor(cursor);
         mAdapter.notifyDataSetChanged();
+
+        boolean hasItems = (cursor.getCount() > 0);
+        mViewEmptyList.setVisibility(hasItems ? View.GONE : View.VISIBLE);
+        mProgressBar.setVisibility(View.GONE);
+        mCharactersRecyclerView.setVisibility(hasItems ? View.VISIBLE : View.GONE);
+    }
+
+    public void search(String searchTerm) {
+        mSearchTerm = searchTerm;
+
+        Loader loader = getActivity().getSupportLoaderManager().getLoader(LIST_TYPE_SEARCH);
+
+        if (loader == null) {
+            getActivity().getSupportLoaderManager().initLoader(LIST_TYPE_SEARCH, null, null);
+            return;
+        }
+
+        if (loader.isStarted()) {
+            loader.cancelLoad();
+        }
+
+        if (!loader.isReset()) {
+            loader.isReset();
+        }
+
+        getActivity().getSupportLoaderManager().initLoader(LIST_TYPE_SEARCH, null, null);
     }
 
     private boolean isKnownLoader(int loaderId) {
@@ -196,7 +248,8 @@ public class CharactersListFragment extends Fragment implements LoaderManager.Lo
 
     @Override
     public void onLoaderReset(Loader loader) {
-
+        mAdapter.swapCursor(null);
+        mAdapter.notifyDataSetChanged();
     }
 
     public String getSortOrder() {
@@ -225,6 +278,9 @@ public class CharactersListFragment extends Fragment implements LoaderManager.Lo
             selectionArgs = new String[]{"1"};
         } else if (LIST_TYPE_SEEN == mListType) {
             selection = String.format("%s IS NOT NULL", MarvelShelfContract.CharacterEntry.COLUMN_LAST_SEEN);
+            selectionArgs = null;
+        } else if (LIST_TYPE_SEARCH == mListType) {
+            selection = String.format("%s like %%s%", MarvelShelfContract.CharacterEntry.COLUMN_LAST_SEEN, mSearchTerm);
             selectionArgs = null;
         }
 

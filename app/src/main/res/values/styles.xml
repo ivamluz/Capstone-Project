@@ -33,6 +33,14 @@
         <item name="android:background">@color/black_alpha_87</item>
     </style>
 
+    <style name="MarvelShelfTheme.Widget.Toolbar.Search" parent="@style/MarvelShelfTheme.Widget.Toolbar.Translucent">
+        <item name="android:background">@color/colorPrimary</item>
+
+        <item name="colorControlNormal">@color/white</item>
+        <item name="colorControlActivated">@color/white</item>
+        <item name="colorControlHighlight">@color/white</item>
+    </style>
+
     <style name="MarvelShelfTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
 
     <style name="MarvelShelfTheme.Toolbar.TextAppearance.Title" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
@@ -67,5 +75,4 @@
         <item name="android:textColor">@color/white</item>
         <item name="android:textStyle">bold</item>
     </style>
-
 </resources>

@@ -97,9 +97,6 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
     @BindView(R.id.card_character_comics)
     protected CardView mCardCharacterComics;
 
-    @BindView(R.id.card_toolbar)
-    protected Toolbar mCardToolbar;
-
     private View mViewEmptyComics;
     private ProgressBar mProgressComics;
 
@@ -267,8 +264,6 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
 
         setupComicsAdapterAndRecyclerView(rootView);
         setupSeriesAdapterAndRecyclerView(rootView);
-
-        mCardToolbar.setVisibility(View.GONE);
 
         if (mMarvelCharacter == null) {
             getActivity().getSupportLoaderManager().initLoader(CHARACTER_LOADER, null, this);

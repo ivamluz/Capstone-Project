@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="ivamluz.marvelshelf.ui.activities.SearchActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:elevation="@dimen/default_elevation"
+
+        app:popupTheme="@style/MarvelShelfTheme.Widget.Toolbar.Search"
+        app:theme="@style/MarvelShelfTheme.Widget.Toolbar.Search">
+
+        <EditText
+            android:id="@+id/search_field"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </android.support.v7.widget.Toolbar>
+
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/search_results_fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </android.support.v4.widget.NestedScrollView>
+
+</LinearLayout>
