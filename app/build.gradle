@@ -13,12 +13,24 @@ android {
 
         buildConfigField 'int', 'LOG_LEVEL', '4' // MarvelShelfLogger.LOG_LEVEL_DEBUG = 4;
     }
+    signingConfigs {
+        release {
+            storeFile file("capstone.keystore")
+            storePassword "secret"
+            keyAlias "capstone"
+            keyPassword "secret"
+        }
+    }
     buildTypes {
         release {
+            debuggable true
+
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
 
             buildConfigField 'int', 'LOG_LEVEL', '0' // MarvelShelfLogger.LOG_LEVEL_NONE = 0;
+
+            signingConfig signingConfigs.release
         }
     }
 
