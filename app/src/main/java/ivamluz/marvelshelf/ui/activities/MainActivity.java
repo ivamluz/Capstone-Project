@@ -40,9 +40,6 @@ public class MainActivity extends BaseActivity
     @BindView(R.id.toolbar)
     protected Toolbar mToolbar;
 
-    @BindView(R.id.fab)
-    protected FloatingActionButton mFab;
-
     @BindView(R.id.nav_view)
     protected NavigationView mNavigationView;
 
@@ -56,14 +53,6 @@ public class MainActivity extends BaseActivity
         ButterKnife.bind(this);
 
         setSupportActionBar(mToolbar);
-
-        mFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, mDrawer, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);

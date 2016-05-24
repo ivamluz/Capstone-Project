@@ -136,10 +136,13 @@ public class CharactersCursorAdapter extends AbstractCursorRecyclerViewAdapter<C
 
         boolean isBookmarked = cursor.getInt(cursor.getColumnIndex(MarvelShelfContract.CharacterEntry.COLUMN_IS_BOOKMARK)) > 0;
         int bookmarkIconId = R.drawable.ic_bookmark_border;
+        String contentDescription = mContext.getString(R.string.content_description_bookmark_add);
         if (isBookmarked) {
             bookmarkIconId = R.drawable.ic_bookmark_filled;
+            contentDescription = mContext.getString(R.string.content_description_bookmark_remove);
         }
         viewHolder.mButtomToggleBookmark.setImageDrawable(ResourcesCompat.getDrawable(mContext.getResources(), bookmarkIconId, mContext.getTheme()));
+        viewHolder.mButtomToggleBookmark.setContentDescription(contentDescription);
     }
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {

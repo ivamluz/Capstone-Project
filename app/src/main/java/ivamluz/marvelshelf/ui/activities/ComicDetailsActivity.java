@@ -106,6 +106,8 @@ public class ComicDetailsActivity extends BaseActivity {
                 .error(R.drawable.character_placeholder_landscape)
                 .into(mComicThumbnail);
 
+        mComicThumbnail.setContentDescription(getString(R.string.content_description_comic_description, mComic.getDescription()));
+
         getSupportActionBar().setTitle(mComic.getTitle());
     }
 

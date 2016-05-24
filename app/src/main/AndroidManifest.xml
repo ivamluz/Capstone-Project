@@ -16,7 +16,8 @@
         android:theme="@style/MarvelShelfTheme">
         <provider
             android:name=".data.MarvelShelfProvider"
-            android:authorities="${applicationId}">
+            android:authorities="${applicationId}"
+            android:exported="true">
         </provider>
 
         <activity
@@ -47,6 +48,29 @@
             android:name=".ui.activities.ImageViewerActivity"
             android:theme="@style/MarvelShelfTheme.NoActionBar">
         </activity>
+
+
+        <receiver
+            android:icon="@drawable/ic_launcher"
+            android:label="@string/app_name"
+            android:name=".widget.lastseen.LastSeenWidgetProvider" >
+            <intent-filter >
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/last_seen_widget_info" />
+        </receiver>
+
+
+        <service
+            android:name=".widget.lastseen.LastSeenWidgetRemoteViewsService"
+            android:exported="false"
+            android:permission="android.permission.BIND_REMOTEVIEWS" >
+        </service>
+
+
     </application>
 
 </manifest>

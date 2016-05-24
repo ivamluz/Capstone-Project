@@ -51,4 +51,23 @@
     <string name="action_share">Share</string>
     <string name="action_bookmark_add">Add to bookmarks</string>
     <string name="action_bookmark_remove">Remove from bookmarks</string>
+
+    <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In vitae sem ac orci rutrum scelerisque</string>
+
+
+    <string name="content_description_character_image">Character thumbnail: %1$s</string>
+    <string name="content_description_character_name">Character name: %1$s</string>
+    <string name="content_description_character_description">Character description: %1$s</string>
+
+    <string name="content_description_comic_image">Comic image: %1$s</string>
+    <string name="content_description_comic_title">Comic title: %1$s</string>
+    <string name="content_description_comic_description">Comic description: %1$s</string>
+
+    <string name="content_description_series_image">Series image: %1$s</string>
+    <string name="content_description_series_title">Series title: %1$s</string>
+
+    <string name="content_description_retry">Retry loading items</string>
+
+    <string name="content_description_bookmark_add">@string/action_bookmark_add</string>
+    <string name="content_description_bookmark_remove">@string/action_bookmark_remove</string>
 </resources>

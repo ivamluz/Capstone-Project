@@ -147,6 +147,8 @@ public class CharacterDetailsActivity extends BaseActivity implements ComicsLoad
                 .error(R.drawable.character_placeholder_landscape)
                 .into(mCharacterThumbnail);
 
+        mCharacterThumbnail.setContentDescription(getString(R.string.content_description_character_image, mCharacter.getName()));
+
         getSupportActionBar().setTitle(mCharacter.getName());
     }
 

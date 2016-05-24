@@ -115,7 +115,7 @@ public class CharactersListFragment extends Fragment implements LoaderManager.Lo
         mCharactersRecyclerView.setLayoutManager(mLayoutManager);
         mCharactersRecyclerView.setAdapter(mAdapter);
 
-        int marginBottom = getResources().getDimensionPixelSize(R.dimen.card_spacing);
+        int marginBottom = getResources().getDimensionPixelSize(R.dimen.default_spacing);
         mCharactersRecyclerView.addItemDecoration(new MarginItemDecoration(0, 0, marginBottom, 0));
 
         getActivity().getSupportLoaderManager().initLoader(mListType, null, this);

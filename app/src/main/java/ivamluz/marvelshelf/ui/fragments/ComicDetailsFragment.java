@@ -172,7 +172,7 @@ public class ComicDetailsFragment extends Fragment implements ImagesAdapter.OnIt
         mImagesRecyclerView = findById(view, R.id.recycler_view_comics_images);
         mImagesRecyclerView.setLayoutManager(layoutManager);
         mImagesRecyclerView.setAdapter(mImagesAdapter);
-        int margin = getResources().getDimensionPixelSize(R.dimen.card_spacing);
+        int margin = getResources().getDimensionPixelSize(R.dimen.default_spacing);
         mImagesRecyclerView.addItemDecoration(new MarginItemDecoration(margin, margin, margin, margin));
     }
 
@@ -194,10 +194,13 @@ public class ComicDetailsFragment extends Fragment implements ImagesAdapter.OnIt
                     .centerCrop()
                     .error(R.drawable.character_placeholder_landscape)
                     .into(mImageThumbnail);
+
+            mImageThumbnail.setContentDescription(getString(R.string.content_description_comic_image, mComic.getTitle()));
         }
 
         if (mShowTitle) {
             mTextTitle.setText(mComic.getTitle());
+            mTextTitle.setContentDescription(getString(R.string.content_description_comic_title, mComic.getTitle()));
         }
 
         String description = mComic.getDescription();
@@ -205,6 +208,7 @@ public class ComicDetailsFragment extends Fragment implements ImagesAdapter.OnIt
             description = getString(R.string.not_available_description);
         }
         mTextDescription.setText(Html.fromHtml(description));
+        mTextDescription.setContentDescription(getString(R.string.content_description_comic_description, mComic.getDescription()));
     }
 
     @Override

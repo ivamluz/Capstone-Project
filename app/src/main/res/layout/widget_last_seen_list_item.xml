@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/widget_last_seen_list_item"
+    android:background="@color/white"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/widget_bookmarks_list_item_height"
+    android:layout_margin="@dimen/small_spacing"
+    android:orientation="horizontal">
+
+    <!--
+    <ImageView
+        android:layout_width="@dimen/widget_bookmarks_list_item_image_width"
+        android:layout_height="match_parent"
+        android:id="@+id/widget_last_seen_item_thumb"
+        tools:src="@drawable/character_placeholder_portrait"/> -->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="@dimen/small_spacing">
+
+        <TextView
+            android:id="@+id/widget_last_seen_item_title"
+            style="@style/MarvelShelfTheme.Card.Title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:singleLine="true"
+            tools:text="@string/lorem_ipsum"/>
+
+        <TextView
+            android:id="@+id/widget_last_seen_item_description"
+            style="@style/MarvelShelfTheme.Card.Description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:lines="2"
+            tools:text="@string/lorem_ipsum"/>
+    </LinearLayout>
+</LinearLayout>

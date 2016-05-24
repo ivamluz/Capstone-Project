@@ -319,8 +319,10 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
                     MarvelImage image = comic.getImages().get(0);
                     setThumbnail(holder, image);
                 }
+                holder.mImageViewThumbnail.setContentDescription(getString(R.string.content_description_comic_image, comic.getTitle()));
 
                 setTitle(holder, comic.getTitle());
+                holder.mTxtViewTitle.setContentDescription(getString(R.string.content_description_comic_title, comic.getTitle()));
             }
         };
         mAdapterCharacterComics.setOnItemClickListener(this);
@@ -330,7 +332,7 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
 
         mRecyclerViewCharacterComics.setLayoutManager(layoutManager);
         mRecyclerViewCharacterComics.setAdapter(mAdapterCharacterComics);
-        int marginRight = getResources().getDimensionPixelSize(R.dimen.card_spacing);
+        int marginRight = getResources().getDimensionPixelSize(R.dimen.default_spacing);
         mRecyclerViewCharacterComics.addItemDecoration(new MarginItemDecoration(0, marginRight, 0, 0));
 
         if (mRecyclerViewCharacterComicsState != null) {
@@ -351,12 +353,14 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
                 if (series.getThumbnail() != null) {
                     setThumbnail(holder, series.getThumbnail());
                 }
+                holder.mImageViewThumbnail.setContentDescription(getString(R.string.content_description_series_image, series.getTitle()));
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     holder.mImageViewThumbnail.setTransitionName(getString(R.string.shared_transition_series_image));
                 }
 
                 setTitle(holder, series.getTitle());
+                holder.mTxtViewTitle.setContentDescription(getString(R.string.content_description_series_title, series.getTitle()));
             }
         };
         mAdapterCharacterSeries.setOnItemClickListener(this);
@@ -366,7 +370,7 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
 
         mRecyclerViewCharacterSeries.setLayoutManager(layoutManager);
         mRecyclerViewCharacterSeries.setAdapter(mAdapterCharacterSeries);
-        int marginRight = getResources().getDimensionPixelSize(R.dimen.card_spacing);
+        int marginRight = getResources().getDimensionPixelSize(R.dimen.default_spacing);
         mRecyclerViewCharacterSeries.addItemDecoration(new MarginItemDecoration(0, marginRight, 0, 0));
     }
 
@@ -417,11 +421,14 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
                     .centerCrop()
                     .error(R.drawable.character_placeholder_landscape)
                     .into(mImageCharacterThumbnail);
+
+            mImageCharacterThumbnail.setContentDescription(getString(R.string.content_description_character_image, mMarvelCharacter.getName()));
         }
 
         if (mShowCharacterName) {
             String name = mMarvelCharacter.getName();
             mTextCharacterName.setText(name);
+            mTextCharacterName.setContentDescription(getString(R.string.content_description_character_name, mMarvelCharacter.getName()));
         }
 
         String description = mMarvelCharacter.getDescription();
@@ -429,6 +436,7 @@ public class CharacterDetailsFragment extends Fragment implements LoaderManager.
             description = getString(R.string.not_available_description);
         }
         mTextCharacterDescription.setText(Html.fromHtml(description));
+        mTextCharacterDescription.setContentDescription(getString(R.string.content_description_character_description, description));
     }
 
     @Override
