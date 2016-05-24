@@ -15,11 +15,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
 import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import ivamluz.marvelshelf.BuildConfig;
 import ivamluz.marvelshelf.MarvelShelfApplication;
 import ivamluz.marvelshelf.R;
 import ivamluz.marvelshelf.adapter.ImagesAdapter;
@@ -64,6 +68,10 @@ public class ComicDetailsFragment extends Fragment implements ImagesAdapter.OnIt
 
     private Unbinder mUnbinder;
 
+    private InterstitialAd mInterstitialAd;
+    private String mSelectedImageUrl;
+    private View mImageSelectedComic;
+
     public ComicDetailsFragment() {
         // Required empty public constructor
     }
@@ -103,7 +111,32 @@ public class ComicDetailsFragment extends Fragment implements ImagesAdapter.OnIt
             MarvelShelfLogger.debug(LOG_TAG, "comic: " + mComic);
         }
 
+        setupAd();
+
         mPicasso = MarvelShelfApplication.getInstance().getPicasso();
+    }
+
+    private void setupAd() {
+        mInterstitialAd = new InterstitialAd(getActivity());
+        mInterstitialAd.setAdUnitId(BuildConfig.AD_UNIT_ID);
+
+        mInterstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdClosed() {
+                requestNewInterstitial();
+                showSelectedImage();
+            }
+        });
+
+        requestNewInterstitial();
+    }
+
+    private void requestNewInterstitial() {
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .build();
+
+        mInterstitialAd.loadAd(adRequest);
     }
 
     @Override
@@ -176,14 +209,27 @@ public class ComicDetailsFragment extends Fragment implements ImagesAdapter.OnIt
 
     @Override
     public void onItemClick(int position, View view) {
-        String url = mImagesAdapter.getItem(position);
-        String id = String.valueOf(url.hashCode());
-        Intent intent = ImageViewerActivity.newIntent(getContext(), id, url, getString(R.string.shared_transition_comic_image));
+        mSelectedImageUrl = mImagesAdapter.getItem(position);
+        mImageSelectedComic = findById(view, R.id.image_thumbnail);
 
-        ImageView imageComic = findById(view, R.id.image_thumbnail);
+        if (mInterstitialAd.isLoaded()) {
+            mInterstitialAd.show();
+        } else {
+            showSelectedImage();
+        }
+    }
+
+    private void showSelectedImage() {
+        if (mSelectedImageUrl == null) {
+            return;
+        }
+
+        String id = String.valueOf(mSelectedImageUrl.hashCode());
+        Intent intent = ImageViewerActivity.newIntent(getContext(), id, mSelectedImageUrl, getString(R.string.shared_transition_comic_image));
+
         ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
                 getActivity(),
-                imageComic,
+                mImageSelectedComic,
                 getContext().getString(R.string.shared_transition_comic_image)
         );
 
