@@ -46,7 +46,7 @@ import uk.co.senab.photoview.PhotoView;
 import uk.co.senab.photoview.PhotoViewAttacher;
 
 @RuntimePermissions
-public class ImageViewerActivity extends AppCompatActivity {
+public class ImageViewerActivity extends BaseActivity {
     private static final String LOG_TAG = ImageViewerActivity.class.getSimpleName();
 
     private static final String EXTRA_IMAGE_ID = String.format("%s.image_id", BuildConfig.APPLICATION_ID);
@@ -107,6 +107,11 @@ public class ImageViewerActivity extends AppCompatActivity {
 
         configToolbar();
         setupPhoto(savedInstanceState);
+
+        if (savedInstanceState == null) {
+            String title = String.format("%s: %s", ImageViewerActivity.class.getSimpleName(), mUrl);
+            trackScreenView(title);
+        }
     }
 
     @Override

@@ -15,12 +15,17 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import ivamluz.marvelshelf.MarvelShelfApplication;
 import ivamluz.marvelshelf.R;
+import ivamluz.marvelshelf.infrastructure.MarvelShelfLogger;
 import ivamluz.marvelshelf.ui.fragments.CharactersListFragment;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
@@ -40,6 +45,8 @@ public class MainActivity extends AppCompatActivity
 
     @BindView(R.id.nav_view)
     protected NavigationView mNavigationView;
+
+    private Tracker mTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,7 +86,16 @@ public class MainActivity extends AppCompatActivity
             Fragment fragment = CharactersListFragment.newInstance(CharactersListFragment.LIST_TYPE_ALL);
             setTitle(getString(R.string.characters_all));
             mFragmentManager.beginTransaction().replace(R.id.content_holder, fragment).commit();
+
+            trackScreenView();
         }
+
+        MarvelShelfApplication application = (MarvelShelfApplication) getApplication();
+        mTracker = application.getDefaultTracker();
+    }
+
+    private void trackScreenView() {
+        trackScreenView(String.valueOf(getTitle()));
     }
 
     @Override
@@ -132,8 +148,11 @@ public class MainActivity extends AppCompatActivity
 
         mFragmentManager.beginTransaction().replace(R.id.content_holder, fragment).commit();
 
+
         item.setChecked(true);
         setTitle(item.getTitle());
+
+        trackScreenView();
 
         mDrawer.closeDrawer(GravityCompat.START);
 

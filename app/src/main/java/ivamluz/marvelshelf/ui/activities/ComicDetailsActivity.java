@@ -21,7 +21,7 @@ import ivamluz.marvelshelf.R;
 import ivamluz.marvelshelf.data.model.MarvelComic;
 import ivamluz.marvelshelf.ui.fragments.ComicDetailsFragment;
 
-public class ComicDetailsActivity extends BaseDetailsActivity {
+public class ComicDetailsActivity extends BaseActivity {
     private static final String EXTRA_COMIC = String.format("%s.comic", BuildConfig.APPLICATION_ID);
 
     private MarvelComic mComic;
@@ -61,6 +61,11 @@ public class ComicDetailsActivity extends BaseDetailsActivity {
 
         bindComicInfo();
         setupComicDetailsFragment();
+
+        if (savedInstanceState == null) {
+            String title = String.format("%s: %s", ComicDetailsActivity.class.getSimpleName(), mComic.getTitle());
+            trackScreenView(title);
+        }
     }
 
     @Override

@@ -28,7 +28,7 @@ import ivamluz.marvelshelf.ui.fragments.CharacterDetailsFragment;
 import ivamluz.marvelshelf.ui.fragments.workers.ComicsLoaderWorkerFragment;
 import ivamluz.marvelshelf.ui.fragments.workers.SeriesLoaderWorkerFragment;
 
-public class CharacterDetailsActivity extends BaseDetailsActivity implements ComicsLoaderWorkerFragment.TaskCallbacks, SeriesLoaderWorkerFragment.TaskCallbacks {
+public class CharacterDetailsActivity extends BaseActivity implements ComicsLoaderWorkerFragment.TaskCallbacks, SeriesLoaderWorkerFragment.TaskCallbacks {
     private static final String EXTRA_CHARACTER = String.format("%s.character", BuildConfig.APPLICATION_ID);
 
     private MarvelCharacter mCharacter;
@@ -72,6 +72,11 @@ public class CharacterDetailsActivity extends BaseDetailsActivity implements Com
 
         bindCharacterInfo();
         setupCharacterDetailsFragment(savedInstanceState);
+
+        if (savedInstanceState == null) {
+            String title = String.format("%s: %s", CharacterDetailsActivity.class.getSimpleName(), mCharacter.getName());
+            trackScreenView(title);
+        }
     }
 
     private void setupBookmarksManager() {

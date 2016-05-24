@@ -3,6 +3,8 @@ package ivamluz.marvelshelf;
 import android.app.Application;
 import android.net.Uri;
 
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.Tracker;
 import com.karumi.marvelapiclient.MarvelApiConfig;
 import com.squareup.okhttp.Cache;
 import com.squareup.okhttp.OkHttpClient;
@@ -23,6 +25,8 @@ public class MarvelShelfApplication extends Application {
 
     private Picasso mPicasso;
     protected MarvelApiConfig mMarvelApiConfig;
+
+    private Tracker mTracker;
 
     @Override
     public void onCreate() {
@@ -67,6 +71,19 @@ public class MarvelShelfApplication extends Application {
         configureMarvelApiHttpClient();
 
         return mMarvelApiConfig;
+    }
+
+    /**
+     * Gets the default {@link Tracker} for this {@link Application}.
+     * @return tracker
+     */
+    synchronized public Tracker getDefaultTracker() {
+        if (mTracker == null) {
+            GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
+            mTracker = analytics.newTracker(BuildConfig.ANALYTICS_TRACKING_ID);
+        }
+
+        return mTracker;
     }
 
     protected void configureMarvelApiHttpClient() {

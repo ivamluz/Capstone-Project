@@ -2,17 +2,35 @@ package ivamluz.marvelshelf.ui.activities;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.widget.Toast;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
+import ivamluz.marvelshelf.MarvelShelfApplication;
 import ivamluz.marvelshelf.R;
+import ivamluz.marvelshelf.infrastructure.MarvelShelfLogger;
 
 /**
  * Created by iluz on 5/22/16.
  */
-public class BaseDetailsActivity extends AppCompatActivity {
+public class BaseActivity extends AppCompatActivity {
+    protected Tracker mTracker;
+
+    private final String TRACKING_LOG_TAG = "TRACKING";
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        MarvelShelfApplication application = (MarvelShelfApplication) getApplication();
+        mTracker = application.getDefaultTracker();
+    }
+
     protected void configToolbar(Toolbar toolbar) {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(null);
@@ -40,5 +58,12 @@ public class BaseDetailsActivity extends AppCompatActivity {
         intent.setType("text/plain");
 
         startActivity(intent);
+    }
+
+    protected void trackScreenView(String title) {
+        MarvelShelfLogger.debug(TRACKING_LOG_TAG, String.format("Tracking screen view: %s", title));
+
+        mTracker.setScreenName(title);
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 }
